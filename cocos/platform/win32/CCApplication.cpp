@@ -287,19 +287,14 @@ void Application::setStartupScriptFilename(const std::string& startupScriptFile)
 
 void Application::createNewApplication()
 {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include <WinBase.h>
-	char exe[MAX_PATH];
-#ifdef UNICODE
-	TCHAR exePath[MAX_PATH];
-	GetModuleFileNameW(NULL, exePath, MAX_PATH);
-	sprintf(exe, "%S", exePath);
-#else
-	GetModuleFileNameA(NULL, exe, MAX_PATH);
-#endif
-
-	WinExec(exe, SW_SHOW);
-#endif
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	TCHAR exe[MAX_PATH];
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	GetModuleFileName(NULL, exe, MAX_PATH);
+	CreateProcess(exe, NULL, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
 }
 
 
