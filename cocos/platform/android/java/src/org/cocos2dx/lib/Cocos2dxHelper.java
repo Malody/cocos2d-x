@@ -142,6 +142,10 @@ public class Cocos2dxHelper {
 	public static String getCocos2dxWritablePath() {
 		return Cocos2dxHelper.sFileDirectory;
 	}
+	
+	public static void setCocos2dxWritablePath(String directory) {
+		Cocos2dxHelper.sFileDirectory = directory;
+	}
 
 	public static String getCurrentLanguage() {
 		return Locale.getDefault().getLanguage();
