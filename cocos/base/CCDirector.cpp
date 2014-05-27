@@ -447,7 +447,6 @@ void Director::suitViewWithMonitor(GLView* openGLView)
         return;
 	
     openGLView->setFrameSize(frameSize.width,  frameSize.height);
-    openGLView->setDesignResolutionSize(frameSize.width,frameSize.height, openGLView->getResolutionPolicy());
 #endif
 }
 
