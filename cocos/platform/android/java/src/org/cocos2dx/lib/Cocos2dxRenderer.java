@@ -37,7 +37,7 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 	private final static long NANOSECONDSPERSECOND = 1000000000L;
 	private final static long NANOSECONDSPERMICROSECOND = 1000000;
 
-	private static long sAnimationInterval = (long) (1.0 / 60 * Cocos2dxRenderer.NANOSECONDSPERSECOND);
+	private static long sAnimationInterval = (long) (1.0 / 40 * Cocos2dxRenderer.NANOSECONDSPERSECOND);
 
 	// ===========================================================
 	// Fields
@@ -90,12 +90,14 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 		final long nowInNanoSeconds = System.nanoTime();
 		final long interval = nowInNanoSeconds - this.mLastTickInNanoSeconds;
 		*/
+		this.mLastTickInNanoSeconds = System.nanoTime();
 
 		// should render a frame when onDrawFrame() is called or there is a
 		// "ghost"
 		Cocos2dxRenderer.nativeRender();
 
 		/*
+		final long interval = System.nanoTime() - this.mLastTickInNanoSeconds;
 		// fps controlling
 		if (interval < Cocos2dxRenderer.sAnimationInterval) {
 			try {
