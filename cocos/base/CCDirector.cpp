@@ -430,8 +430,8 @@ void Director::suitViewWithMonitor(GLView* openGLView)
     int clipW = 0;
     int clipH = 0;
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-    clipW = GetSystemMetrics(SM_CXSIZEFRAME);
-    clipH = GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYCAPTION);
+	clipW = GetSystemMetrics(SM_CXSIZEFRAME)*2;
+    clipH = GetSystemMetrics(SM_CYSIZEFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 	
 #endif
