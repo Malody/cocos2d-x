@@ -28,6 +28,13 @@ THE SOFTWARE.
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <functional>
+#include <algorithm>
+
 
 #include "base/CCPlatformMacros.h"
 #include "base/ccTypes.h"
@@ -328,6 +335,18 @@ public:
      */
     virtual ValueVector getValueVectorFromFile(const std::string& filename);
 
+		/*
+		Added by Scorpiour
+		4th May, 2014
+		Used for loading virtual file from *.spk package
+	*/
+	virtual Data getVirtualData(const std::string& filename,const std::string& packname,bool forString);
+
+	virtual void registerVirtualLoader(std::function<bool(const std::string&,const std::string&,std::ostream*)> loaderFunc);
+	virtual void withdrawVirtualLoader(void);
+
+	virtual void addVirtualPackName(const std::string& packname);
+
     /** Returns the full path cache */
     const std::unordered_map<std::string, std::string>& getFullPathCache() const { return _fullPathCache; }
 
@@ -336,6 +355,13 @@ protected:
      *  The default constructor.
      */
     FileUtils();
+
+		/*
+		Virtual File loader function
+	*/
+	std::function<bool(const std::string&,const std::string&,std::ostream*)> loader;
+	std::set<std::string> packnameList;
+
     
     /**
      *  Initializes the instance of FileUtils. It will set _searchPathArray and _searchResolutionsOrderArray to default values.

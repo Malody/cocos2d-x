@@ -198,7 +198,20 @@ std::string FileUtilsWin32::getStringFromFile(const std::string& filename)
     Data data = getData(filename, true);
 	if (data.isNull())
 	{
-		return "";
+		std::set<std::string>::iterator iter;
+		for(iter = packnameList.begin();iter!=packnameList.end();iter++)
+		{
+			data = getVirtualData(filename,*iter,true);
+			if(!data.isNull()){
+				break;
+			}
+		}
+
+		if(data.isNull())
+		{
+			return "";
+		}
+
 	}
 
     std::string ret((const char*)data.getBytes());
@@ -207,7 +220,21 @@ std::string FileUtilsWin32::getStringFromFile(const std::string& filename)
     
 Data FileUtilsWin32::getDataFromFile(const std::string& filename)
 {
-    return getData(filename, false);
+    //return getData(filename, false);
+	Data ret = getData(filename,false);
+	if(ret.isNull())
+	{
+		std::set<std::string>::iterator iter;
+		for(iter = packnameList.begin();iter!=packnameList.end();iter++)
+		{
+			ret = getVirtualData(filename,*iter,false);
+			if(!ret.isNull()){
+				break;
+			}
+		}
+	}
+	return ret;
+
 }
 
 unsigned char* FileUtilsWin32::getFileData(const std::string& filename, const char* mode, ssize_t* size)

@@ -33,6 +33,10 @@ THE SOFTWARE.
 #include "base/ccTypes.h"
 #include <string>
 #include <vector>
+#include <set>
+#include <functional>
+#include <algorithm>
+
 
 NS_CC_BEGIN
 

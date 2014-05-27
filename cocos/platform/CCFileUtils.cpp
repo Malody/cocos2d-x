@@ -497,10 +497,78 @@ bool FileUtils::init()
     return true;
 }
 
+Data FileUtils::getVirtualData(const std::string& filename,const std::string& packname,bool forString)
+{
+	if(filename.empty()||packname.empty()||this->loader==nullptr)
+	{
+		return Data::Null;
+	}
+
+	Data ret;
+	char* buffer = nullptr;
+	ssize_t size = 0;
+	const char* mode = nullptr;
+	if(forString){
+		mode = "rt";
+	}else{
+		mode = "rb";
+	}
+
+	std::stringstream ss;
+
+	if(!(this->loader)(filename,packname,&ss))
+	{
+		return Data::Null;
+	}
+
+	ss.seekg(0,ios::end);
+	size = ss.tellg();
+	ss.seekg(0,ios::beg);
+
+	if(size == 0){
+		return Data::Null;
+	}
+
+	if(forString)
+	{
+		buffer = new char[size+1];
+		buffer[size]='\0';
+	}
+	else
+	{
+		buffer = new char[size];
+	}
+
+	ss.read(buffer,size);
+
+	ret.fastSet(reinterpret_cast<unsigned char*>(buffer),size);
+	return ret;
+}
+
+void FileUtils::registerVirtualLoader(std::function<bool(const std::string&,const std::string&,std::ostream*)> loaderFunc)
+{
+	this->loader = loaderFunc;
+}
+
+void FileUtils::withdrawVirtualLoader(void)
+{
+	this->loader = nullptr;
+}
+void FileUtils::addVirtualPackName(const std::string& packname)
+{
+	this->packnameList.insert(packname);
+}
+
+
 void FileUtils::purgeCachedEntries()
 {
     _fullPathCache.clear();
 }
+
+static Data getVirtualData()
+{
+}
+
 
 static Data getData(const std::string& filename, bool forString)
 {
@@ -560,7 +628,20 @@ std::string FileUtils::getStringFromFile(const std::string& filename)
 {
     Data data = getData(filename, true);
     if (data.isNull())
-    	return "";
+	{
+		std::set<std::string>::iterator iter;
+		for(iter = packnameList.begin();iter!=packnameList.end();iter++)
+		{
+			data = getVirtualData(filename,*iter,true);
+			if(!data.isNull()){
+				break;
+			}
+		}
+		if(data.isNull()){
+			return "";
+		}
+	}
+
     
     std::string ret((const char*)data.getBytes());
     return ret;
@@ -568,7 +649,21 @@ std::string FileUtils::getStringFromFile(const std::string& filename)
 
 Data FileUtils::getDataFromFile(const std::string& filename)
 {
-    return getData(filename, false);
+    //return getData(filename, false);
+	Data ret = getData(filename,false);
+	if(ret.isNull())
+	{
+		std::set<std::string>::iterator iter;
+		for(iter = packnameList.begin();iter!=packnameList.end();iter++)
+		{
+			ret = getVirtualData(filename,*iter,false);
+			if(!ret.isNull()){
+				break;
+			}
+		}
+	}
+	return ret;
+
 }
 
 unsigned char* FileUtils::getFileData(const std::string& filename, const char* mode, ssize_t *size)

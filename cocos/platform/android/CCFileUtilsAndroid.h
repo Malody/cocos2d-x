@@ -80,7 +80,7 @@ public:
 private:
     virtual bool isFileExistInternal(const std::string& strFilePath) const;
     Data getData(const std::string& filename, bool forString);
-
+	Data getVirtualData(const std::string& filename,const std::string& packname,bool forString);
     static AAssetManager* assetmanager;
 };
 
