@@ -169,7 +169,10 @@ Application::Platform Application::getTargetPlatform()
 }
 
 void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
-
+    cocos2d::GLView *glview = cocos2d::Director::getInstance()->getOpenGLView();
+    glview->setFrameSize(newWidth, newHeight);
+    glview->setDesignResolutionSize(newWidth, newHeight, ResolutionPolicy::SHOW_ALL);
+    this->applicationWindowResize();
 }
 
 void Application::createNewApplication(){
