@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2013 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
@@ -133,6 +133,7 @@ bool Director::init(void)
     _openGLView = nullptr;
 
     _contentScaleFactor = 1.0f;
+	_changeWindowInNextLoop = false;
 
     // scheduler
     _scheduler = new Scheduler();
@@ -985,6 +986,19 @@ void Director::purgeDirector()
     release();
 }
 
+void Director::changeWindow()
+{
+	auto window = _openGLView->getWindow();
+	if (window)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#include <WinBase.h>
+	//std::string exePath =
+	WinExec((_openGLView->getViewName() + ".exe").c_str(), SW_SHOW); //���ָ�����title��һ����ʱ������bug((
+#endif
+}
+
 void Director::setNextScene()
 {
     bool runningIsTransition = dynamic_cast<TransitionScene*>(_runningScene) != nullptr;
@@ -1254,6 +1268,11 @@ void DisplayLinkDirector::mainLoop()
         _purgeDirectorInNextLoop = false;
         purgeDirector();
     }
+	else if (_changeWindowInNextLoop)
+	{
+		_changeWindowInNextLoop = false;
+		changeWindow();
+	}
     else if (! _invalid)
     {
         drawScene();
