@@ -302,10 +302,15 @@ string FileUtilsWin32::getWritablePath() const
 {
     // Get full path of executable, e.g. c:\Program Files (x86)\My Game Folder\MyGame.exe
     char full_path[CC_MAX_PATH + 1];
-    ::GetModuleFileNameA(NULL, full_path, CC_MAX_PATH + 1);
+    //::GetModuleFileNameA(NULL, full_path, CC_MAX_PATH + 1);
+	wchar_t buf[CC_MAX_PATH + 1];
+	::GetModuleFileNameW(NULL, buf, CC_MAX_PATH + 1);
+	WideCharToMultiByte(CP_UTF8, 0, buf, -1, full_path, CC_MAX_PATH + 1, NULL, NULL);
+
 
     // Debug app uses executable directory; Non-debug app uses local app data directory
-#ifndef _DEBUG
+//#ifndef _DEBUG
+#if 0
         // Get filename of executable only, e.g. MyGame.exe
         char *base_name = strrchr(full_path, '\\');
 
