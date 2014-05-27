@@ -365,19 +365,31 @@ bool Console::listenOnTCP(int port)
 
     listen(listenfd, 50);
 
+	// statementreply 2014-03-22
+	// Replaced inet_ntop with inet_ntoa for compatibility with Windows XP
+	// Thus dropping IPv6 support on Windows (which seems to be non-existant anyway)
     if (res->ai_family == AF_INET) {
         char buf[INET_ADDRSTRLEN] = "";
         struct sockaddr_in *sin = (struct sockaddr_in*) res->ai_addr;
-        if( inet_ntop(res->ai_family, &sin->sin_addr, buf, sizeof(buf)) != NULL )
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32)
+		if( inet_ntop(res->ai_family, &sin->sin_addr, buf, sizeof(buf)) != NULL )
+#else
+		char * ret = inet_ntoa(sin->sin_addr);
+		if( ret != NULL )
+			strcpy(buf, ret);
+		if( ret != NULL )
+#endif
             cocos2d::log("Console: listening on  %s : %d", buf, ntohs(sin->sin_port));
         else
             perror("inet_ntop");
     } else if (res->ai_family == AF_INET6) {
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32)
         char buf[INET6_ADDRSTRLEN] = "";
         struct sockaddr_in6 *sin = (struct sockaddr_in6*) res->ai_addr;
         if( inet_ntop(res->ai_family, &sin->sin6_addr, buf, sizeof(buf)) != NULL )
             cocos2d::log("Console: listening on  %s : %d", buf, ntohs(sin->sin6_port));
         else
+#endif
             perror("inet_ntop");
     }
 
