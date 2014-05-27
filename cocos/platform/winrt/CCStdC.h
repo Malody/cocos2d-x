@@ -50,7 +50,7 @@ typedef SSIZE_T ssize_t;
 #endif
 
 #ifndef snprintf
-#define snprintf _snprintf
+#define snprintf(buffer, buf_size, format, ...) _snprintf_s(buffer, buf_size, _TRUNCATE, format, ##__VA_ARGS__)
 #endif
 
 #include <math.h>
