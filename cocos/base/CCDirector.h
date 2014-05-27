@@ -172,9 +172,7 @@ public:
     */
     inline GLView* getOpenGLView() { return _openGLView; }
     void setOpenGLView(GLView *openGLView);
-	inline void togleFullWindow() { _changeWindowInNextLoop = true; }
-	inline bool isReCreate() { return _reCreate; }
-	static void createNewApp();
+	inline void setWindowShouldClose() { _closeWindowInNextLoop = true; }
 
     TextureCache* getTextureCache() const;
 
@@ -411,9 +409,8 @@ protected:
     void purgeDirector();
     bool _purgeDirectorInNextLoop; // this flag will be set to true in end()
     
-	void changeWindow();
-	bool _changeWindowInNextLoop;
-	bool _reCreate;
+	void closeWindow();
+    bool _closeWindowInNextLoop;
 
     void setNextScene();
     

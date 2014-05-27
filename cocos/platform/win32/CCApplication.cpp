@@ -152,19 +152,14 @@ int Application::run()
 	timeEndPeriod(timeCaps.wPeriodMin);
 
     // Director should still do a cleanup if the window was closed manually.
-	bool reCreateApp = false;
     if (glview->isOpenGLReady())
     {
-		if (director->isReCreate())
-			reCreateApp = true;
-
         director->end();
         director->mainLoop();
         director = nullptr;
     }
     glview->release();
-	if (reCreateApp)
-		Director::createNewApp();
+	applicationWillShutdown();
 
     return true;
 }
@@ -289,6 +284,24 @@ void Application::setStartupScriptFilename(const std::string& startupScriptFile)
     _startupScriptFilename = startupScriptFile;
     std::replace(_startupScriptFilename.begin(), _startupScriptFilename.end(), '\\', '/');
 }
+
+void Application::createNewApplication()
+{
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#include <WinBase.h>
+	char exe[MAX_PATH];
+#ifdef UNICODE
+	TCHAR exePath[MAX_PATH];
+	GetModuleFileNameW(NULL, exePath, MAX_PATH);
+	sprintf(exe, "%S", exePath);
+#else
+	GetModuleFileNameA(NULL, exe, MAX_PATH);
+#endif
+
+	WinExec(exe, SW_SHOW);
+#endif
+}
+
 
 NS_CC_END
 

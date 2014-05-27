@@ -116,6 +116,14 @@ public:
      * @lua NA
      */
     virtual Platform getTargetPlatform() = 0;
+
+	/**
+	@brief  This function will be called when the application shutdown.
+	* @js NA
+	* @lua NA
+	*/
+	virtual void applicationWillShutdown() = 0;
+
 };
 
 // end of platform group

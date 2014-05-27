@@ -89,6 +89,8 @@ public:
 
     void setStartupScriptFilename(const std::string& startupScriptFile);
 
+	void createNewApplication();
+
     const std::string& getStartupScriptFilename(void)
     {
         return _startupScriptFilename;
