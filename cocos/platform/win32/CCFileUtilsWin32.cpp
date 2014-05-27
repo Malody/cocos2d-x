@@ -93,6 +93,7 @@ bool FileUtilsWin32::init()
 {
     _checkPath();
     _defaultResRootPath = s_resourcePath;
+	writablePath = getWritablePathInternal();
     return FileUtils::init();
 }
 
@@ -299,6 +300,11 @@ std::string FileUtilsWin32::getFullPathForDirectoryAndFilename(const std::string
 }
 
 string FileUtilsWin32::getWritablePath() const
+{
+	return writablePath;
+}
+
+string FileUtilsWin32::getWritablePathInternal()
 {
     // Get full path of executable, e.g. c:\Program Files (x86)\My Game Folder\MyGame.exe
     char full_path[CC_MAX_PATH + 1];

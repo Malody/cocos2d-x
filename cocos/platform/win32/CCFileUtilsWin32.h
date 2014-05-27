@@ -56,7 +56,8 @@ public:
     virtual std::string getWritablePath() const;
     virtual bool isAbsolutePath(const std::string& strPath) const;
 protected:
-
+	std::string writablePath;
+	std::string getWritablePathInternal();
     virtual bool isFileExistInternal(const std::string& strFilePath) const;
     
     /**
