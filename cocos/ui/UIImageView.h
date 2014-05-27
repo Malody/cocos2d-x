@@ -74,6 +74,7 @@ public:
      * @param texType    @see UI_TEX_TYPE_LOCAL
      */
     void loadTexture(const std::string& fileName,TextureResType texType = TextureResType::LOCAL);
+	std::string& getTexturePath();
 
     /**
      * Updates the texture rect of the ImageView in points.
