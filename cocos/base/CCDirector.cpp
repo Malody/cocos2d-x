@@ -399,7 +399,7 @@ void Director::setOpenGLView(GLView *openGLView)
 
 void Director::centerOpenGLWindow(GLView *openGLView)
 {
-	CC_ASSERT(openGLView, "opengl view should not be null");
+	CCASSERT(openGLView, "opengl view should not be null");
 
 	auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	auto frameSize = openGLView->getFrameSize();
@@ -1330,10 +1330,10 @@ void DisplayLinkDirector::mainLoop()
         _purgeDirectorInNextLoop = false;
         purgeDirector();
     }
-	else if (_changeWindowInNextLoop)
+	else if (_closeWindowInNextLoop)
 	{
-		_changeWindowInNextLoop = false;
-		changeWindow();
+		_closeWindowInNextLoop = false;
+		closeWindow();
 	}
     else if (! _invalid)
     {

@@ -110,7 +110,8 @@ _bounceOriginalSpeed(0.0f),
 _inertiaScrollEnabled(true),
 _scrollViewEventListener(nullptr),
 _scrollViewEventSelector(nullptr),
-_eventCallback(nullptr)
+_eventCallback(nullptr),
+_mouseListener(nullptr)
 {
 }
 
@@ -118,6 +119,7 @@ ScrollView::~ScrollView()
 {
     _scrollViewEventListener = nullptr;
     _scrollViewEventSelector = nullptr;
+	_mouseListener = nullptr;
 }
 
 ScrollView* ScrollView::create()
@@ -145,6 +147,9 @@ bool ScrollView::init()
     {
         setClippingEnabled(true);
         _innerContainer->setTouchEnabled(false);
+		_mouseListener = EventListenerMouse::create();
+        _mouseListener->onMouseScroll = CC_CALLBACK_1(ScrollView::onMouseWheel, this);
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(_mouseListener, this);//will be a mess when there are two listviews.
         return true;
     }
     return false;
@@ -1565,6 +1570,24 @@ void ScrollView::recordSlidTime(float dt)
         _slidTime += dt;
     }
 }
+	
+void ScrollView::onMouseWheel(Event* event)
+{
+	EventMouse* e =static_cast<EventMouse *>(event);
+	Point p;
+	p.setPoint(e->getCursorX(), e->getCursorY());//fuck cursor
+	Point p2 = Director::getInstance()->convertToGL(p);
+	//CCLOG("UIScrollView.cpp onMouseWheel p: %f, %f",p.x,p.y);
+	//CCLOG("UIScrollView.cpp onMouseWheel p2: %f, %f",p2.x,p2.y);
+	if(hitTest(p2)){//warning:scrolling effective only in the area.
+		float dw = e->getScrollY();
+		//CCLOG("UIScrollView.cpp onMouseWheel dw: %f",dw);
+		float minY = _size.height - _innerContainer->getSize().height;
+		float h = - minY;
+		startAutoScrollChildrenWithDestination(Point(_innerContainer->getPosition().x, _innerContainer->getPosition().y + dw * h), 1, true);//Magic numbers, but who cares.
+	}
+}
+
 
 void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sender, const Vec2 &touchPoint)
 {

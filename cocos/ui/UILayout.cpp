@@ -835,7 +835,7 @@ void Layout::setBackGroundColorOpacity(GLubyte opacity)
 }
 
 void Layout::setBackGroundColorOpacity(GLubyte start, GLubyte end){
-	if(_colorType != LAYOUT_COLOR_GRADIENT)
+	if(_colorType != BackGroundColorType::GRADIENT)
 		return;
 	_gradientRender->setStartOpacity(start);
 	_gradientRender->setEndOpacity(end);
