@@ -397,6 +397,22 @@ void Director::setOpenGLView(GLView *openGLView)
     }
 }
 
+void Director::centerOpenGLWindow(GLView *openGLView)
+{
+	CC_ASSERT(openGLView, "opengl view should not be null");
+
+	auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	auto frameSize = openGLView->getFrameSize();
+	auto window = openGLView->getWindow();
+
+	if (!window)
+		return;
+
+	float x = (video->width - frameSize.width) / 2;
+	float y = (video->height - frameSize.height) / 2;
+	glfwSetWindowPos(window, x, y);
+}
+
 TextureCache* Director::getTextureCache() const
 {
     return _textureCache;

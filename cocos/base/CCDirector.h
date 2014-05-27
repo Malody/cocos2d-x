@@ -171,6 +171,7 @@ public:
     * @lua NA
     */
     inline GLView* getOpenGLView() { return _openGLView; }
+	void centerOpenGLWindow(GLView *openGLView);
     void setOpenGLView(GLView *openGLView);
 	inline void setWindowShouldClose() { _closeWindowInNextLoop = true; }
 
