@@ -692,8 +692,7 @@ bool Widget::onTouchBegan(Touch *touch, Event *unusedEvent)
     {
         widgetParent->interceptTouchEvent(TouchEventType::BEGAN, this, _touchStartPos);
     }
-    pushDownEvent();
-    return true;
+    return pushDownEvent();
 }
 
 void Widget::onTouchMoved(Touch *touch, Event *unusedEvent)
@@ -737,16 +736,20 @@ void Widget::onTouchCancelled(Touch *touch, Event *unusedEvent)
     cancelUpEvent();
 }
 
-void Widget::pushDownEvent()
+bool Widget::pushDownEvent()
 {
+	bool ret = false;
     if (_touchEventCallback) {
         _touchEventCallback(this, TouchEventType::BEGAN);
+		ret = true;
     }
     
     if (_touchEventListener && _touchEventSelector)
     {
         (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_BEGAN);
+		ret = true;
     }
+	return ret;
 }
 
 void Widget::moveEvent()

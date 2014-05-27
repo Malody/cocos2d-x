@@ -641,7 +641,7 @@ protected:
 
     //call back function called widget's state changed to dark.
     virtual void onPressStateChangedToDisabled();
-    void pushDownEvent();
+    bool pushDownEvent();
     void moveEvent();
 
     virtual void releaseUpEvent();
