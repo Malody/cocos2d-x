@@ -295,6 +295,7 @@ void Application::createNewApplication()
 	ZeroMemory(&pi, sizeof(pi));
 	GetModuleFileName(NULL, exe, MAX_PATH);
 	CreateProcess(exe, NULL, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+	WaitForSingleObject(pi.hProcess, WAIT_TIMEOUT);
 }
 
 
