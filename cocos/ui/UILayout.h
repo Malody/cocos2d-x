@@ -158,6 +158,7 @@ public:
      * @param opacity
      */
     void setBackGroundColorOpacity(GLubyte opacity);
+	void setBackGroundColorOpacity(GLubyte start, GLubyte end);
     
     GLubyte getBackGroundColorOpacity()const;
     
