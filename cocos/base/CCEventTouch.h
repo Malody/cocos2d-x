@@ -36,7 +36,7 @@ NS_CC_BEGIN
 class EventTouch : public Event
 {
 public:
-    static const int MAX_TOUCHES = 5;
+    static const int MAX_TOUCHES = 10;
     
     enum class EventCode
     {
