@@ -2178,6 +2178,9 @@ bool Image::initWithRawData(const unsigned char * data, ssize_t dataLen, int wid
     return bRet;
 }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#define CC_MAX_PATH 512
+#endif
 
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
 bool Image::saveToFile(const std::string& filename, bool bIsToRGB)
@@ -2233,7 +2236,15 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
         png_colorp palette;
         png_bytep *row_pointers;
 
-        fp = fopen(filePath.c_str(), "wb");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+		// What about non-MS C++ compilers?
+		WCHAR utf16Buf[CC_MAX_PATH] = {0};
+		MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), -1, utf16Buf, sizeof(utf16Buf)/sizeof(utf16Buf[0]));
+		fp = _wfopen(utf16Buf, L"wb");
+#else
+		fp = fopen(filePath.c_str(), "wb");
+#endif
+
         CC_BREAK_IF(nullptr == fp);
 
         png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -2381,7 +2392,15 @@ bool Image::saveImageToJPG(const std::string& filePath)
         /* Now we can initialize the JPEG compression object. */
         jpeg_create_compress(&cinfo);
 
-        CC_BREAK_IF((outfile = fopen(filePath.c_str(), "wb")) == nullptr);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+		WCHAR utf16Buf[CC_MAX_PATH] = {0};
+		MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), -1, utf16Buf, sizeof(utf16Buf)/sizeof(utf16Buf[0]));
+		outfile = _wfopen(utf16Buf, L"wb");
+#else
+		outfile = fopen(filePath.c_str(), "wb");
+#endif
+		CC_BREAK_IF(outfile == nullptr);
+
         
         jpeg_stdio_dest(&cinfo, outfile);
 
