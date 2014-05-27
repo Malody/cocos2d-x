@@ -111,6 +111,11 @@ void ImageView::initRenderer()
     addProtectedChild(_imageRenderer, IMAGE_RENDERER_Z, -1);
 }
 
+std::string& ImageView::getTexturePath(){
+	return _textureFile;
+}
+
+
 void ImageView::loadTexture(const std::string& fileName, TextureResType texType)
 {
     if (fileName.empty())
