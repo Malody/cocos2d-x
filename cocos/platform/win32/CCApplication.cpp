@@ -66,9 +66,20 @@ int Application::run()
     LARGE_INTEGER nFreq;
     LARGE_INTEGER nLast;
     LARGE_INTEGER nNow;
+	LARGE_INTEGER nTarget;
+	LARGE_INTEGER nTolerance;
+	LARGE_INTEGER nTypSleep;
+	TIMECAPS timeCaps;
+
 
     QueryPerformanceFrequency(&nFreq);
     QueryPerformanceCounter(&nLast);
+	nNow.QuadPart = nLast.QuadPart;
+	nTarget.QuadPart = nLast.QuadPart;
+	nTolerance.QuadPart = nFreq.QuadPart >> 10;
+	nTypSleep.QuadPart = nFreq.QuadPart >> 10; // ~1ms
+	timeCaps.wPeriodMin = 1;
+
 
     // Initialize instance and cocos2d.
     if (!applicationDidFinishLaunching())
@@ -82,21 +93,63 @@ int Application::run()
     // Retain glview to avoid glview being released in the while loop
     glview->retain();
 
+	if (timeGetDevCaps(&timeCaps, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
+	{
+		timeBeginPeriod(timeCaps.wPeriodMin);
+	}
+
+	bool slept = false;
     while(!glview->windowShouldClose())
     {
+		nLast.QuadPart = nNow.QuadPart;
         QueryPerformanceCounter(&nNow);
-        if (nNow.QuadPart - nLast.QuadPart > _animationInterval.QuadPart)
-        {
-            nLast.QuadPart = nNow.QuadPart;
-            
+		// Update Sleep(1) time estimation. Respond faster to bad news.
+		if (slept)
+		{
+			nLast.QuadPart = nNow.QuadPart;
+			LARGE_INTEGER nSlept;
+			nSlept.QuadPart = nNow.QuadPart - nLast.QuadPart;
+			if (nSlept.QuadPart > (nFreq.QuadPart >> 6))
+			{
+				nSlept.QuadPart = nFreq.QuadPart >> 6;
+			}
+			if (nSlept.QuadPart < nTypSleep.QuadPart)
+			{
+				nTypSleep.QuadPart -= (nTypSleep.QuadPart - nSlept.QuadPart) >> 6;
+			}
+			else
+			{
+				nTypSleep.QuadPart = (long long)(sqrt(
+					(double)(nTypSleep.QuadPart + (nFreq.QuadPart >> 10)) *
+					(double)(nSlept.QuadPart + (nFreq.QuadPart >> 10))
+					)) - (nFreq.QuadPart >> 10);
+			}
+		}
+
+		if (nNow.QuadPart + nTypSleep.QuadPart >= nTarget.QuadPart)
+		{
+			if (nNow.QuadPart >= nTarget.QuadPart + nTolerance.QuadPart)
+			{
+				nTarget.QuadPart = nNow.QuadPart - nTolerance.QuadPart + _animationInterval.QuadPart;
+			}
+			else if (nNow.QuadPart + _animationInterval.QuadPart >= nTarget.QuadPart)
+			{
+				nTarget.QuadPart += _animationInterval.QuadPart;
+			}
+
+
             director->mainLoop();
             glview->pollEvents();
+			slept = false;
         }
         else
         {
-            Sleep(0);
+			Sleep(1);
+			slept = true;
         }
     }
+
+	timeEndPeriod(timeCaps.wPeriodMin);
 
     // Director should still do a cleanup if the window was closed manually.
     if (glview->isOpenGLReady())
