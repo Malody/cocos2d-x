@@ -340,6 +340,8 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
                                    _viewName.c_str(),
                                    _monitor,
                                    nullptr);
+	if (_mainWindow == nullptr)
+		return false;
     glfwMakeContextCurrent(_mainWindow);
 
     glfwSetMouseButtonCallback(_mainWindow, GLFWEventHandler::onGLFWMouseCallBack);
