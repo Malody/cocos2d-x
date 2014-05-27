@@ -311,6 +311,10 @@ void Sprite::setTexture(const std::string &filename)
 {
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(filename);
     setTexture(texture);
+	if (texture == nullptr)
+	{
+		return;
+	}
 
     Rect rect = Rect::ZERO;
     rect.size = texture->getContentSize();
