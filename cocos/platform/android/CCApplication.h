@@ -83,6 +83,7 @@ public:
      @brief Get target platform
      */
     virtual Platform getTargetPlatform();
+    virtual void createNewApplication();
 
 	/**
 	@brief  This function will be called when the application screen size is changed.
