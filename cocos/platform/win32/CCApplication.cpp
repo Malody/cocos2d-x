@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "base/CCDirector.h"
 #include <algorithm>
 #include "platform/CCFileUtils.h"
+#include <WinBase.h>
 /**
 @brief    This function change the PVRFrame show/hide setting in register.
 @param  bEnable If true show the PVRFrame window, otherwise hide.

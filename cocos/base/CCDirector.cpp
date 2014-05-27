@@ -482,6 +482,12 @@ void Director::setViewport()
     }
 }
 
+void Director::updateViewport(){
+    auto app = Application::getInstance();
+    if(app)
+        app->applicationWindowResize();
+}
+
 void Director::setNextDeltaTimeZero(bool nextDeltaTimeZero)
 {
     _nextDeltaTimeZero = nextDeltaTimeZero;

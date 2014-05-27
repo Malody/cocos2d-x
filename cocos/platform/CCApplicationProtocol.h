@@ -123,6 +123,7 @@ public:
 	* @lua NA
 	*/
 	virtual void applicationWillShutdown() = 0;
+	virtual void applicationWindowResize(){};
 
 };
 

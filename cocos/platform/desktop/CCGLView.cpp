@@ -332,9 +332,9 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     setViewName(viewName);
 
     _frameZoomFactor = frameZoomFactor;
-
+#if CC_TARGET_PLATFORM != CC_PLATFORM_MAC
     glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
-
+#endif
     _mainWindow = glfwCreateWindow(rect.size.width * _frameZoomFactor,
                                    rect.size.height * _frameZoomFactor,
                                    _viewName.c_str(),
@@ -679,6 +679,7 @@ void GLView::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int heig
         updateDesignResolutionSize();
         Director::getInstance()->setViewport();
     }
+	Director::getInstance()->updateViewport();
 }
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)

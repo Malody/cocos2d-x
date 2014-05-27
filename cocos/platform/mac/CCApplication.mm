@@ -105,6 +105,8 @@ int Application::run()
     }
     
     glview->release();
+	
+	applicationWillShutdown();
     
     return 0;
 }
@@ -236,6 +238,10 @@ void Application::setStartupScriptFilename(const std::string& startupScriptFile)
 {
     _startupScriptFilename = startupScriptFile;
     std::replace(_startupScriptFilename.begin(), _startupScriptFilename.end(), '\\', '/');
+}
+
+void Application::createNewApplication(){
+    return;
 }
 
 const std::string& Application::getStartupScriptFilename(void)

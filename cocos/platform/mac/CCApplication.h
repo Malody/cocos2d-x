@@ -90,6 +90,7 @@ public:
      @brief Get target platform
      */
     virtual Platform getTargetPlatform();
+	void createNewApplication();
 
     /**
      *  Sets the Resource root path.

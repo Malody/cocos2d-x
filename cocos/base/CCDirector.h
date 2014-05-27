@@ -197,6 +197,7 @@ public:
     
     /** Sets the glViewport*/
     void setViewport();
+	void updateViewport();
 
     /** How many frames were called since the director started */
     
