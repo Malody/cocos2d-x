@@ -1004,11 +1004,14 @@ void Director::purgeDirector()
 
 void Director::closeWindow()
 {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+
 	CCASSERT(_openGLView != nullptr, "no GL view");
 
 	auto window = _openGLView->getWindow();
 	if (window)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+#endif
 }
 
 void Director::setNextScene()

@@ -44,6 +44,7 @@ LOCAL_EXPORT_LDLIBS := -lGLESv1_CM \
 
 LOCAL_WHOLE_STATIC_LIBRARIES	:= cocos_png_static cocos_jpeg_static cocos_tiff_static cocos_webp_static
 
+LOCAL_CPP_FEATURES += exceptions
 
 include $(BUILD_STATIC_LIBRARY)
 
