@@ -152,13 +152,20 @@ int Application::run()
 	timeEndPeriod(timeCaps.wPeriodMin);
 
     // Director should still do a cleanup if the window was closed manually.
+	bool reCreateApp = false;
     if (glview->isOpenGLReady())
     {
+		if (director->isReCreate())
+			reCreateApp = true;
+
         director->end();
         director->mainLoop();
         director = nullptr;
     }
     glview->release();
+	if (reCreateApp)
+		Director::createNewApp();
+
     return true;
 }
 

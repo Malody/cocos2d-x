@@ -134,6 +134,7 @@ bool Director::init(void)
 
     _contentScaleFactor = 1.0f;
 	_changeWindowInNextLoop = false;
+	_reCreate = false;
 
     // scheduler
     _scheduler = new Scheduler();
@@ -991,11 +992,22 @@ void Director::changeWindow()
 	auto window = _openGLView->getWindow();
 	if (window)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	_reCreate = true;
+}
 
+void Director::createNewApp()
+{
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 #include <WinBase.h>
 	//std::string exePath =
 	WinExec((_openGLView->getViewName() + ".exe").c_str(), SW_SHOW); //���ָ�����title��һ����ʱ������bug((
+	TCHAR exePath[MAX_PATH];
+	char exe[MAX_PATH];
+	GetModuleFileName(NULL, exePath, MAX_PATH);
+	sprintf(exe, "%S", exePath);
+
+	WinExec(exe, SW_SHOW);
+
 #endif
 }
 
