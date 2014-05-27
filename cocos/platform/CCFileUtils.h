@@ -343,9 +343,13 @@ public:
 	virtual Data getVirtualData(const std::string& filename,const std::string& packname,bool forString);
 
 	virtual void registerVirtualLoader(std::function<bool(const std::string&,const std::string&,std::ostream*)> loaderFunc);
+	virtual void registerVirtualChecker(std::function<bool(const std::string&,const std::string&)> checkerFunc);
+
 	virtual void withdrawVirtualLoader(void);
+	virtual void withdrawVirtualChecker(void);
 
 	virtual void addVirtualPackName(const std::string& packname);
+	virtual bool isFileExistInVirtualLoader(const std::string& filename)const;
 
     /** Returns the full path cache */
     const std::unordered_map<std::string, std::string>& getFullPathCache() const { return _fullPathCache; }
@@ -360,6 +364,7 @@ protected:
 		Virtual File loader function
 	*/
 	std::function<bool(const std::string&,const std::string&,std::ostream*)> loader;
+	std::function<bool(const std::string&,const std::string&)> checker;
 	std::set<std::string> packnameList;
 
     

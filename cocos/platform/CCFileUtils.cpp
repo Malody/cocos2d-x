@@ -997,8 +997,29 @@ bool FileUtils::isFileExist(const std::string& filename) const
             }
         }
     }
-    return false;
+	return isFileExistInVirtualLoader(filename);
 }
+
+bool FileUtils::isFileExistInVirtualLoader(const std::string& filename)const{
+	if(this->loader==nullptr || this->packnameList.size()<1 || this->checker == nullptr){
+		return false;
+	}
+	bool isFound = false;
+	std::set<std::string>::iterator iter;
+	for(iter = packnameList.begin();iter!=packnameList.end() && !isFound;iter++){
+		isFound = (this->checker)(filename,*iter);
+	}
+	return isFound;
+}
+
+void FileUtils::registerVirtualChecker(std::function<bool(const std::string&,const std::string&)> checkerFunc){
+	this->checker = checkerFunc;
+}
+
+void FileUtils::withdrawVirtualChecker(void){
+	this->checker = nullptr;
+}
+
 
 bool FileUtils::isAbsolutePath(const std::string& path) const
 {
