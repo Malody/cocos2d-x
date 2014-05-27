@@ -413,6 +413,45 @@ void Director::centerOpenGLWindow(GLView *openGLView)
 	glfwSetWindowPos(window, x, y);
 }
 
+void Director::suitViewWithMonitor(GLView* openGLView)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    CCASSERT(openGLView != nullptr, "no view");
+	
+    auto frameSize = openGLView->getFrameSize();
+    auto frameZoom = openGLView->getFrameZoomFactor();
+	
+    auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    if (video == nullptr)
+        return;
+	
+    Size suitableSize(video->width, video->height);
+    
+    int clipW = 0;
+    int clipH = 0;
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+    clipW = GetSystemMetrics(SM_CXSIZEFRAME);
+    clipH = GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYCAPTION);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+	
+#endif
+    suitableSize.width = suitableSize.width - clipW;
+    suitableSize.height = suitableSize.height - clipH;
+	
+    if (frameSize.width > suitableSize.width)
+        frameSize.width = suitableSize.width;
+    if (frameSize.height > suitableSize.height)
+        frameSize.height = suitableSize.height;
+	
+    if (frameSize.width <= 0 || frameSize.height <= 0)
+        return;
+	
+    openGLView->setFrameSize(frameSize.width,  frameSize.height);
+    openGLView->setDesignResolutionSize(frameSize.width,frameSize.height, openGLView->getResolutionPolicy());
+#endif
+}
+
+
 TextureCache* Director::getTextureCache() const
 {
     return _textureCache;

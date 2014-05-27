@@ -172,6 +172,7 @@ public:
     */
     inline GLView* getOpenGLView() { return _openGLView; }
 	void centerOpenGLWindow(GLView *openGLView);
+	void suitViewWithMonitor(GLView *getOpenGLView);
     void setOpenGLView(GLView *openGLView);
 	inline void setWindowShouldClose() { _closeWindowInNextLoop = true; }
 
