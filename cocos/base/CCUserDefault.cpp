@@ -441,7 +441,14 @@ void UserDefault::purgeSharedUserDefault()
 
 bool UserDefault::isXMLFileExist()
 {
-    FILE *fp = fopen(_filePath.c_str(), "r");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	WCHAR utf16Buf[MAX_PATH] = {0};
+	MultiByteToWideChar(CP_UTF8, 0, _filePath.c_str(), -1, utf16Buf, sizeof(utf16Buf)/sizeof(utf16Buf[0]));
+	FILE *fp = _wfopen(utf16Buf, L"r");
+#else
+	FILE *fp = fopen(_filePath.c_str(), "r");
+#endif
+
 	bool bRet = false;
 
 	if (fp)
