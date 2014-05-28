@@ -1090,6 +1090,14 @@ Vec2 Layout::getWorldCenterPoint(Widget* widget)const
     return widget->convertToWorldSpace(Vec2(widgetSize.width/2, widgetSize.height/2));
 }
 
+void Layout::interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint){
+	if (_touchEventCallback) {
+		_touchEventCallback(this, event);
+	}else{
+		Widget::interceptTouchEvent(event, sender, touchPoint);
+	}
+}
+
 float Layout::caculateNearestDistance(Widget* baseWidget)
 {
     float distance = FLT_MAX;

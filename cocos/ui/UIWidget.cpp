@@ -692,7 +692,8 @@ bool Widget::onTouchBegan(Touch *touch, Event *unusedEvent)
     {
         widgetParent->interceptTouchEvent(TouchEventType::BEGAN, this, _touchStartPos);
     }
-    return pushDownEvent();
+	pushDownEvent();
+    return true;
 }
 
 void Widget::onTouchMoved(Touch *touch, Event *unusedEvent)

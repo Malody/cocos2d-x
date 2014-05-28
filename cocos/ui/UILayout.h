@@ -332,6 +332,7 @@ protected:
     virtual LayoutExecutant* createLayoutExecutant()override;
     virtual Size getLayoutContentSize()const override;
     virtual const Vector<Node*>& getLayoutElements()const override;
+	virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint) override;
     
     //clipping
     void onBeforeVisitStencil();
