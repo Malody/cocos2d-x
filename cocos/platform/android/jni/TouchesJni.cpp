@@ -98,7 +98,7 @@ extern "C" {
         }
         
         cocos2d::EventKeyboard::KeyCode cocos2dKey = g_keyCodeMap.at(keyCode);
-        cocos2d::EventKeyboard event(cocos2dKey, false);
+        cocos2d::EventKeyboard event(cocos2dKey, true);
         cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
         return JNI_TRUE;
         
