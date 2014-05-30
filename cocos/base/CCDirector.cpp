@@ -400,7 +400,7 @@ void Director::setOpenGLView(GLView *openGLView)
 void Director::centerOpenGLWindow(GLView *openGLView)
 {
 	CCASSERT(openGLView, "opengl view should not be null");
-
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	auto frameSize = openGLView->getFrameSize();
 	auto window = openGLView->getWindow();
@@ -411,6 +411,7 @@ void Director::centerOpenGLWindow(GLView *openGLView)
 	float x = (video->width - frameSize.width) / 2;
 	float y = (video->height - frameSize.height) / 2;
 	glfwSetWindowPos(window, x, y);
+#endif
 }
 
 void Director::suitViewWithMonitor(GLView* openGLView)
