@@ -60,7 +60,8 @@ public:
     enum class EventType
     {
         ON_SELECTED_ITEM_START,
-        ON_SELECTED_ITEM_END
+        ON_SELECTED_ITEM_END,
+		ON_SELECTED_ITEM
     };
     
     typedef std::function<void(Ref*, EventType)> ccListViewCallback;
@@ -225,6 +226,7 @@ protected:
     
     ssize_t _curSelectedIndex;
     bool _refreshViewDirty;
+	Vec2 _lastTouchPoint;
 };
 
 }

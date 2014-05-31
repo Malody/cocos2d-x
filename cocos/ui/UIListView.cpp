@@ -503,7 +503,16 @@ void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, const V
             }
             parent = dynamic_cast<Widget*>(parent->getParent());
         }
+		if(event == TouchEventType::BEGAN){
+			_lastTouchPoint.x = touchPoint.x;
+			_lastTouchPoint.y = touchPoint.y;
+		}
         selectedItemEvent(event);
+		if(event == TouchEventType::ENDED && abs(touchPoint.x - _lastTouchPoint.x) < 20 && abs(touchPoint.y - _lastTouchPoint.y) < 20){
+			if (_eventCallback) {
+                _eventCallback(this,EventType::ON_SELECTED_ITEM);
+            }
+		}
     }
 }
     
