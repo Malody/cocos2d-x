@@ -211,6 +211,7 @@ protected:
     virtual void copySpecialProperties(Widget* model) override;
     virtual void adaptRenderers() override;
     void updateTitleLocation();
+	virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint) override;
 protected:
     Node* _buttonNormalRenderer;
     Node* _buttonClickedRenderer;

@@ -1056,7 +1056,7 @@ void Director::closeWindow()
 	auto window = _openGLView->getWindow();
 	if (window)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	Application::getInstance()->applicationWillShutdown();
     this->end();
 #endif

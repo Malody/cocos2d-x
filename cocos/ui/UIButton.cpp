@@ -678,6 +678,19 @@ void Button::disabledTextureScaleChangedWithSize()
     }
     _buttonDisableRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
 }
+	
+void Button::interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint){
+	if(event == TouchEventType::BEGAN){
+		setHighlighted(true);
+	}else if(event == TouchEventType::ENDED || event == TouchEventType::CANCELED){
+		setHighlighted(false);
+	}
+	if (_touchEventCallback) {
+		_touchEventCallback(this, event);
+	}else{
+		Widget::interceptTouchEvent(event, sender, touchPoint);
+	}
+}
 
 void Button::setPressedActionEnabled(bool enabled)
 {
