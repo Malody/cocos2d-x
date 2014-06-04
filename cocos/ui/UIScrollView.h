@@ -291,6 +291,8 @@ public:
     void setInertiaScrollEnabled(bool enabled);
     
     bool isInertiaScrollEnabled() const;
+	
+	void toggleIgnoreScroll(bool ignore) {_ignoreScroll = ignore;};
     
     /**
      * Sets LayoutType.
@@ -404,7 +406,7 @@ protected:
     float _bounceLeftBoundary;
     float _bounceRightBoundary;
 
-    
+    bool _ignoreScroll;
     bool _autoScroll;
     float _autoScrollAddUpTime;
     

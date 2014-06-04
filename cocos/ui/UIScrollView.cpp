@@ -104,6 +104,7 @@ _topBounceNeeded(false),
 _rightBounceNeeded(false),
 _bottomBounceNeeded(false),
 _bounceEnabled(false),
+_ignoreScroll(false),
 _bouncing(false),
 _bounceDir(Vec2::ZERO),
 _bounceOriginalSpeed(0.0f),
@@ -1573,13 +1574,15 @@ void ScrollView::recordSlidTime(float dt)
 	
 void ScrollView::onMouseWheel(Event* event)
 {
+	if(_ignoreScroll) return;
+	if(!isVisible() || !isAncestorsVisible(this)) return;
 	EventMouse* e =static_cast<EventMouse *>(event);
 	Point p;
 	p.setPoint(e->getCursorX(), e->getCursorY());//fuck cursor
-	Point p2 = Director::getInstance()->convertToGL(p);
+//	Point p2 = Director::getInstance()->convertToGL(p);
 	//CCLOG("UIScrollView.cpp onMouseWheel p: %f, %f",p.x,p.y);
 	//CCLOG("UIScrollView.cpp onMouseWheel p2: %f, %f",p2.x,p2.y);
-	if(hitTest(p2)){//warning:scrolling effective only in the area.
+	if(hitTest(p)){//warning:scrolling effective only in the area.
 		float dw = e->getScrollY();
 		//CCLOG("UIScrollView.cpp onMouseWheel dw: %f",dw);
 		float minY = _size.height - _innerContainer->getSize().height;
