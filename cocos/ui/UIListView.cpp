@@ -504,6 +504,7 @@ void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* 
             }
             parent = dynamic_cast<Widget*>(parent->getParent());
         }
+		Vec2 touchPoint = touch->getLocation();
 		if(event == TouchEventType::BEGAN){
 			_lastTouchPoint.x = touchPoint.x;
 			_lastTouchPoint.y = touchPoint.y;

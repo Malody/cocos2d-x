@@ -743,20 +743,16 @@ void Widget::onTouchCancelled(Touch *touch, Event *unusedEvent)
     cancelUpEvent();
 }
 
-bool Widget::pushDownEvent()
+void Widget::pushDownEvent()
 {
-	bool ret = false;
     if (_touchEventCallback) {
         _touchEventCallback(this, TouchEventType::BEGAN);
-		ret = true;
     }
     
     if (_touchEventListener && _touchEventSelector)
     {
         (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_BEGAN);
-		ret = true;
     }
-	return ret;
 }
 
 void Widget::moveEvent()

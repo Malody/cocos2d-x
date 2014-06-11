@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define __UISCROLLVIEW_H__
 
 #include "ui/UILayout.h"
+#include "base/CCEventListenerMouse.h"
 
 NS_CC_BEGIN
 

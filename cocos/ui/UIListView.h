@@ -161,8 +161,9 @@ public:
     void setItemsMargin(float margin);
     
     float getItemsMargin()const;
+
+	virtual void doLayout() override;
     
-    virtual void sortAllChildren() override;
     virtual void addChild(Node * child) override;
     virtual void addChild(Node * child, int zOrder) override;
     virtual void addChild(Node* child, int zOrder, int tag) override;
@@ -201,7 +202,7 @@ protected:
     virtual void copySpecialProperties(Widget* model) override;
     virtual void copyClonedWidgetChildren(Widget* model) override;
     void selectedItemEvent(TouchEventType event);
-    virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint) override;
+    virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender, Touch* touch) override;
 protected:
     
     Widget* _model;

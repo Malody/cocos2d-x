@@ -214,7 +214,7 @@ protected:
     virtual void adaptRenderers() override;
     void updateTitleLocation();
 
-	virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,const Vec2 &touchPoint) override;
+	virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,Touch *touch) override;
     
     virtual Widget* createCloneInstance() override;
     virtual void copySpecialProperties(Widget* model) override;
