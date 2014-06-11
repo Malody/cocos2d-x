@@ -39,6 +39,26 @@ THE SOFTWARE.
 
 extern "C"
 {
+    // To resolve link error when building 32bits with Xcode 6.
+    // More information please refer to the discussion in https://github.com/cocos2d/cocos2d-x/pull/6986
+#if defined(__APPLE__) || defined(__unix) 
+#ifndef __ENABLE_COMPATIBILITY_WITH_UNIX_2003__
+#define __ENABLE_COMPATIBILITY_WITH_UNIX_2003__
+#include <stdio.h>
+    FILE *fopen$UNIX2003( const char *filename, const char *mode )
+    {
+        return fopen(filename, mode);
+    }
+    size_t fwrite$UNIX2003( const void *a, size_t b, size_t c, FILE *d )
+    {
+        return fwrite(a, b, c, d);
+    }
+    char *strerror$UNIX2003( int errnum )
+    {
+        return strerror(errnum);
+    }
+#endif
+#endif
 #include "png.h"
 #include "tiffio.h"
 #include "base/etc1.h"
@@ -491,9 +511,6 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
         case Format::WEBP:
             ret = initWithWebpData(unpackedData, unpackedLen);
             break;
-		case Format::BMP:
-			ret = initWithBmpData(unpackedData, unpackedLen);
-			break;
         case Format::PVR:
             ret = initWithPVRData(unpackedData, unpackedLen);
             break;
@@ -618,18 +635,6 @@ bool Image::isWebp(const unsigned char * data, ssize_t dataLen)
         && memcmp(static_cast<const unsigned char*>(data) + 8, WEBP_WEBP, 4) == 0;
 }
 
-bool Image::isBmp(const unsigned char * data, ssize_t dataLen)
-{
-	if (dataLen <= 14)
-	{
-		return false;
-	}
-
-	static const unsigned char BMP_SIGNATURE[] = {0x42, 0x4d};
-
-	return memcmp(data, BMP_SIGNATURE, 2) == 0;
-}
-
 bool Image::isPvr(const unsigned char * data, ssize_t dataLen)
 {
     if (static_cast<size_t>(dataLen) < sizeof(PVRv2TexHeader) || static_cast<size_t>(dataLen) < sizeof(PVRv3TexHeader))
@@ -661,10 +666,6 @@ Image::Format Image::detectFormat(const unsigned char * data, ssize_t dataLen)
     {
         return Format::WEBP;
     }
-	else if (isBmp(data, dataLen))
-	{
-		return Format::BMP;
-	}
     else if (isPvr(data, dataLen))
     {
         return Format::PVR;
@@ -980,7 +981,15 @@ bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
 
         png_read_end(png_ptr, nullptr);
 
-        _preMulti = false;
+        // premultiplied alpha for RGBA8888
+        if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+        {
+            premultipliedAlpha();
+        }
+        else
+        {
+            _preMulti = false;
+        }
 
         if (row_pointers != nullptr)
         {
@@ -1561,7 +1570,9 @@ bool Image::initWithTGAData(tImageTGA* tgaData)
         _data = tgaData->imageData;
         _dataLen = _width * _height * tgaData->pixelDepth / 8;
         _fileType = Format::TGA;
+        
         _preMulti = false;
+        
         ret = true;
         
     }while(false);
@@ -1900,258 +1911,6 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
 	return bRet;
 }
 
-/* Windows Bitmap File Loader
-	* Version 1.2.5 (20120929)
-	*
-	* Supported Formats: 1, 4, 8, 16, 24, 32 Bit Images
-	* Alpha Bitmaps are also supported.
-	* Supported compression types: RLE 8, BITFIELDS
-	*
-	* Created by: Benjamin Kalytta, 2006 - 2012
-	* Thanks for bug fixes goes to: Chris Campbell
-	*
-	* Licence: Free to use, URL to my source and my name is required in your source code.
-	*
-	* Source can be found at http://www.kalytta.com/bitmap.h
-*
-	* Warning: This code should not be used in unmodified form in a production environment.
-	* It should only serve as a basis for your own development.
-	* There is only a minimal error handling in this code. (Notice added 20111211)
-	*/
-namespace
-{
-	const ssize_t BITMAP_FILEHEADER_SIZE = 14;
-	const unsigned char BMP_SIGNATURE[] = {0x42, 0x4d};
-	struct BitmapFileHeader
-	{
-		// This causes problems with data alignment
-		// uint16_t Signature;
-		uint32_t size;
-		uint32_t reserved;
-		uint32_t bitsOffset;
-	};
-
-	struct BitmapHeader
-	{
-		uint32_t headerSize;
-		int32_t width;
-		int32_t height;
-		uint16_t planes;
-		uint16_t bitCount;
-		uint32_t compression;
-		uint32_t sizeImage;
-		int32_t pelsPerMeterX;
-		int32_t pelsPerMeterY;
-		uint32_t clrUsed;
-		uint32_t clrImportant;
-		uint32_t redMask;
-		uint32_t greenMask;
-		uint32_t blueMask;
-		uint32_t alphaMask;
-		uint32_t csType;
-		uint32_t endpoints[9]; // see http://msdn2.microsoft.com/en-us/library/ms536569.aspx
-		uint32_t gammaRed;
-		uint32_t gammaGreen;
-		uint32_t gammaBlue;
-	};
-}
-
-bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
-{
-	if (dataLen < BITMAP_FILEHEADER_SIZE || memcmp(data, BMP_SIGNATURE, 2) != 0)
-	{
-		return false;
-	}
-	const BitmapFileHeader * bitmapFileHeader = reinterpret_cast<const BitmapFileHeader *>(data + 2);
-	if (dataLen < bitmapFileHeader->size)
-	{
-		return false;
-	}
-	dataLen = bitmapFileHeader->size; // Don't read excessive bytes.
-	ssize_t pos = BITMAP_FILEHEADER_SIZE;
-
-	if (dataLen - pos < 40) // sizeof(BITMAPINFOHEADER). Older versions are not supported.
-	{
-		return false;
-	}
-	const BitmapHeader * bitmapHeader = reinterpret_cast<const BitmapHeader *>(data + pos);
-	// This is intended behavior. pos + bitmapHeader->HeaderSize could overflow.
-	if (dataLen - pos < bitmapHeader->headerSize)
-	{
-		return false;
-	}
-	pos += bitmapHeader->headerSize;
-
-	// Color Table for 16 bits images are not supported.
-	unsigned int colorTableSize;
-	switch (bitmapHeader->bitCount)
-	{
-	case 1:
-	case 4:
-	case 8:
-		colorTableSize = 1u << bitmapHeader->bitCount;
-		break;
-	case 16:
-	case 24:
-	case 32:
-		colorTableSize = 0;
-		break;
-	default:
-		return false;
-	}
-
-	if (bitmapHeader->clrUsed > colorTableSize || dataLen - pos < bitmapHeader->clrUsed * 4)
-	{
-		return false;
-	}
-	const unsigned char * colorTable  = data + pos;
-	pos += bitmapHeader->clrUsed * 4;
-
-	if (pos > bitmapFileHeader->bitsOffset)
-	{
-		return false;
-	}
-	pos = bitmapFileHeader->bitsOffset;
-	_width = bitmapHeader->width;
-	_height = abs(bitmapHeader->height);
-	unsigned int stride = (_width * bitmapHeader->bitCount + 31u & -32u) >> 3; // 4-byte alignment
-	if (_width <= 0 || _height <= 0 || (dataLen - pos) / stride < _height)
-	{
-		return false;
-	}
-	_preMulti = false;
-	_renderFormat = Texture2D::PixelFormat::RGBA8888;
-	size_t tempDataLen = static_cast<size_t>(_height) * static_cast<size_t>(_width) * 4u;
-	_dataLen = static_cast<ssize_t>(tempDataLen);
-	if (_dataLen / 4 / _width != _height)
-	{
-		return false;
-	}
-	try
-	{
-		_data = static_cast<unsigned char*>(malloc(_dataLen * sizeof(unsigned char)));
-	}
-	catch (std::bad_alloc e)
-	{
-		return false;
-	}
-
-	bool success = false;
-
-	ssize_t bufpos;
-	if (bitmapHeader->height < 0)
-	{
-		bufpos = 0;
-	}
-	else
-	{
-		bufpos = (_height - 1) * _width * 4;
-	}
-
-	switch (bitmapHeader->compression)
-	{
-	case 0: // No compression
-		for (int i = 0; i < _height; i++)
-		{
-			ssize_t nextLine = pos + stride;
-			for (int j = 0; j < _width; ) // j is incremented inside the loop
-			{
-				unsigned int c;
-				switch (bitmapHeader->bitCount)
-				{
-				case 1:
-					c = data[pos];
-					for (int k = 0; k < 8 && j < _width; k++, j++)
-					{
-						_data[bufpos++] = colorTable[c >> 5 & 0x04 | 0x02];
-						_data[bufpos++] = colorTable[c >> 5 & 0x04 | 0x01];
-						_data[bufpos++] = colorTable[c >> 5 & 0x04       ];
-						_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
-						c <<= 1;
-					}
-					pos++;
-					break;
-				case 4:
-					c = data[pos];
-					_data[bufpos++] = colorTable[c >> 2 & 0x3c | 0x02];
-					_data[bufpos++] = colorTable[c >> 2 & 0x3c | 0x01];
-					_data[bufpos++] = colorTable[c >> 2 & 0x3c       ];
-					_data[bufpos++] = 0xff; // colorTable[c >> 2 & 0x3c | 0x03];
-					if (++j < _width)
-					{
-						_data[bufpos++] = colorTable[c << 2 & 0x3c | 0x02];
-						_data[bufpos++] = colorTable[c << 2 & 0x3c | 0x01];
-						_data[bufpos++] = colorTable[c << 2 & 0x3c       ];
-						_data[bufpos++] = 0xff; // colorTable[c << 2 & 0x3c | 0x03];
-						j++;
-					}
-					pos++;
-					break;
-				case 8:
-					c = data[pos];
-					_data[bufpos++] = colorTable[c << 2 | 0x02];
-					_data[bufpos++] = colorTable[c << 2 | 0x01];
-					_data[bufpos++] = colorTable[c << 2       ];
-					_data[bufpos++] = 0xff; // colorTable[c << 2 | 0x03];
-					j++;
-					pos++;
-					break;
-				case 16:
-					c = *reinterpret_cast<const uint16_t *>(data + pos);
-					// TODO: better RGB555 to RGBA8888 conversion?
-					_data[bufpos++] = c >> 7 & 0xf8 | c >> 12 & 0x07;
-					_data[bufpos++] = c >> 2 & 0xf8 | c >>  7 & 0x07;
-					_data[bufpos++] = c << 3 & 0xf8 | c >>  2 & 0x07;
-					_data[bufpos++] = 0xff;
-					j++;
-					pos += 2;
-					break;
-				case 24:
-					_data[bufpos++] = data[pos + 2];
-					_data[bufpos++] = data[pos + 1];
-					_data[bufpos++] = data[pos    ];
-					_data[bufpos++] = 0xff;
-					j++;
-					pos += 3;
-					break;
-				case 32:
-					_data[bufpos++] = data[pos + 2];
-					_data[bufpos++] = data[pos + 1];
-					_data[bufpos++] = data[pos    ];
-					_data[bufpos++] = data[pos + 3];
-					j++;
-					pos += 4;
-					break;
-				}
-			}
-			pos = nextLine;
-			if (bitmapHeader->height >= 0)
-			{
-				bufpos -= _width * 8; // Go to previous line
-			}
-		}
-		success = true;
-		break;
-	case 1: // RLE 8
-		// TODO: RLE 8
-		break;
-	case 2: // RLE 4
-		// RLE 4 is not supported
-		break;
-	case 3: // BITFIELDS
-		// TODO: BITFIELDS
-		break;
-	}
-
-	if (!success)
-	{
-		CCLOG("cocos2d: Image: BMP compression method %d not supported.", bitmapHeader->compression);
-		delete _data;
-		_data = nullptr;
-	}
-	return success;
-}
-
 
 bool Image::initWithRawData(const unsigned char * data, ssize_t dataLen, int width, int height, int bitsPerComponent, bool preMulti)
 {
@@ -2178,9 +1937,6 @@ bool Image::initWithRawData(const unsigned char * data, ssize_t dataLen, int wid
     return bRet;
 }
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-#define CC_MAX_PATH 512
-#endif
 
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
 bool Image::saveToFile(const std::string& filename, bool bIsToRGB)
@@ -2236,15 +1992,7 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
         png_colorp palette;
         png_bytep *row_pointers;
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-		// What about non-MS C++ compilers?
-		WCHAR utf16Buf[CC_MAX_PATH] = {0};
-		MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), -1, utf16Buf, sizeof(utf16Buf)/sizeof(utf16Buf[0]));
-		fp = _wfopen(utf16Buf, L"wb");
-#else
-		fp = fopen(filePath.c_str(), "wb");
-#endif
-
+        fp = fopen(filePath.c_str(), "wb");
         CC_BREAK_IF(nullptr == fp);
 
         png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -2392,15 +2140,7 @@ bool Image::saveImageToJPG(const std::string& filePath)
         /* Now we can initialize the JPEG compression object. */
         jpeg_create_compress(&cinfo);
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-		WCHAR utf16Buf[CC_MAX_PATH] = {0};
-		MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), -1, utf16Buf, sizeof(utf16Buf)/sizeof(utf16Buf[0]));
-		outfile = _wfopen(utf16Buf, L"wb");
-#else
-		outfile = fopen(filePath.c_str(), "wb");
-#endif
-		CC_BREAK_IF(outfile == nullptr);
-
+        CC_BREAK_IF((outfile = fopen(filePath.c_str(), "wb")) == nullptr);
         
         jpeg_stdio_dest(&cinfo, outfile);
 
@@ -2465,7 +2205,19 @@ bool Image::saveImageToJPG(const std::string& filePath)
     return bRet;
 }
 
-
+void Image::premultipliedAlpha()
+{
+    CCASSERT(_renderFormat == Texture2D::PixelFormat::RGBA8888, "The pixel format should be RGBA8888!");
+    
+    unsigned int* fourBytes = (unsigned int*)_data;
+    for(int i = 0; i < _width * _height; i++)
+    {
+        unsigned char* p = _data + i * 4;
+        fourBytes[i] = CC_RGB_PREMULTIPLY_ALPHA(p[0], p[1], p[2], p[3]);
+    }
+    
+    _preMulti = true;
+}
 
 NS_CC_END
 

@@ -158,6 +158,8 @@ protected:
     bool saveImageToPNG(const std::string& filePath, bool isToRGB = true);
     bool saveImageToJPG(const std::string& filePath);
     
+    void premultipliedAlpha();
+    
 protected:
     /**
      @brief Determine how many mipmaps can we have.
