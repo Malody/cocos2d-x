@@ -53,7 +53,7 @@ namespace cocos2d {
 #endif
 
 #if defined(USE_FILE32API)
-#define fopen64 _wfopen
+#define fopen64 fopen
 #define ftello64 ftell
 #define fseeko64 fseek
 #else
