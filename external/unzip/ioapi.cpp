@@ -12,6 +12,10 @@
 
 #include "ioapi.h"
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
+
 namespace cocos2d {
 
 voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode)
@@ -113,6 +117,13 @@ static voidpf ZCALLBACK fopen64_file_func (voidpf opaque, const void* filename, 
     {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MARMALADE || CC_TARGET_PLATFORM == CC_PLATFORM_BADA || CC_TARGET_PLATFORM == CC_PLATFORM_BLACKBERRY || CC_TARGET_PLATFORM == CC_PLATFORM_NACL || CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
         file = NULL;
+#elif defined(_MSC_VER)
+        wchar_t wPath[MAX_PATH];
+        const size_t MAX_MODE = 8;
+        wchar_t wMode[MAX_MODE];
+        MultiByteToWideChar(CP_UTF8, 0, static_cast<const char *>(filename), -1, wPath, MAX_PATH);
+        MultiByteToWideChar(CP_UTF8, 0, mode_fopen, -1, wMode, MAX_MODE);
+        file = fopen64(wPath, wMode);
 #else
         file = fopen64((const char*)filename, mode_fopen);    
 #endif
