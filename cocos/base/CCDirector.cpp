@@ -825,6 +825,18 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     Vec4 glCoord(glPoint.x, glPoint.y, 0.0, 1);
     transform.transformVector(glCoord, &clipCoord);
 
+	/*
+	BUG-FIX #5506
+
+	a = (Vx, Vy, Vz, 1)
+	b = (a×M)T
+	Out = 1 ⁄ bw(bx, by, bz)
+	*/
+	
+	clipCoord.x = clipCoord.x / clipCoord.w;
+	clipCoord.y = clipCoord.y / clipCoord.w;
+	clipCoord.z = clipCoord.z / clipCoord.w;
+
     Size glSize = _openGLView->getDesignResolutionSize();
     float factor = 1.0/glCoord.w;
     return Vec2(glSize.width*(clipCoord.x*0.5 + 0.5) * factor, glSize.height*(-clipCoord.y*0.5 + 0.5) * factor);
