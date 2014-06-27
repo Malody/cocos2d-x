@@ -1557,13 +1557,11 @@ void ScrollView::onMouseWheel(Event* event)
 	EventMouse* e =static_cast<EventMouse *>(event);
 	Point p;
 	p.setPoint(e->getCursorX(), e->getCursorY());//fuck cursor
-//	Point p2 = Director::getInstance()->convertToGL(p);
-	//CCLOG("UIScrollView.cpp onMouseWheel p: %f, %f",p.x,p.y);
-	//CCLOG("UIScrollView.cpp onMouseWheel p2: %f, %f",p2.x,p2.y);
+
 	if(hitTest(p)){//warning:scrolling effective only in the area.
 		float dw = e->getScrollY();
 		//CCLOG("UIScrollView.cpp onMouseWheel dw: %f",dw);
-		float minY = _size.height - _innerContainer->getSize().height;
+		float minY = _contentSize.height - _innerContainer->getSize().height;
 		float h = - minY;
 		startAutoScrollChildrenWithDestination(Point(_innerContainer->getPosition().x, _innerContainer->getPosition().y + dw * h), 1, true);//Magic numbers, but who cares.
 	}

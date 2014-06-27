@@ -522,7 +522,7 @@ void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* 
 			_lastTouchPoint.x = touchPoint.x;
 			_lastTouchPoint.y = touchPoint.y;
 		}
-        selectedItemEvent(event);
+        //selectedItemEvent(event);
 		if(event == TouchEventType::ENDED && abs(touchPoint.x - _lastTouchPoint.x) < 20 && abs(touchPoint.y - _lastTouchPoint.y) < 20){
 			if (_eventCallback) {
                 _eventCallback(this,EventType::ON_SELECTED_ITEM);
