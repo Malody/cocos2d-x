@@ -2169,7 +2169,7 @@ static int lua_cocos2dx_physics_PhysicsShape_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsShape(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShape");
-    tolua_cclass(tolua_S,"PhysicsShape","cc.PhysicsShape","cc.Ref",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShape","cc.PhysicsShape","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShape");
         tolua_function(tolua_S,"getFriction",lua_cocos2dx_physics_PhysicsShape_getFriction);
@@ -2402,7 +2402,7 @@ static int lua_cocos2dx_physics_PhysicsShapeCircle_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsShapeCircle(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShapeCircle");
-    tolua_cclass(tolua_S,"PhysicsShapeCircle","cc.PhysicsShapeCircle","cc.PhysicsShape",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShapeCircle","cc.PhysicsShapeCircle","cc.PhysicsShape",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapeCircle");
         tolua_function(tolua_S,"getRadius",lua_cocos2dx_physics_PhysicsShapeCircle_getRadius);
@@ -2413,259 +2413,6 @@ int lua_register_cocos2dx_physics_PhysicsShapeCircle(lua_State* tolua_S)
     std::string typeName = typeid(cocos2d::PhysicsShapeCircle).name();
     g_luaType[typeName] = "cc.PhysicsShapeCircle";
     g_typeCast["PhysicsShapeCircle"] = "cc.PhysicsShapeCircle";
-    return 1;
-}
-
-int lua_cocos2dx_physics_PhysicsShapeBox_getPointsCount(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::PhysicsShapeBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::PhysicsShapeBox*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeBox_getPointsCount'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-            return 0;
-        int ret = cobj->getPointsCount();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getPointsCount",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_getPointsCount'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_physics_PhysicsShapeBox_getSize(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::PhysicsShapeBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::PhysicsShapeBox*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeBox_getSize'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-            return 0;
-        cocos2d::Size ret = cobj->getSize();
-        size_to_luaval(tolua_S, ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getSize",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_getSize'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
-{
-    int argc = 0;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
-
-    if (argc == 1)
-    {
-        cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0);
-        if(!ok)
-            return 0;
-        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0);
-        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
-        return 1;
-    }
-    if (argc == 2)
-    {
-        cocos2d::Size arg0;
-        cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_size(tolua_S, 2, &arg0);
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1);
-        if(!ok)
-            return 0;
-        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0, arg1);
-        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
-        return 1;
-    }
-    if (argc == 3)
-    {
-        cocos2d::Size arg0;
-        cocos2d::PhysicsMaterial arg1;
-        cocos2d::Vec2 arg2;
-        ok &= luaval_to_size(tolua_S, 2, &arg0);
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1);
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2);
-        if(!ok)
-            return 0;
-        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0, arg1, arg2);
-        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d\n ", "create",argc, 1);
-    return 0;
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'.",&tolua_err);
-#endif
-    return 0;
-}
-int lua_cocos2dx_physics_PhysicsShapeBox_calculateArea(lua_State* tolua_S)
-{
-    int argc = 0;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
-
-    if (argc == 1)
-    {
-        cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0);
-        if(!ok)
-            return 0;
-        double ret = cocos2d::PhysicsShapeBox::calculateArea(arg0);
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d\n ", "calculateArea",argc, 1);
-    return 0;
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_calculateArea'.",&tolua_err);
-#endif
-    return 0;
-}
-int lua_cocos2dx_physics_PhysicsShapeBox_calculateMoment(lua_State* tolua_S)
-{
-    int argc = 0;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
-
-    if (argc == 2)
-    {
-        double arg0;
-        cocos2d::Size arg1;
-        ok &= luaval_to_number(tolua_S, 2,&arg0);
-        ok &= luaval_to_size(tolua_S, 3, &arg1);
-        if(!ok)
-            return 0;
-        double ret = cocos2d::PhysicsShapeBox::calculateMoment(arg0, arg1);
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    if (argc == 3)
-    {
-        double arg0;
-        cocos2d::Size arg1;
-        cocos2d::Vec2 arg2;
-        ok &= luaval_to_number(tolua_S, 2,&arg0);
-        ok &= luaval_to_size(tolua_S, 3, &arg1);
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2);
-        if(!ok)
-            return 0;
-        double ret = cocos2d::PhysicsShapeBox::calculateMoment(arg0, arg1, arg2);
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d\n ", "calculateMoment",argc, 2);
-    return 0;
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_calculateMoment'.",&tolua_err);
-#endif
-    return 0;
-}
-static int lua_cocos2dx_physics_PhysicsShapeBox_finalize(lua_State* tolua_S)
-{
-    printf("luabindings: finalizing LUA object (PhysicsShapeBox)");
-    return 0;
-}
-
-int lua_register_cocos2dx_physics_PhysicsShapeBox(lua_State* tolua_S)
-{
-    tolua_usertype(tolua_S,"cc.PhysicsShapeBox");
-    tolua_cclass(tolua_S,"PhysicsShapeBox","cc.PhysicsShapeBox","cc.PhysicsShape",nullptr);    
-
-    tolua_beginmodule(tolua_S,"PhysicsShapeBox");
-        tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapeBox_getPointsCount);
-        tolua_function(tolua_S,"getSize",lua_cocos2dx_physics_PhysicsShapeBox_getSize);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeBox_create);
-        tolua_function(tolua_S,"calculateArea", lua_cocos2dx_physics_PhysicsShapeBox_calculateArea);
-        tolua_function(tolua_S,"calculateMoment", lua_cocos2dx_physics_PhysicsShapeBox_calculateMoment);
-    tolua_endmodule(tolua_S);
-    std::string typeName = typeid(cocos2d::PhysicsShapeBox).name();
-    g_luaType[typeName] = "cc.PhysicsShapeBox";
-    g_typeCast["PhysicsShapeBox"] = "cc.PhysicsShapeBox";
     return 1;
 }
 
@@ -2769,7 +2516,7 @@ static int lua_cocos2dx_physics_PhysicsShapePolygon_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsShapePolygon(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShapePolygon");
-    tolua_cclass(tolua_S,"PhysicsShapePolygon","cc.PhysicsShapePolygon","cc.PhysicsShape",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShapePolygon","cc.PhysicsShapePolygon","cc.PhysicsShape",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapePolygon");
         tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapePolygon_getPointsCount);
@@ -2778,6 +2525,130 @@ int lua_register_cocos2dx_physics_PhysicsShapePolygon(lua_State* tolua_S)
     std::string typeName = typeid(cocos2d::PhysicsShapePolygon).name();
     g_luaType[typeName] = "cc.PhysicsShapePolygon";
     g_typeCast["PhysicsShapePolygon"] = "cc.PhysicsShapePolygon";
+    return 1;
+}
+
+int lua_cocos2dx_physics_PhysicsShapeBox_getSize(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::PhysicsShapeBox* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::PhysicsShapeBox*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeBox_getSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+            return 0;
+        cocos2d::Size ret = cobj->getSize();
+        size_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getSize",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_getSize'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 1)
+    {
+        cocos2d::Size arg0;
+        ok &= luaval_to_size(tolua_S, 2, &arg0);
+        if(!ok)
+            return 0;
+        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0);
+        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
+        return 1;
+    }
+    if (argc == 2)
+    {
+        cocos2d::Size arg0;
+        cocos2d::PhysicsMaterial arg1;
+        ok &= luaval_to_size(tolua_S, 2, &arg0);
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg1);
+        if(!ok)
+            return 0;
+        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0, arg1);
+        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
+        return 1;
+    }
+    if (argc == 3)
+    {
+        cocos2d::Size arg0;
+        cocos2d::PhysicsMaterial arg1;
+        cocos2d::Vec2 arg2;
+        ok &= luaval_to_size(tolua_S, 2, &arg0);
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg1);
+        ok &= luaval_to_vec2(tolua_S, 4, &arg2);
+        if(!ok)
+            return 0;
+        cocos2d::PhysicsShapeBox* ret = cocos2d::PhysicsShapeBox::create(arg0, arg1, arg2);
+        object_to_luaval<cocos2d::PhysicsShapeBox>(tolua_S, "cc.PhysicsShapeBox",(cocos2d::PhysicsShapeBox*)ret);
+        return 1;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d\n ", "create",argc, 1);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'.",&tolua_err);
+#endif
+    return 0;
+}
+static int lua_cocos2dx_physics_PhysicsShapeBox_finalize(lua_State* tolua_S)
+{
+    printf("luabindings: finalizing LUA object (PhysicsShapeBox)");
+    return 0;
+}
+
+int lua_register_cocos2dx_physics_PhysicsShapeBox(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"cc.PhysicsShapeBox");
+    tolua_cclass(tolua_S,"PhysicsShapeBox","cc.PhysicsShapeBox","cc.PhysicsShapePolygon",nullptr);
+
+    tolua_beginmodule(tolua_S,"PhysicsShapeBox");
+        tolua_function(tolua_S,"getSize",lua_cocos2dx_physics_PhysicsShapeBox_getSize);
+        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeBox_create);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(cocos2d::PhysicsShapeBox).name();
+    g_luaType[typeName] = "cc.PhysicsShapeBox";
+    g_typeCast["PhysicsShapeBox"] = "cc.PhysicsShapeBox";
     return 1;
 }
 
@@ -2943,7 +2814,7 @@ static int lua_cocos2dx_physics_PhysicsShapeEdgeSegment_finalize(lua_State* tolu
 int lua_register_cocos2dx_physics_PhysicsShapeEdgeSegment(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShapeEdgeSegment");
-    tolua_cclass(tolua_S,"PhysicsShapeEdgeSegment","cc.PhysicsShapeEdgeSegment","cc.PhysicsShape",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShapeEdgeSegment","cc.PhysicsShapeEdgeSegment","cc.PhysicsShape",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapeEdgeSegment");
         tolua_function(tolua_S,"getPointB",lua_cocos2dx_physics_PhysicsShapeEdgeSegment_getPointB);
@@ -2956,10 +2827,10 @@ int lua_register_cocos2dx_physics_PhysicsShapeEdgeSegment(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount(lua_State* tolua_S)
+int lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount(lua_State* tolua_S)
 {
     int argc = 0;
-    cocos2d::PhysicsShapeEdgeBox* cobj = nullptr;
+    cocos2d::PhysicsShapeEdgePolygon* cobj = nullptr;
     bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
@@ -2968,15 +2839,15 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount(lua_State* tolua_S)
 
 
 #if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeEdgeBox",0,&tolua_err)) goto tolua_lerror;
+    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeEdgePolygon",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    cobj = (cocos2d::PhysicsShapeEdgeBox*)tolua_tousertype(tolua_S,1,0);
+    cobj = (cocos2d::PhysicsShapeEdgePolygon*)tolua_tousertype(tolua_S,1,0);
 
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount'", nullptr);
         return 0;
     }
 #endif
@@ -2995,11 +2866,31 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount'.",&tolua_err);
 #endif
 
     return 0;
 }
+static int lua_cocos2dx_physics_PhysicsShapeEdgePolygon_finalize(lua_State* tolua_S)
+{
+    printf("luabindings: finalizing LUA object (PhysicsShapeEdgePolygon)");
+    return 0;
+}
+
+int lua_register_cocos2dx_physics_PhysicsShapeEdgePolygon(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"cc.PhysicsShapeEdgePolygon");
+    tolua_cclass(tolua_S,"PhysicsShapeEdgePolygon","cc.PhysicsShapeEdgePolygon","cc.PhysicsShape",nullptr);
+
+    tolua_beginmodule(tolua_S,"PhysicsShapeEdgePolygon");
+        tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(cocos2d::PhysicsShapeEdgePolygon).name();
+    g_luaType[typeName] = "cc.PhysicsShapeEdgePolygon";
+    g_typeCast["PhysicsShapeEdgePolygon"] = "cc.PhysicsShapeEdgePolygon";
+    return 1;
+}
+
 int lua_cocos2dx_physics_PhysicsShapeEdgeBox_create(lua_State* tolua_S)
 {
     int argc = 0;
@@ -3084,79 +2975,14 @@ static int lua_cocos2dx_physics_PhysicsShapeEdgeBox_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsShapeEdgeBox(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShapeEdgeBox");
-    tolua_cclass(tolua_S,"PhysicsShapeEdgeBox","cc.PhysicsShapeEdgeBox","cc.PhysicsShape",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShapeEdgeBox","cc.PhysicsShapeEdgeBox","cc.PhysicsShapeEdgePolygon",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapeEdgeBox");
-        tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapeEdgeBox_getPointsCount);
         tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeEdgeBox_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::PhysicsShapeEdgeBox).name();
     g_luaType[typeName] = "cc.PhysicsShapeEdgeBox";
     g_typeCast["PhysicsShapeEdgeBox"] = "cc.PhysicsShapeEdgeBox";
-    return 1;
-}
-
-int lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::PhysicsShapeEdgePolygon* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsShapeEdgePolygon",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::PhysicsShapeEdgePolygon*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-            return 0;
-        int ret = cobj->getPointsCount();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "getPointsCount",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount'.",&tolua_err);
-#endif
-
-    return 0;
-}
-static int lua_cocos2dx_physics_PhysicsShapeEdgePolygon_finalize(lua_State* tolua_S)
-{
-    printf("luabindings: finalizing LUA object (PhysicsShapeEdgePolygon)");
-    return 0;
-}
-
-int lua_register_cocos2dx_physics_PhysicsShapeEdgePolygon(lua_State* tolua_S)
-{
-    tolua_usertype(tolua_S,"cc.PhysicsShapeEdgePolygon");
-    tolua_cclass(tolua_S,"PhysicsShapeEdgePolygon","cc.PhysicsShapeEdgePolygon","cc.PhysicsShape",nullptr);    
-
-    tolua_beginmodule(tolua_S,"PhysicsShapeEdgePolygon");
-        tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPointsCount);
-    tolua_endmodule(tolua_S);
-    std::string typeName = typeid(cocos2d::PhysicsShapeEdgePolygon).name();
-    g_luaType[typeName] = "cc.PhysicsShapeEdgePolygon";
-    g_typeCast["PhysicsShapeEdgePolygon"] = "cc.PhysicsShapeEdgePolygon";
     return 1;
 }
 
@@ -3213,7 +3039,7 @@ static int lua_cocos2dx_physics_PhysicsShapeEdgeChain_finalize(lua_State* tolua_
 int lua_register_cocos2dx_physics_PhysicsShapeEdgeChain(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsShapeEdgeChain");
-    tolua_cclass(tolua_S,"PhysicsShapeEdgeChain","cc.PhysicsShapeEdgeChain","cc.PhysicsShape",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsShapeEdgeChain","cc.PhysicsShapeEdgeChain","cc.PhysicsShape",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapeEdgeChain");
         tolua_function(tolua_S,"getPointsCount",lua_cocos2dx_physics_PhysicsShapeEdgeChain_getPointsCount);
@@ -6386,7 +6212,7 @@ static int lua_cocos2dx_physics_PhysicsBody_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsBody(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsBody");
-    tolua_cclass(tolua_S,"PhysicsBody","cc.PhysicsBody","cc.Ref",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsBody","cc.PhysicsBody","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsBody");
         tolua_function(tolua_S,"isGravityEnabled",lua_cocos2dx_physics_PhysicsBody_isGravityEnabled);
@@ -6691,7 +6517,7 @@ static int lua_cocos2dx_physics_PhysicsContact_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsContact(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsContact");
-    tolua_cclass(tolua_S,"PhysicsContact","cc.PhysicsContact","cc.EventCustom",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsContact","cc.PhysicsContact","cc.EventCustom",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsContact");
         tolua_function(tolua_S,"getContactData",lua_cocos2dx_physics_PhysicsContact_getContactData);
@@ -7239,7 +7065,7 @@ static int lua_cocos2dx_physics_EventListenerPhysicsContact_finalize(lua_State* 
 int lua_register_cocos2dx_physics_EventListenerPhysicsContact(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.EventListenerPhysicsContact");
-    tolua_cclass(tolua_S,"EventListenerPhysicsContact","cc.EventListenerPhysicsContact","cc.EventListenerCustom",nullptr);    
+    tolua_cclass(tolua_S,"EventListenerPhysicsContact","cc.EventListenerPhysicsContact","cc.EventListenerCustom",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContact");
         tolua_function(tolua_S,"create", lua_cocos2dx_physics_EventListenerPhysicsContact_create);
@@ -7344,7 +7170,7 @@ static int lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_finalize(l
 int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithBodies(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.EventListenerPhysicsContactWithBodies");
-    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithBodies","cc.EventListenerPhysicsContactWithBodies","cc.EventListenerPhysicsContact",nullptr);    
+    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithBodies","cc.EventListenerPhysicsContactWithBodies","cc.EventListenerPhysicsContact",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithBodies");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_hitTest);
@@ -7450,7 +7276,7 @@ static int lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_finalize(l
 int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithShapes(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.EventListenerPhysicsContactWithShapes");
-    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithShapes","cc.EventListenerPhysicsContactWithShapes","cc.EventListenerPhysicsContact",nullptr);    
+    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithShapes","cc.EventListenerPhysicsContactWithShapes","cc.EventListenerPhysicsContact",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithShapes");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_hitTest);
@@ -7554,7 +7380,7 @@ static int lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_finalize(lu
 int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithGroup(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.EventListenerPhysicsContactWithGroup");
-    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithGroup","cc.EventListenerPhysicsContactWithGroup","cc.EventListenerPhysicsContact",nullptr);    
+    tolua_cclass(tolua_S,"EventListenerPhysicsContactWithGroup","cc.EventListenerPhysicsContactWithGroup","cc.EventListenerPhysicsContact",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithGroup");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_hitTest);
@@ -8211,7 +8037,7 @@ static int lua_cocos2dx_physics_PhysicsJointFixed_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointFixed(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointFixed");
-    tolua_cclass(tolua_S,"PhysicsJointFixed","cc.PhysicsJointFixed","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointFixed","cc.PhysicsJointFixed","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointFixed");
         tolua_function(tolua_S,"construct", lua_cocos2dx_physics_PhysicsJointFixed_construct);
@@ -8663,7 +8489,7 @@ static int lua_cocos2dx_physics_PhysicsJointLimit_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointLimit(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointLimit");
-    tolua_cclass(tolua_S,"PhysicsJointLimit","cc.PhysicsJointLimit","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointLimit","cc.PhysicsJointLimit","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointLimit");
         tolua_function(tolua_S,"setAnchr2",lua_cocos2dx_physics_PhysicsJointLimit_setAnchr2);
@@ -8728,7 +8554,7 @@ static int lua_cocos2dx_physics_PhysicsJointPin_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointPin(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointPin");
-    tolua_cclass(tolua_S,"PhysicsJointPin","cc.PhysicsJointPin","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointPin","cc.PhysicsJointPin","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointPin");
         tolua_function(tolua_S,"construct", lua_cocos2dx_physics_PhysicsJointPin_construct);
@@ -8877,7 +8703,7 @@ static int lua_cocos2dx_physics_PhysicsJointDistance_finalize(lua_State* tolua_S
 int lua_register_cocos2dx_physics_PhysicsJointDistance(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointDistance");
-    tolua_cclass(tolua_S,"PhysicsJointDistance","cc.PhysicsJointDistance","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointDistance","cc.PhysicsJointDistance","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointDistance");
         tolua_function(tolua_S,"setDistance",lua_cocos2dx_physics_PhysicsJointDistance_setDistance);
@@ -9392,7 +9218,7 @@ static int lua_cocos2dx_physics_PhysicsJointSpring_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointSpring(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointSpring");
-    tolua_cclass(tolua_S,"PhysicsJointSpring","cc.PhysicsJointSpring","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointSpring","cc.PhysicsJointSpring","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointSpring");
         tolua_function(tolua_S,"setAnchr2",lua_cocos2dx_physics_PhysicsJointSpring_setAnchr2);
@@ -9733,7 +9559,7 @@ static int lua_cocos2dx_physics_PhysicsJointGroove_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointGroove(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointGroove");
-    tolua_cclass(tolua_S,"PhysicsJointGroove","cc.PhysicsJointGroove","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointGroove","cc.PhysicsJointGroove","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointGroove");
         tolua_function(tolua_S,"setAnchr2",lua_cocos2dx_physics_PhysicsJointGroove_setAnchr2);
@@ -10068,7 +9894,7 @@ static int lua_cocos2dx_physics_PhysicsJointRotarySpring_finalize(lua_State* tol
 int lua_register_cocos2dx_physics_PhysicsJointRotarySpring(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointRotarySpring");
-    tolua_cclass(tolua_S,"PhysicsJointRotarySpring","cc.PhysicsJointRotarySpring","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointRotarySpring","cc.PhysicsJointRotarySpring","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointRotarySpring");
         tolua_function(tolua_S,"getDamping",lua_cocos2dx_physics_PhysicsJointRotarySpring_getDamping);
@@ -10334,7 +10160,7 @@ static int lua_cocos2dx_physics_PhysicsJointRotaryLimit_finalize(lua_State* tolu
 int lua_register_cocos2dx_physics_PhysicsJointRotaryLimit(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointRotaryLimit");
-    tolua_cclass(tolua_S,"PhysicsJointRotaryLimit","cc.PhysicsJointRotaryLimit","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointRotaryLimit","cc.PhysicsJointRotaryLimit","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointRotaryLimit");
         tolua_function(tolua_S,"getMax",lua_cocos2dx_physics_PhysicsJointRotaryLimit_getMax);
@@ -10667,7 +10493,7 @@ static int lua_cocos2dx_physics_PhysicsJointRatchet_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointRatchet(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointRatchet");
-    tolua_cclass(tolua_S,"PhysicsJointRatchet","cc.PhysicsJointRatchet","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointRatchet","cc.PhysicsJointRatchet","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointRatchet");
         tolua_function(tolua_S,"getAngle",lua_cocos2dx_physics_PhysicsJointRatchet_getAngle);
@@ -10912,7 +10738,7 @@ static int lua_cocos2dx_physics_PhysicsJointGear_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointGear(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointGear");
-    tolua_cclass(tolua_S,"PhysicsJointGear","cc.PhysicsJointGear","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointGear","cc.PhysicsJointGear","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointGear");
         tolua_function(tolua_S,"setRatio",lua_cocos2dx_physics_PhysicsJointGear_setRatio);
@@ -11063,7 +10889,7 @@ static int lua_cocos2dx_physics_PhysicsJointMotor_finalize(lua_State* tolua_S)
 int lua_register_cocos2dx_physics_PhysicsJointMotor(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"cc.PhysicsJointMotor");
-    tolua_cclass(tolua_S,"PhysicsJointMotor","cc.PhysicsJointMotor","cc.PhysicsJoint",nullptr);    
+    tolua_cclass(tolua_S,"PhysicsJointMotor","cc.PhysicsJointMotor","cc.PhysicsJoint",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsJointMotor");
         tolua_function(tolua_S,"setRate",lua_cocos2dx_physics_PhysicsJointMotor_setRate);
@@ -11090,6 +10916,7 @@ TOLUA_API int register_all_cocos2dx_physics(lua_State* tolua_S)
 	lua_register_cocos2dx_physics_EventListenerPhysicsContact(tolua_S);
 	lua_register_cocos2dx_physics_EventListenerPhysicsContactWithGroup(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsShape(tolua_S);
+	lua_register_cocos2dx_physics_PhysicsShapePolygon(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsShapeBox(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsJointMotor(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsJointRatchet(tolua_S);
@@ -11103,7 +10930,6 @@ TOLUA_API int register_all_cocos2dx_physics(lua_State* tolua_S)
 	lua_register_cocos2dx_physics_PhysicsShapeEdgeSegment(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsJointGear(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsContact(tolua_S);
-	lua_register_cocos2dx_physics_PhysicsShapePolygon(tolua_S);
 	lua_register_cocos2dx_physics_EventListenerPhysicsContactWithBodies(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsJointRotarySpring(tolua_S);
 	lua_register_cocos2dx_physics_PhysicsContactPostSolve(tolua_S);

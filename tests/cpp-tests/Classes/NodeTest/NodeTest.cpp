@@ -24,6 +24,7 @@
  ****************************************************************************/
 
 #include "NodeTest.h"
+#include <regex>
 #include "../testResource.h"
 
 enum 
@@ -1247,6 +1248,11 @@ void NodeNameTest::onEnter()
 {
     TestCocosNodeDemo::BaseTest::onEnter();
     
+    this->scheduleOnce(schedule_selector(NodeNameTest::test),0.05f);
+}
+
+void NodeNameTest::test(float dt)
+{
     auto parent = Node::create();
     
     // setName(), getName() and getChildByName()
@@ -1267,22 +1273,8 @@ void NodeNameTest::onEnter()
     }
     
     // enumerateChildren()
-    int i = 0;
-    parent->enumerateChildren("test", [&i](Node* node) -> bool {
-        ++i;
-        return true;
-    });
-    CCAssert(i == 1, "");
-    
-    i = 0;
-    parent->enumerateChildren("test", [&i](Node* node) -> bool {
-        ++i;
-        return false;
-    });
-    CCAssert(i == 2, "");
-    
-    // enumerateChildren()
     // name = regular expression
+    int i = 0;
     parent = Node::create();
     for (int i = 0; i < 100; ++i)
     {
@@ -1339,6 +1331,23 @@ void NodeNameTest::onEnter()
         return true;
     });
     CCAssert(i == 1, "");
+    
+    // search from root
+    parent = Node::create();
+    for (int i = 0; i < 100; ++i)
+    {
+        auto node = Node::create();
+        sprintf(name, "node%d", i);
+        node->setName(name);
+        parent->addChild(node);
+        
+        for (int j = 0; j < 100; ++j)
+        {
+            auto child = Node::create();
+            child->setName("node");
+            node->addChild(child);
+        }
+    }
     
     i = 0;
     parent->enumerateChildren("node[[:digit:]]+/node", [&i](Node* node) -> bool {
@@ -1422,6 +1431,19 @@ void NodeNameTest::onEnter()
         return false;
     });
     CCAssert(i == 10000, "");
+    
+    // utils::findChildren()
+    
+    parent = Node::create();
+    for (int i = 0; i < 50; ++i)
+    {
+        auto child = Node::create();
+        child->setName("node");
+        parent->addChild(child);
+    }
+    auto findChildren = utils::findChildren(*parent, "node");
+    CCAssert(findChildren.size() == 50, "");
+    
 }
 
 ///
