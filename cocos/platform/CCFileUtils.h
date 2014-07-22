@@ -236,7 +236,7 @@ public:
       * @see setSearchResolutionsOrder(), fullPathForFilename().
       * @since v2.1
       */
-    virtual void addSearchResolutionsOrder(const std::string &order);
+    virtual void addSearchResolutionsOrder(const std::string &order,const bool front=false);
     
     /**
      *  Gets the array that contains the search order of the resources.
@@ -273,7 +273,7 @@ public:
       *
       * @since v2.1
       */
-    void addSearchPath(const std::string & path);
+    void addSearchPath(const std::string & path, const bool front=false);
     
     /**
      *  Gets the array of search paths.
