@@ -287,6 +287,8 @@ public:
     bool isInertiaScrollEnabled() const;
 	
 	void toggleIgnoreScroll(bool ignore) {_ignoreScroll = ignore;};
+	
+	void setWheelMultipiler(float multipiler){_wheelMultipiler = multipiler;}
     
     /**
      * Sets LayoutType.
@@ -411,6 +413,7 @@ protected:
     float _slidTime;
     Vec2 _moveChildPoint;
     float _childFocusCancelOffset;
+	float _wheelMultipiler;
     
     bool _leftBounceNeeded;
     bool _topBounceNeeded;

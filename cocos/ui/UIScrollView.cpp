@@ -73,7 +73,8 @@ _inertiaScrollEnabled(true),
 _scrollViewEventListener(nullptr),
 _scrollViewEventSelector(nullptr),
 _eventCallback(nullptr),
-_mouseListener(nullptr)
+_mouseListener(nullptr),
+_wheelMultipiler(1)
 {
     setTouchEnabled(true);
 }
@@ -1559,7 +1560,7 @@ void ScrollView::onMouseWheel(Event* event)
 	p.setPoint(e->getCursorX(), e->getCursorY());//fuck cursor
 
 	if(hitTest(p)){//warning:scrolling effective only in the area.
-		float dw = e->getScrollY();
+		float dw = e->getScrollY() * _wheelMultipiler;
 		//CCLOG("UIScrollView.cpp onMouseWheel dw: %f",dw);
 		float minY = _contentSize.height - _innerContainer->getSize().height;
 		float h = - minY;
