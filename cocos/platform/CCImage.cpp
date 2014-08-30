@@ -409,6 +409,8 @@ Image::Image()
 , _preMulti(false)
 , _numberOfMipmaps(0)
 , _hasPremultipliedAlpha(true)
+,transparentColor(Color3B::BLACK)
+,useTransparent(false)
 {
 
 }
@@ -2421,7 +2423,11 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 								_data[bufpos++] = colorTable[c >> 5 & 0x04 | 0x02];
 								_data[bufpos++] = colorTable[c >> 5 & 0x04 | 0x01];
 								_data[bufpos++] = colorTable[c >> 5 & 0x04       ];
-								_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+								if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+									_data[bufpos++] = 0;
+								}else{
+									_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+								}
 								c <<= 1;
 							}
 							pos++;
@@ -2431,13 +2437,21 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 							_data[bufpos++] = colorTable[c >> 2 & 0x3c | 0x02];
 							_data[bufpos++] = colorTable[c >> 2 & 0x3c | 0x01];
 							_data[bufpos++] = colorTable[c >> 2 & 0x3c       ];
-							_data[bufpos++] = 0xff; // colorTable[c >> 2 & 0x3c | 0x03];
+							if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+								_data[bufpos++] = 0;
+							}else{
+								_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+							}
 							if (++j < _width)
 							{
 								_data[bufpos++] = colorTable[c << 2 & 0x3c | 0x02];
 								_data[bufpos++] = colorTable[c << 2 & 0x3c | 0x01];
 								_data[bufpos++] = colorTable[c << 2 & 0x3c       ];
-								_data[bufpos++] = 0xff; // colorTable[c << 2 & 0x3c | 0x03];
+								if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+									_data[bufpos++] = 0;
+								}else{
+									_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+								}
 								j++;
 							}
 							pos++;
@@ -2447,7 +2461,11 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 							_data[bufpos++] = colorTable[c << 2 | 0x02];
 							_data[bufpos++] = colorTable[c << 2 | 0x01];
 							_data[bufpos++] = colorTable[c << 2       ];
-							_data[bufpos++] = 0xff; // colorTable[c << 2 | 0x03];
+							if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+								_data[bufpos++] = 0;
+							}else{
+								_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+							}
 							j++;
 							pos++;
 							break;
@@ -2457,7 +2475,11 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 							_data[bufpos++] = c >> 7 & 0xf8 | c >> 12 & 0x07;
 							_data[bufpos++] = c >> 2 & 0xf8 | c >>  7 & 0x07;
 							_data[bufpos++] = c << 3 & 0xf8 | c >>  2 & 0x07;
-							_data[bufpos++] = 0xff;
+							if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+								_data[bufpos++] = 0;
+							}else{
+								_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+							}
 							j++;
 							pos += 2;
 							break;
@@ -2465,7 +2487,11 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 							_data[bufpos++] = data[pos + 2];
 							_data[bufpos++] = data[pos + 1];
 							_data[bufpos++] = data[pos    ];
-							_data[bufpos++] = 0xff;
+							if(useTransparent && _data[bufpos-3] == transparentColor.r && _data[bufpos-2] == transparentColor.g && _data[bufpos-1] == transparentColor.b){
+								_data[bufpos++] = 0;
+							}else{
+								_data[bufpos++] = 0xff; // colorTable[c >> 5 & 0x04 | 0x03];
+							}
 							j++;
 							pos += 3;
 							break;
@@ -2488,7 +2514,51 @@ bool Image::initWithBmpData(const unsigned char * data, ssize_t dataLen)
 			success = true;
 			break;
 		case 1: // RLE 8
-			// TODO: RLE 8
+		{
+			//尝试写一下，写错了别打我
+			uint8_t Count = 0;
+			uint8_t ColorIndex = 0;
+			int x = 0, y = 0;
+			while(true){
+				if(pos >= dataLen){
+					break;
+				}
+				Count = data[pos++];
+				ColorIndex = data[pos++];
+				if(Count > 0){
+					int idx = x + y * _width;
+					for(int k=0;k<Count;k++){
+						_data[idx+k] = colorTable[ColorIndex << 2 | 0x02];
+						_data[idx+k+1] = colorTable[ColorIndex << 2 | 0x01];
+						_data[idx+k+2] = colorTable[ColorIndex << 2       ];
+						_data[idx+k+3] = 0xff; // colorTable[c << 2 | 0x03];
+					}
+					x += Count;
+				}else if(Count == 0){
+					int Flag = ColorIndex;
+					if(Flag == 0){
+						x = 0;
+						y++;
+					}else if(Flag == 1){
+						break;
+					}else if(Flag == 2){
+						x += data[pos++];
+						y += data[pos++];
+					}else{
+						Count = Flag;
+						int idx = x + y * _width;
+						for(int k=0;k<Count;k++){
+							ColorIndex = data[pos++];
+							_data[idx+k] = colorTable[ColorIndex << 2 | 0x02];
+							_data[idx+k+1] = colorTable[ColorIndex << 2 | 0x01];
+							_data[idx+k+2] = colorTable[ColorIndex << 2       ];
+							_data[idx+k+3] = 0xff; // colorTable[c << 2 | 0x03];
+						}
+						x += Count;
+					}
+				}
+			}
+		}
 			break;
 		case 2: // RLE 4
 			// RLE 4 is not supported

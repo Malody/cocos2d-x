@@ -56,6 +56,9 @@ typedef struct _MipmapInfo
 class CC_DLL Image : public Ref
 {
 public:
+	bool useTransparent;
+	Color3B transparentColor;
+public:
     friend class TextureCache;
     /**
      * @js ctor
