@@ -280,6 +280,10 @@ void Scheduler::schedule(const ccSchedulerFunc& callback, void *target, float in
     this->schedule(callback, target, interval, kRepeatForever, 0.0f, paused, key);
 }
 
+void Scheduler::nextTick(const ccSchedulerFunc& callback, void* target, const std::string& key){
+	this->schedule(callback, target, 0.01, 0, 0, false, key);
+}
+
 void Scheduler::schedule(const ccSchedulerFunc& callback, void *target, float interval, unsigned int repeat, float delay, bool paused, const std::string& key)
 {
     CCASSERT(target, "Argument target must be non-nullptr");
