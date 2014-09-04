@@ -202,6 +202,12 @@ public:
         KEY_DPAD_CENTER,
         KEY_ENTER,
         KEY_PLAY,
+		KEY_SHIFT_LEFT,
+		KEY_CTRL_LEFT,
+		KEY_ALT_LEFT,
+		KEY_SHIFT_RIGHT,
+		KEY_CTRL_RIGHT,
+		KEY_ALT_RIGHT
     };
     
     EventKeyboard(KeyCode keyCode, bool isPressed);
