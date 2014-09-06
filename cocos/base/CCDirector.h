@@ -107,6 +107,9 @@ public:
     void multiplyMatrix(MATRIX_STACK_TYPE type, const Mat4& mat);
     Mat4 getMatrix(MATRIX_STACK_TYPE type);
     void resetMatrixStack();
+
+	void setCursorVisible(bool);
+	void loadCursorFromStream(std::istream& s);
 public:
     static const char *EVENT_PROJECTION_CHANGED;
     static const char* EVENT_AFTER_UPDATE;
@@ -532,9 +535,19 @@ class DisplayLinkDirector : public Director
 {
 public:
     DisplayLinkDirector() 
-        : _invalid(false)
-    {}
-    virtual ~DisplayLinkDirector(){}
+		: _invalid(false),isMouseVisible(true)
+    {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+		cursor = LoadCursor(NULL,IDC_ARROW);
+#endif
+	}
+    virtual ~DisplayLinkDirector(){
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+		if(tmpCursorFilepath.size()>0){
+			::DeleteFileW(tmpCursorFilepath.c_str());
+		}
+#endif
+	}
 
     //
     // Overrides
@@ -543,9 +556,15 @@ public:
     virtual void setAnimationInterval(double value) override;
     virtual void startAnimation() override;
     virtual void stopAnimation() override;
-
+	void setMouseVisible(bool);
+	void loadMouseFromStream(std::istream& s);
 protected:
     bool _invalid;
+	bool isMouseVisible;
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	HCURSOR cursor;
+	std::wstring tmpCursorFilepath;
+#endif
 };
 
 // end of base_node group
