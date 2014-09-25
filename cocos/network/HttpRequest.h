@@ -155,6 +155,11 @@ public:
     {
         _tag = tag;
     };
+
+	inline void setIntTag(int tag)
+	{
+		_inttag = tag;
+	};
     /** Get the string tag back to identify the request. 
         The best practice is to use it in your MyClass::onMyHttpRequestCompleted(sender, HttpResponse*) callback
      */
@@ -162,6 +167,11 @@ public:
     {
         return _tag.c_str();
     };
+
+	inline int getIntTag()
+	{
+		return _inttag;
+	};
     
     /** Option field. You can attach a customed data in each request, and get it back in response callback.
         But you need to new/delete the data pointer manully
@@ -249,6 +259,7 @@ protected:
     std::string                 _url;            /// target url that this request is sent to
     std::vector<char>           _requestData;    /// used for POST
     std::string                 _tag;            /// user defined tag, to identify different requests in response callback
+	int							_inttag;
     Ref*                        _pTarget;        /// callback target of pSelector function
     SEL_HttpResponse            _pSelector;      /// callback function, e.g. MyLayer::onHttpResponse(HttpClient *sender, HttpResponse * response)
     ccHttpRequestCallback       _pCallback;      /// C++11 style callbacks
