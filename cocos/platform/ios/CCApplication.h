@@ -93,7 +93,12 @@ public:
 	@param new height
 	*/
 	virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
-
+	/**
+     @brief Open url in default browser
+     @param String with url to open.
+     @return true if the resource located by the URL was successfully opened; otherwise false.
+     */
+    virtual bool openURL(const std::string &url);
 protected:
     static Application * sm_pSharedApplication;
 };

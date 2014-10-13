@@ -40,6 +40,8 @@ import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import android.content.Intent;
+import android.net.Uri;
 
 public class Cocos2dxHelper {
 	// ===========================================================
@@ -170,6 +172,18 @@ public class Cocos2dxHelper {
 	public static void disableAccelerometer() {
 		Cocos2dxHelper.sAccelerometerEnabled = false;
 		Cocos2dxHelper.sCocos2dxAccelerometer.disable();
+	}
+	
+	public static boolean openURL(String url) {	
+	    boolean ret = false;
+	    try {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            sActivity.startActivity(i);
+            ret = true;
+        } catch (Exception e) {
+        }
+		return ret;
 	}
 
 	public static void preloadBackgroundMusic(final String pPath) {

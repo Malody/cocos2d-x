@@ -132,7 +132,14 @@ public:
 	*/
 	virtual void applicationWillShutdown() = 0;
 	virtual void applicationWindowResize(){};
-
+	/**
+     @brief Open url in default browser
+     @param String with url to open.
+     @return true if the resource located by the URL was successfully opened; otherwise false.
+     * @js NA
+     * @lua NA
+     */
+    virtual bool openURL(const std::string &url) = 0;
 };
 
 // end of platform group

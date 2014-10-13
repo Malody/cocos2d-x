@@ -91,6 +91,13 @@ public:
      */
     virtual Platform getTargetPlatform();
 	void createNewApplication();
+	
+	/**
+     @brief Open url in default browser
+     @param String with url to open.
+     @return true if the resource located by the URL was successfully opened; otherwise false.
+     */
+    virtual bool openURL(const std::string &url);
 
     /**
      *  Sets the Resource root path.

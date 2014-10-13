@@ -179,6 +179,10 @@ void Application::createNewApplication(){
     
 }
 
+bool Application::openURL(const std::string &url)
+{
+    return openURLJNI(url.c_str());
+}
 
 NS_CC_END
 

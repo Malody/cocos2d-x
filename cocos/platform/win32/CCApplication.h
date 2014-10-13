@@ -74,7 +74,7 @@ public:
      @brief Get target platform
      */
     virtual Platform getTargetPlatform();
-
+	virtual bool openURL(const std::string &url);
     /**
      *  Sets the Resource root path.
      *  @deprecated Please use FileUtils::getInstance()->setSearchPaths() instead.
