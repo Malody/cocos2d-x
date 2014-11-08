@@ -160,6 +160,9 @@ public:
 
     TextVAlignment getTextVerticalAlignment()const;
     
+    void setTextColor(Color4B color);
+
+    const Color4B& getTextColor() const;
     /**
      * Enable shadow for the label
      *
