@@ -91,7 +91,7 @@ ssize_t BundleReader::length()
     return m_length;
 }
 
-ssize_t BundleReader::tell()
+long BundleReader::tell()
 {
     if (!m_buffer)
         return -1;
