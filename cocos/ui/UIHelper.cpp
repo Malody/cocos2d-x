@@ -109,7 +109,7 @@ Widget* Helper::seekActionWidgetByActionTag(Widget* root, int tag)
 	return nullptr;
 }
 
-std::string Helper::utf8_substr(const std::string& str, unsigned long start, unsigned long length)
+std::string Helper::utf8_substr(const std::string& str, std::string::size_type start, std::string::size_type length)
 {
     if (length==0)
     {
