@@ -719,6 +719,7 @@ void Widget::onTouchCancelled(Touch *touch, Event *unusedEvent)
 
 void Widget::pushDownEvent()
 {
+    //this->retain();  ->3502cb0a23a17967fac4a7bccaf7d2e52297a2c6  有必要就参照这个
     if (_touchEventCallback) {
         _touchEventCallback(this, TouchEventType::BEGAN);
     }
