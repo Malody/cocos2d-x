@@ -136,3 +136,4 @@ project.properties
 /templates/lua-template-runtime/runtime
 /v*-deps-*.zip
 /v*-lua-runtime-*.zip
+*.iml
