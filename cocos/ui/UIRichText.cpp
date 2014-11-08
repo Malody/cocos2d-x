@@ -27,6 +27,7 @@
 #include "2d/CCLabel.h"
 #include "2d/CCSprite.h"
 #include "base/ccUTF8.h"
+#include "ui/UIHelper.h"
 
 NS_CC_BEGIN
 
