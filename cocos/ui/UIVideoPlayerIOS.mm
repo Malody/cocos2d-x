@@ -32,6 +32,7 @@ using namespace cocos2d::experimental::ui;
 #include "CCGLView.h"
 #import <MediaPlayer/MediaPlayer.h>
 #include "base/CCDirector.h"
+#include "CCFileUtils.h"
 
 @interface UIVideoViewWrapperIos : NSObject
 
