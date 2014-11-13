@@ -1112,7 +1112,9 @@ void Label::setSystemFontName(const std::string& systemFont)
 {
     if (systemFont != _systemFont)
     {
-        _systemFont = systemFont;
+		if(systemFont.size() > 0){
+			_systemFont = systemFont;
+		}
         _systemFontDirty = true;
     }
 }
