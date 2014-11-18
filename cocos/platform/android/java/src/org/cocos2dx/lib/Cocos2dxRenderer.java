@@ -90,11 +90,11 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 		final long nowInNanoSeconds = System.nanoTime();
 		final long interval = nowInNanoSeconds - this.mLastTickInNanoSeconds;
 		*/
-		this.mLastTickInNanoSeconds = System.nanoTime();
+		// --this.mLastTickInNanoSeconds = System.nanoTime();
 
 		// should render a frame when onDrawFrame() is called or there is a
 		// "ghost"
-		Cocos2dxRenderer.nativeRender();
+		// --Cocos2dxRenderer.nativeRender();
 
 		/*
 		final long interval = System.nanoTime() - this.mLastTickInNanoSeconds;
@@ -109,6 +109,24 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 
 		this.mLastTickInNanoSeconds = nowInNanoSeconds;
 		*/
+		if (sAnimationInterval <= 1.0 / 60 * Cocos2dxRenderer.NANOSECONDSPERSECOND) {
+            Cocos2dxRenderer.nativeRender();
+        } else {
+            final long now = System.nanoTime();
+            final long interval = now - this.mLastTickInNanoSeconds;
+        
+            if (interval < Cocos2dxRenderer.sAnimationInterval) {
+                try {
+                    Thread.sleep((Cocos2dxRenderer.sAnimationInterval - interval) / Cocos2dxRenderer.NANOSECONDSPERMICROSECOND);
+                } catch (final Exception e) {
+                }
+            }
+            /*
+             * Render time MUST be counted in, or the FPS will slower than appointed.
+            */
+            this.mLastTickInNanoSeconds = System.nanoTime();
+            Cocos2dxRenderer.nativeRender();
+        }
 	}
 
 	// ===========================================================
