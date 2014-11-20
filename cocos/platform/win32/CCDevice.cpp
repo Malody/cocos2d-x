@@ -29,6 +29,16 @@ THE SOFTWARE.
 #include "platform/CCDevice.h"
 #include "platform/CCFileUtils.h"
 #include "CCStdC.h"
+#include <unordered_map>
+
+// Workaround for GdiPlus.h
+using std::max;
+using std::min;
+#include <GdiPlus.h>
+#pragma comment(lib, "gdiplus.lib")
+
+using namespace std;
+using namespace Gdiplus;
 
 NS_CC_BEGIN
 
@@ -52,52 +62,11 @@ void Device::setAccelerometerEnabled(bool isEnabled)
 void Device::setAccelerometerInterval(float interval)
 {}
 
+/*
 class BitmapDC
 {
 public:
-    BitmapDC(HWND hWnd = nullptr)
-        : _DC(nullptr)
-        , _bmp(nullptr)
-        , _font((HFONT)GetStockObject(DEFAULT_GUI_FONT))
-        , _wnd(nullptr)
-    {
-        _wnd = hWnd;
-        HDC hdc = GetDC(hWnd);
-        _DC   = CreateCompatibleDC(hdc);
-        ReleaseDC(hWnd, hdc);
-    }
 
-    ~BitmapDC()
-    {
-        prepareBitmap(0, 0);
-        if (_DC)
-        {
-            DeleteDC(_DC);
-        }
-        removeCustomFont();
-    }
-
-    wchar_t * utf8ToUtf16(const std::string& str)
-    {
-        wchar_t * pwszBuffer = nullptr;
-        do 
-        {
-            if (str.empty())
-            {
-                break;
-            }
-            // utf-8 to utf-16
-            int nLen = str.size();
-            int nBufLen  = nLen + 1;			
-            pwszBuffer = new wchar_t[nBufLen];
-            CC_BREAK_IF(! pwszBuffer);
-            memset(pwszBuffer,0,nBufLen);
-            nLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), nLen, pwszBuffer, nBufLen);		
-            pwszBuffer[nLen] = '\0';
-        } while (0);	
-        return pwszBuffer;
-
-    }
 
     bool setFont(const char * pFontName = nullptr, int nSize = 0)
     {
@@ -192,167 +161,6 @@ public:
         return bRet;
     }
 
-    SIZE sizeWithText(const wchar_t * pszText, int nLen, DWORD dwFmt, LONG nWidthLimit)
-    {
-        SIZE tRet = {0};
-        do 
-        {
-            CC_BREAK_IF(! pszText || nLen <= 0);
-
-            RECT rc = {0, 0, 0, 0};
-            DWORD dwCalcFmt = DT_CALCRECT;
-
-            if (nWidthLimit > 0)
-            {
-                rc.right = nWidthLimit;
-                dwCalcFmt |= DT_WORDBREAK
-                    | (dwFmt & DT_CENTER)
-                    | (dwFmt & DT_RIGHT);
-            }
-            // use current font to measure text extent
-            HGDIOBJ hOld = SelectObject(_DC, _font);
-
-            // measure text size
-            DrawTextW(_DC, pszText, nLen, &rc, dwCalcFmt);
-            SelectObject(_DC, hOld);
-
-            tRet.cx = rc.right;
-            tRet.cy = rc.bottom;
-        } while (0);
-
-        return tRet;
-    }
-
-    bool prepareBitmap(int nWidth, int nHeight)
-    {
-        // release bitmap
-        if (_bmp)
-        {
-            DeleteObject(_bmp);
-            _bmp = nullptr;
-        }
-        if (nWidth > 0 && nHeight > 0)
-        {
-            _bmp = CreateBitmap(nWidth, nHeight, 1, 32, nullptr);
-            if (! _bmp)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    int drawText(const char * pszText, SIZE& tSize, Device::TextAlign eAlign)
-    {
-        int nRet = 0;
-        wchar_t * pwszBuffer = 0;
-        do 
-        {
-            CC_BREAK_IF(! pszText);
-
-            DWORD dwFmt = DT_WORDBREAK;
-            DWORD dwHoriFlag = (int)eAlign & 0x0f;
-            DWORD dwVertFlag = ((int)eAlign & 0xf0) >> 4;
-
-            switch (dwHoriFlag)
-            {
-            case 1: // left
-                dwFmt |= DT_LEFT;
-                break;
-            case 2: // right
-                dwFmt |= DT_RIGHT;
-                break;
-            case 3: // center
-                dwFmt |= DT_CENTER;
-                break;
-            }
-
-            int nLen = strlen(pszText);
-            // utf-8 to utf-16
-            int nBufLen  = nLen + 1;
-            pwszBuffer = new wchar_t[nBufLen];
-            CC_BREAK_IF(! pwszBuffer);
-
-            memset(pwszBuffer, 0, sizeof(wchar_t)*nBufLen);
-            nLen = MultiByteToWideChar(CP_UTF8, 0, pszText, nLen, pwszBuffer, nBufLen);
-
-            SIZE newSize = sizeWithText(pwszBuffer, nLen, dwFmt, tSize.cx);
-
-            RECT rcText = {0};
-            // if content width is 0, use text size as content size
-            if (tSize.cx <= 0)
-            {
-                tSize = newSize;
-                rcText.right  = newSize.cx;
-                rcText.bottom = newSize.cy;
-            }
-            else
-            {
-
-                LONG offsetX = 0;
-                LONG offsetY = 0;
-                rcText.right = newSize.cx; // store the text width to rectangle
-
-                // calculate text horizontal offset
-                if (1 != dwHoriFlag          // and text isn't align to left
-                    && newSize.cx < tSize.cx)   // and text's width less then content width,
-                {                               // then need adjust offset of X.
-                    offsetX = (2 == dwHoriFlag) ? tSize.cx - newSize.cx     // align to right
-                        : (tSize.cx - newSize.cx) / 2;                      // align to center
-                }
-
-                // if content height is 0, use text height as content height
-                // else if content height less than text height, use content height to draw text
-                if (tSize.cy <= 0)
-                {
-                    tSize.cy = newSize.cy;
-                    dwFmt   |= DT_NOCLIP;
-                    rcText.bottom = newSize.cy; // store the text height to rectangle
-                }
-                else if (tSize.cy < newSize.cy)
-                {
-                    // content height larger than text height need, clip text to rect
-                    rcText.bottom = tSize.cy;
-                }
-                else
-                {
-                    rcText.bottom = newSize.cy; // store the text height to rectangle
-
-                    // content larger than text, need adjust vertical position
-                    dwFmt |= DT_NOCLIP;
-
-                    // calculate text vertical offset
-                    offsetY = (2 == dwVertFlag) ? tSize.cy - newSize.cy     // align to bottom
-                        : (3 == dwVertFlag) ? (tSize.cy - newSize.cy) / 2   // align to middle
-                        : 0;                                                // align to top
-                }
-
-                if (offsetX || offsetY)
-                {
-                    OffsetRect(&rcText, offsetX, offsetY);
-                }
-            }
-
-            CC_BREAK_IF(! prepareBitmap(tSize.cx, tSize.cy));
-
-            // draw text
-            HGDIOBJ hOldFont = SelectObject(_DC, _font);
-            HGDIOBJ hOldBmp  = SelectObject(_DC, _bmp);
-
-            SetBkMode(_DC, TRANSPARENT);
-            SetTextColor(_DC, RGB(255, 255, 255)); // white color
-
-            // draw text
-            nRet = DrawTextW(_DC, pwszBuffer, nLen, &rcText, dwFmt);
-            //DrawTextA(_DC, pszText, nLen, &rcText, dwFmt);
-
-            SelectObject(_DC, hOldBmp);
-            SelectObject(_DC, hOldFont);
-        } while (0);
-        CC_SAFE_DELETE_ARRAY(pwszBuffer);
-        return nRet;
-    }
-
     CC_SYNTHESIZE_READONLY(HDC, _DC, DC);
     CC_SYNTHESIZE_READONLY(HBITMAP, _bmp, Bitmap);
 private:
@@ -391,56 +199,147 @@ static BitmapDC& sharedBitmapDC()
     static BitmapDC s_BmpDC;
     return s_BmpDC;
 }
+*/
+
+
+namespace {
+    wstring utf8ToUtf16(const string & str)
+    {
+        wstring ret;
+        do
+        {
+            if (str.empty())
+            {
+                break;
+            }
+            // utf-8 to utf-16
+            int nLen = str.size();
+            // utf-16 code units <= utf-8 code units
+            ret.resize(nLen);
+            nLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), nLen, &ret[0], nLen + 1);		
+            ret.resize(nLen);
+        } while (0);
+        return ret;
+    }
+
+
+    class FontCache {
+    public:
+        ~FontCache() {
+            for (auto & f : _cache) {
+                delete f.second;
+            }
+        }
+
+        Font * getFont(const string & name, float size) {
+            char buf[32];
+            snprintf(buf, sizeof(buf), "@%.4g", size);
+            string key = name + buf;
+
+            auto it = _cache.find(key);
+            if (it == _cache.end()) {
+                // TODO: create font from file?
+                Font * font = new Font(utf8ToUtf16(name).c_str(), size, FontStyleRegular, UnitPixel);
+                _cache.insert(make_pair(key, font));
+                return font;
+            } else {
+                return it->second;
+            }
+        }
+
+    protected:
+        unordered_map<string, Font *> _cache;
+    };
+
+
+    FontCache & sharedFontCache() {
+        static FontCache cache;
+        return cache;
+    }
+}
+
 
 Data Device::getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha)
 {
-    Data ret;
-    do 
-    {
-        BitmapDC& dc = sharedBitmapDC();
+    // FIXME: move to more suitable place?
+    static struct GdiplusInit {
+        ULONG_PTR gdiplusToken;
+        GdiplusInit() {
+            GdiplusStartupInput gdiplusStartupInput;
+            GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+        }
+        ~GdiplusInit() {
+            GdiplusShutdown(gdiplusToken);
+        }
+    } gdiplusInit;
 
-        if (! dc.setFont(textDefinition._fontName.c_str(), textDefinition._fontSize))
-        {
-            log("Can't found font(%s), use system default", textDefinition._fontName.c_str());
+    Data ret;
+    do
+    {
+        wstring wstr = utf8ToUtf16(text);
+
+        Bitmap measureBitmap(1, 1, PixelFormat32bppARGB);
+        Graphics measureGraphics(&measureBitmap);
+        measureGraphics.SetTextRenderingHint(TextRenderingHintAntiAlias);
+
+        Font * font = sharedFontCache().getFont(textDefinition._fontName, textDefinition._fontSize);
+        SolidBrush brush(Gdiplus::Color::White);
+        StringFormat stringFormat;
+        Gdiplus::RectF layoutRect(0.0f, 0.0f, textDefinition._dimensions.width, textDefinition._dimensions.height);
+        Gdiplus::RectF boundRect;
+
+        switch (static_cast<unsigned>(align) & 0x03) {
+        case 0x01: // left
+            stringFormat.SetAlignment(StringAlignmentNear);
+            layoutRect.X = 0.0f;
+            break;
+        case 0x02: // right
+            stringFormat.SetAlignment(StringAlignmentFar);
+            layoutRect.X = -layoutRect.Width;
+            break;
+        case 0x03: // center
+        default:
+            stringFormat.SetAlignment(StringAlignmentCenter);
+            layoutRect.X = layoutRect.Width * -0.5f;
+            break;
+        }
+        // y axis in GDI+ points downward
+        switch (static_cast<unsigned>(align) & 0x30) {
+        case 0x10: // top
+            stringFormat.SetLineAlignment(StringAlignmentNear);
+            layoutRect.Y = -layoutRect.Height;
+            break;
+        case 0x20: // bottom
+            stringFormat.SetLineAlignment(StringAlignmentFar);
+            layoutRect.Y = 0.0f;
+            break;
+        case 0x30: // center
+        default:
+            stringFormat.SetLineAlignment(StringAlignmentCenter);
+            layoutRect.Y = textDefinition._dimensions.height * -0.5f;
+            break;
         }
 
-        // draw text
-        SIZE size = {textDefinition._dimensions.width, textDefinition._dimensions.height};
-        CC_BREAK_IF(! dc.drawText(text, size, align));
+        measureGraphics.MeasureString(wstr.c_str(), -1, font, layoutRect, &stringFormat, &boundRect);
+        CC_BREAK_IF(!(boundRect.Width > 0.0f && boundRect.Height > 0.0f));
 
-        int dataLen = size.cx * size.cy * 4;
-        unsigned char* dataBuf = (unsigned char*)malloc(sizeof(unsigned char) * dataLen);
-        CC_BREAK_IF(! dataBuf);
+        width = int(ceil(boundRect.Width));
+        height = int(ceil(boundRect.Height));
+        Bitmap bitmap(width, height, PixelFormat32bppARGB);
+        Graphics graphics(&bitmap);
+        graphics.SetTextRenderingHint(TextRenderingHintAntiAlias);
 
-        struct
-        {
-            BITMAPINFOHEADER bmiHeader;
-            int mask[4];
-        } bi = {0};
-        bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-        CC_BREAK_IF(! GetDIBits(dc.getDC(), dc.getBitmap(), 0, 0, 
-            nullptr, (LPBITMAPINFO)&bi, DIB_RGB_COLORS));
+        graphics.DrawString(wstr.c_str(), -1, font, RectF(0.0f, 0.0f, width, height), &stringFormat, &brush);
 
-        width    = (short)size.cx;
-        height   = (short)size.cy;
-
-        // copy pixed data
-        bi.bmiHeader.biHeight = (bi.bmiHeader.biHeight > 0)
-            ? - bi.bmiHeader.biHeight : bi.bmiHeader.biHeight;
-        GetDIBits(dc.getDC(), dc.getBitmap(), 0, height, dataBuf, 
-            (LPBITMAPINFO)&bi, DIB_RGB_COLORS);
-
-        // change pixel's alpha value to 255, when it's RGB != 0
-        COLORREF * pPixel = nullptr;
-        for (int y = 0; y < height; ++y)
-        {
-            pPixel = (COLORREF *)dataBuf + y * width;
-            for (int x = 0; x < width; ++x)
-            {
-                COLORREF& clr = *pPixel;
-                clr = (0xffffff | (GetRValue(clr) << 24));
-                ++pPixel;
-            }
+        ssize_t dataLen = width * height * 4;
+        Gdiplus::Rect rect(0, 0, width, height);
+        BitmapData bitmapData;
+        bitmap.LockBits(&rect, ImageLockModeRead, PixelFormat32bppARGB, &bitmapData);
+        auto dataBuf = new unsigned char[dataLen];
+        for (int y = 0; y < height; y++) {
+            auto lineIn = static_cast<const unsigned char *>(bitmapData.Scan0) + y * bitmapData.Stride;
+            auto lineOut = dataBuf + y * (width * 4);
+            memcpy(lineOut, lineIn, width * 4);
         }
 
         ret.fastSet(dataBuf,dataLen);
