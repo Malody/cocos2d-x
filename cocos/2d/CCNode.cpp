@@ -1730,7 +1730,7 @@ AffineTransform Node::getParentToNodeAffineTransform() const
 const Mat4& Node::getParentToNodeTransform() const
 {
     if ( _inverseDirty ) {
-        _inverse = _transform.getInversed();
+        _inverse = getNodeToParentTransform().getInversed();
         _inverseDirty = false;
     }
 
