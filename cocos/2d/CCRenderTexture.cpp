@@ -566,7 +566,7 @@ void RenderTexture::onBegin()
 		float heightRatio = size.height / texSize.height;
 		
 		Mat4 orthoMatrix;
-		Mat4::createOrthographicOffCenter((float)-1.0 / widthRatio, (float)1.0 / widthRatio, (float)-1.0 / heightRatio, (float)1.0 / heightRatio, -1, 1, &orthoMatrix);
+		Mat4::createOrthographicOffCenter((float)-1.0 / widthRatio, (float)1.0 / widthRatio, (float)-1.0 / heightRatio, (float)1.0 / heightRatio, 1, -1, &orthoMatrix);
 		director->multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, orthoMatrix);
 	}
 	else
