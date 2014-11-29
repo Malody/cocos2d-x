@@ -79,7 +79,9 @@ public:
     
     /** Get retina factor */
     int getRetinaFactor() const { return _retinaFactor; }
-
+	
+	/* desktop only*/
+	cocos2d::Size getScreenSize();
 protected:
     GLView();
     virtual ~GLView();

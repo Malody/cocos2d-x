@@ -707,6 +707,15 @@ void GLView::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int heig
 	Director::getInstance()->updateViewport();
 }
 
+Size GLView::getScreenSize(){
+	auto moni = glfwGetPrimaryMonitor();
+	if (nullptr == moni)
+		return Size::ZERO;
+	
+	const GLFWvidmode* videoMode = glfwGetVideoMode(moni);
+	return Size(videoMode->width, videoMode->height);
+}
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 static bool glew_dynamic_binding()
 {
