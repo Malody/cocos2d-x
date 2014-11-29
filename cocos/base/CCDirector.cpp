@@ -1406,6 +1406,19 @@ void DisplayLinkDirector::mainLoop()
 	}else{
 		SetCursor(nullptr);
 	}
+
+	//这里会在glfw处理事件之前，先行拦截接下来要发生的事件，因此PeekMessage的参数应该是PM_NOREMOVE
+	//另一个可以考虑放置此代码的地方在CCApplication.cpp, 144行后面，在glview->pollEvents()之后再人工解决
+	/*
+	MSG msg;
+	if(::PeekMessage(&msg,NULL,NULL,NULL,PM_NOREMOVE)){
+		switch(msg.message){
+		case WM_TOUCH:{
+
+					  }
+		}
+	}*/
+
 #endif
     if (_purgeDirectorInNextLoop)
     {
