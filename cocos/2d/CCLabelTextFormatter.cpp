@@ -274,7 +274,7 @@ bool LabelTextFormatter::createStringSprites(Label *theLabel)
         return false;
     
     int longestLine             = 0;
-    unsigned int totalHeight    = theLabel->_commonLineHeight * theLabel->_currNumLines;
+    unsigned int totalHeight    = theLabel->_commonLineHeight * theLabel->_currNumLines - theLabel->_externalLeading;
     int nextFontPositionX       = 0;
     int nextFontPositionY       = totalHeight;
     auto contentScaleFactor = CC_CONTENT_SCALE_FACTOR();
@@ -284,8 +284,8 @@ bool LabelTextFormatter::createStringSprites(Label *theLabel)
         auto labelHeightPixel = theLabel->_labelHeight * contentScaleFactor;
         if (totalHeight > labelHeightPixel)
         {
-            int numLines = labelHeightPixel / theLabel->_commonLineHeight;
-            totalHeight = numLines * theLabel->_commonLineHeight;
+            int numLines = (labelHeightPixel + theLabel->_externalLeading) / theLabel->_commonLineHeight;
+            totalHeight = numLines * theLabel->_commonLineHeight - theLabel->_externalLeading;
         }
         switch (theLabel->_vAlignment)
         {
@@ -347,7 +347,7 @@ bool LabelTextFormatter::createStringSprites(Label *theLabel)
             nextFontPositionY -= theLabel->_commonLineHeight;
             
             theLabel->recordPlaceholderInfo(i);
-            if(nextFontPositionY < theLabel->_commonLineHeight)
+            if(nextFontPositionY < theLabel->_commonLineHeight - theLabel->_externalLeading)
                 break;
 
             lineStart = true;

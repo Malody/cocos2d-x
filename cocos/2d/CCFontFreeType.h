@@ -68,6 +68,7 @@ public:
     
     virtual int           getFontMaxHeight() const override;  
     virtual int           getFontAscender() const;
+    virtual int           getFontDescender() const;
 
 protected:
     

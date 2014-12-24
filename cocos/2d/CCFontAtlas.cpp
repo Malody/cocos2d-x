@@ -42,6 +42,7 @@ FontAtlas::FontAtlas(Font &theFont)
 : _font(&theFont)
 , _currentPageData(nullptr)
 , _fontAscender(0)
+, _fontDescender(0)
 , _rendererRecreatedListener(nullptr)
 , _antialiasEnabled(true)
 , _rendererRecreate(false)
@@ -53,6 +54,7 @@ FontAtlas::FontAtlas(Font &theFont)
     {
         _commonLineHeight = _font->getFontMaxHeight();
         _fontAscender = fontTTf->getFontAscender();
+        _fontDescender = fontTTf->getFontDescender();
         auto texture = new Texture2D;
         _currentPage = 0;
         _currentPageOrigX = 0;
@@ -349,6 +351,11 @@ float FontAtlas::getCommonLineHeight() const
 void  FontAtlas::setCommonLineHeight(float newHeight)
 {
     _commonLineHeight = newHeight;
+}
+
+float FontAtlas::getExternalLeading() const
+{
+    return _commonLineHeight - (_fontAscender - _fontDescender);
 }
 
 const Font * FontAtlas::getFont() const

@@ -80,6 +80,7 @@ public:
     void  addTexture(Texture2D *texture, int slot);
     float getCommonLineHeight() const;
     void  setCommonLineHeight(float newHeight);
+    float getExternalLeading() const;
     
     Texture2D* getTexture(int slot);
     const Font* getFont() const;
@@ -124,6 +125,7 @@ private:
     bool  _makeDistanceMap;
 
     int _fontAscender;
+    int _fontDescender;
     EventListenerCustom* _rendererRecreatedListener;
     bool _antialiasEnabled;
     bool _rendererRecreate;
