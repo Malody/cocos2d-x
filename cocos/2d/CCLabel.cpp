@@ -240,7 +240,7 @@ Label::Label(FontAtlas *atlas /* = nullptr */, TextHAlignment hAlignment /* = Te
              TextVAlignment vAlignment /* = TextVAlignment::TOP */,bool useDistanceField /* = false */,bool useA8Shader /* = false */)
 : _reusedLetter(nullptr)
 , _commonLineHeight(0.0f)
-, _externalLeading(0.0f)
+, _commonLineOffset(0.0f)
 , _additionalKerning(0.0f)
 , _lineBreakWithoutSpaces(false)
 , _maxLineWidth(0)
@@ -397,7 +397,7 @@ void Label::setFontAtlas(FontAtlas* atlas,bool distanceFieldEnabled /* = false *
     if (_fontAtlas)
     {
         _commonLineHeight = _fontAtlas->getCommonLineHeight();
-        _externalLeading = _fontAtlas->getExternalLeading();
+        _commonLineOffset = _fontAtlas->getCommonLineOffset();
         _contentDirty = true;
     }
     _useDistanceField = distanceFieldEnabled;

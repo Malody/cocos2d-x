@@ -55,6 +55,7 @@ FontAtlas::FontAtlas(Font &theFont)
         _commonLineHeight = _font->getFontMaxHeight();
         _fontAscender = fontTTf->getFontAscender();
         _fontDescender = fontTTf->getFontDescender();
+		_commonLineOffset = (_commonLineHeight + _fontAscender + _fontDescender) * 0.5f;
         auto texture = new Texture2D;
         _currentPage = 0;
         _currentPageOrigX = 0;
@@ -212,7 +213,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16String)
     auto  pixelFormat = fontTTf->getOutlineSize() > 0 ? Texture2D::PixelFormat::AI88 : Texture2D::PixelFormat::A8; 
 
     bool existNewLetter = false;
-    int bottomHeight = _commonLineHeight - _fontAscender;
+    int bottomHeight = _commonLineHeight - _commonLineOffset;
 
     float startY = _currentPageOrigY;
 
@@ -232,7 +233,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16String)
                 tempDef.width            = tempRect.size.width + _letterPadding;
                 tempDef.height           = tempRect.size.height + _letterPadding;
                 tempDef.offsetX          = tempRect.origin.x + offsetAdjust;
-                tempDef.offsetY          = _fontAscender + tempRect.origin.y - offsetAdjust;
+                tempDef.offsetY          = _commonLineOffset + tempRect.origin.y - offsetAdjust;
                 tempDef.clipBottom     = bottomHeight - (tempDef.height + tempRect.origin.y + offsetAdjust);
 
                 if (_currentPageOrigX + tempDef.width > CacheTextureWidth)
@@ -353,9 +354,9 @@ void  FontAtlas::setCommonLineHeight(float newHeight)
     _commonLineHeight = newHeight;
 }
 
-float FontAtlas::getExternalLeading() const
+float FontAtlas::getCommonLineOffset() const
 {
-    return _commonLineHeight - (_fontAscender - _fontDescender);
+    return _commonLineOffset;
 }
 
 const Font * FontAtlas::getFont() const

@@ -241,14 +241,14 @@ int FontFreeType::getFontMaxHeight() const
     return (static_cast<int>(_fontRef->size->metrics.height >> 6));
 }
 
-int FontFreeType::getFontAscender() const
+float FontFreeType::getFontAscender() const
 {
-    return (static_cast<int>(_fontRef->size->metrics.ascender >> 6));
+    return _fontRef->size->metrics.ascender / 64.0f;
 }
 
-int FontFreeType::getFontDescender() const
+float FontFreeType::getFontDescender() const
 {
-    return (static_cast<int>(_fontRef->size->metrics.descender >> 6));
+    return _fontRef->size->metrics.descender / 64.0f;
 }
 
 unsigned char* FontFreeType::getGlyphBitmap(unsigned short theChar, long &outWidth, long &outHeight, Rect &outRect,int &xAdvance)

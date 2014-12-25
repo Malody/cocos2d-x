@@ -80,7 +80,7 @@ public:
     void  addTexture(Texture2D *texture, int slot);
     float getCommonLineHeight() const;
     void  setCommonLineHeight(float newHeight);
-    float getExternalLeading() const;
+    float getCommonLineOffset() const;
     
     Texture2D* getTexture(int slot);
     const Font* getFont() const;
@@ -113,6 +113,7 @@ private:
     std::unordered_map<ssize_t, Texture2D*> _atlasTextures;
     std::unordered_map<unsigned short, FontLetterDefinition> _fontLetterDefinitions;
     float _commonLineHeight;
+	float _commonLineOffset;
     Font * _font;
 
     // Dynamic GlyphCollection related stuff
@@ -124,8 +125,8 @@ private:
     float _letterPadding;
     bool  _makeDistanceMap;
 
-    int _fontAscender;
-    int _fontDescender;
+    float _fontAscender;
+    float _fontDescender;
     EventListenerCustom* _rendererRecreatedListener;
     bool _antialiasEnabled;
     bool _rendererRecreate;

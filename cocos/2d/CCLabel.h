@@ -361,7 +361,7 @@ protected:
 
     float _additionalKerning;
     float _commonLineHeight;
-    float _externalLeading;
+    float _commonLineOffset;
     bool  _lineBreakWithoutSpaces;
     int * _horizontalKernings;
 
