@@ -57,8 +57,8 @@ typedef int int32_t;
 
 static bool s_need_quit = false;
 
-static Vector<HttpRequest*>*  s_requestQueue = nullptr;
-static Vector<HttpResponse*>* s_responseQueue = nullptr;
+static std::deque<HttpRequest*>*  s_requestQueue = nullptr;
+static std::deque<HttpResponse*>* s_responseQueue = nullptr;
 
 static HttpClient *s_pHttpClient = nullptr; // pointer to singleton
 
@@ -125,8 +125,8 @@ void HttpClient::networkThread()
         
         if (!s_requestQueue->empty())
         {
-            request = s_requestQueue->at(0);
-            s_requestQueue->erase(0);
+            request = s_requestQueue->front();
+			s_requestQueue->pop_front();
         }
         
         s_requestQueueMutex.unlock();
@@ -149,7 +149,7 @@ void HttpClient::networkThread()
 
         // add response packet into queue
         s_responseQueueMutex.lock();
-        s_responseQueue->pushBack(response);
+        s_responseQueue->push_back(response);
         s_responseQueueMutex.unlock();
         
         if (nullptr != s_pHttpClient) {
@@ -478,8 +478,8 @@ bool HttpClient::lazyInitThreadSemphore()
         return true;
     } else {
         
-        s_requestQueue = new Vector<HttpRequest*>();
-        s_responseQueue = new Vector<HttpResponse*>();
+        s_requestQueue = new std::deque<HttpRequest*>;
+        s_responseQueue = new std::deque<HttpResponse*>;
         
 		s_need_quit = false;
 		
@@ -507,7 +507,7 @@ void HttpClient::send(HttpRequest* request)
     
     if (nullptr != s_requestQueue) {
         s_requestQueueMutex.lock();
-        s_requestQueue->pushBack(request);
+        s_requestQueue->push_back(request);
         s_requestQueueMutex.unlock();
         
         // Notify thread start to work
@@ -541,8 +541,8 @@ void HttpClient::dispatchResponseCallbacks()
 
     if (!s_responseQueue->empty())
     {
-        response = s_responseQueue->at(0);
-        s_responseQueue->erase(0);
+        response = s_responseQueue->front();;
+        s_responseQueue->pop_front();
     }
     
     s_responseQueueMutex.unlock();
