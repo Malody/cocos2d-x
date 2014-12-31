@@ -753,7 +753,7 @@ Scene* Node::getScene() const
 
 Rect Node::getBoundingBox() const
 {
-    Rect rect = Rect(0, 0, _contentSize.width, _contentSize.height);
+    Rect rect(0, 0, _contentSize.width, _contentSize.height);
     return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
 }
 
@@ -808,7 +808,7 @@ Node* Node::getChildByTag(int tag) const
 {
     CCASSERT( tag != Node::INVALID_TAG, "Invalid tag");
 
-    for (auto& child : _children)
+    for (const auto& child : _children)
     {
         if(child && child->_tag == tag)
             return child;
@@ -1196,7 +1196,7 @@ void Node::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags)
 void Node::visit()
 {
     auto renderer = Director::getInstance()->getRenderer();
-    Mat4 parentTransform = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    auto& parentTransform = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     visit(renderer, parentTransform, true);
 }
 
@@ -1721,9 +1721,8 @@ void Node::setAdditionalTransform(Mat4* additionalTransform)
 AffineTransform Node::getParentToNodeAffineTransform() const
 {
     AffineTransform ret;
-    Mat4 ret4 = getParentToNodeTransform();
 
-    GLToCGAffine(ret4.m,&ret);
+    GLToCGAffine(getParentToNodeTransform().m,&ret);
     return ret;
 }
 
