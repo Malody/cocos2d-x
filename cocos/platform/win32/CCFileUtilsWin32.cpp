@@ -186,6 +186,8 @@ static Data getData(const std::string& filename, bool forString)
 
         msg = msg + filename + ") failed, error code is " + errorCodeBuffer;
         CCLOG("%s", msg.c_str());
+		if(buffer)
+			free(buffer);
     }
     else
     {
