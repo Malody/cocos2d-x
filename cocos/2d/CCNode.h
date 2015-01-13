@@ -1566,6 +1566,7 @@ protected:
 
     Vector<Node*> _children;        ///< array of children nodes
     Node *_parent;                  ///< weak reference to parent node
+	Director* _director;            //cached director pointer to improve rendering performance
 
     int _tag;                         ///< a tag. Can be any number you assigned just to identify this node
     
