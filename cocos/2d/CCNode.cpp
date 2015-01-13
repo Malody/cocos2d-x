@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <string>
 #include <regex>
 
-#include "base/CCDirector.h"
+
 #include "base/CCScheduler.h"
 #include "base/CCTouch.h"
 #include "base/CCEventDispatcher.h"
@@ -1196,7 +1196,7 @@ void Node::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags)
 void Node::visit()
 {
     auto renderer = _director->getRenderer();
-    auto& parentTransform = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    auto parentTransform = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     visit(renderer, parentTransform, true);
 }
 

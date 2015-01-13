@@ -52,6 +52,7 @@ class ComponentContainer;
 class EventDispatcher;
 class Scene;
 class Renderer;
+class Director;
 class GLProgram;
 class GLProgramState;
 #if CC_USE_PHYSICS
