@@ -825,6 +825,9 @@ std::string FileUtils::fullPathForFilename(const std::string &filename)
     
     CCLOG("cocos2d: fullPathForFilename: No file found at %s. Possible missing file.", filename.c_str());
 
+	//Scorpiour : For Malody Use only - nullptr or empty string may not be returned due to virtual mode needs second check here
+	return filename;
+
     // The file wasn't found, return empty string.
     return "";
 }
