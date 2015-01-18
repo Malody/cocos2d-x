@@ -1409,15 +1409,66 @@ void DisplayLinkDirector::mainLoop()
 
 	//这里会在glfw处理事件之前，先行拦截接下来要发生的事件，因此PeekMessage的参数应该是PM_NOREMOVE
 	//另一个可以考虑放置此代码的地方在CCApplication.cpp, 144行后面，在glview->pollEvents()之后再人工解决
-	/*
+	
 	MSG msg;
 	if(::PeekMessage(&msg,NULL,NULL,NULL,PM_NOREMOVE)){
 		switch(msg.message){
-		case WM_TOUCH:{
+		case WM_TOUCH:
+			{
+				//先提取三个基本信息
+				HWND hwnd = msg.hwnd;
+				LPARAM lParam = msg.lParam;
+				WPARAM wParam = msg.wParam;
+				//匿名scope实现onTouch的处理
+				{
+					do{
+						BOOL handled = false;
+						//Input的数量
+						UINT cInputs = LOWORD(wParam);
+						//准备一个数组
+						PTOUCHINPUT pInputs = new TOUCHINPUT[cInputs];
+						//new出错了，处理一下吧
+						if(pInputs == nullptr){
+							break;
+						}
 
-					  }
+						if(GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam),cInputs,pInputs,sizeof(TOUCHINPUT))){
+							for(UINT i = 0; i< cInputs; i++){
+								TOUCHINPUT ti = pInputs[i];
+
+								//To do here -- Scorpiour
+								//注意这里的ti.dwID，这个值是在之后handleTouchesblabla()中要用到的
+								//其值标记了一连串的dwID供handleTouchesblabla()系列函数使用
+								//那么接下来的重点就是要分辨到底是Begin, Move还是End了
+								//对于这点，就需要dwFlag来帮忙了
+								//几个比较重要的flag包括了：
+								//TOUCHEVENTF_MOVE = 0x0001, 标记了发生了一次move行为
+								//TOUCHEVENTF_DOWN = 0x0002，发生了一次按下，也就是begin
+								//TOUCHEVENTF_UP = 0x0004， 发生了一次抬起，也就是end
+								//那么我们要做的就是将其整理为分门别类的三个数组，并且分别送到Begin, Move和EndOrCancel三个函数中
+								
+							}
+
+							//这里，我们把提取到的数据整理出来，并且根据情况调用给cocos
+							
+							//this->getOpenGLView()->handleTouchesBegin( );
+
+							handled = true;
+						}else{
+							handled = false;
+						}
+						delete[] pInputs;
+						
+						if(handled){
+							::CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(lParam));
+						}
+					}while(0);
+					//这里处理出错的情况，需要将事件抛回去吗？由于是Peek出来的因此似乎不需要
+					//::DefWindowProc(hwnd,WM_TOUCH,wParam,lParam);
+				}
+			}break;
 		}
-	}*/
+	}
 
 #endif
     if (_purgeDirectorInNextLoop)
