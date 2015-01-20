@@ -1421,10 +1421,6 @@ void DisplayLinkDirector::mainLoop()
 				WPARAM wParam = msg.wParam;
 				//匿名scope实现onTouch的处理
 				{
-					static std::vector<TOUCHINPUT> begans;
-					static std::vector<TOUCHINPUT> moves;
-					static std::vector<TOUCHINPUT> ends;
-					
 					do{
 						BOOL handled = false;
 						//Input的数量
@@ -1435,10 +1431,6 @@ void DisplayLinkDirector::mainLoop()
 						if(pInputs == nullptr){
 							break;
 						}
-
-						begans.clear();
-						moves.clear();
-						ends.clear();
 
 						if(GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam),cInputs,pInputs,sizeof(TOUCHINPUT))){
 							for(UINT i = 0; i< cInputs; i++){
@@ -1454,81 +1446,12 @@ void DisplayLinkDirector::mainLoop()
 								//TOUCHEVENTF_DOWN = 0x0002，发生了一次按下，也就是begin
 								//TOUCHEVENTF_UP = 0x0004， 发生了一次抬起，也就是end
 								//那么我们要做的就是将其整理为分门别类的三个数组，并且分别送到Begin, Move和EndOrCancel三个函数中
-
-								switch(ti.dwFlags){
-								case TOUCHEVENTF_DOWN:
-									{
-										begans.push_back(ti);
-									}break;
-								case TOUCHEVENTF_MOVE:
-									{
-										moves.push_back(ti);
-									}break;
-								case TOUCHEVENTF_UP:
-									{
-										ends.push_back(ti);
-									}break;
-								}
 								
 							}
 
 							//这里，我们把提取到的数据整理出来，并且根据情况调用给cocos
 							
 							//this->getOpenGLView()->handleTouchesBegin( );
-							
-							if(begans.size()){
-								int* ids = new int[begans.size()];
-								float* xs = new float[begans.size()];
-								float* ys = new float[begans.size()];
-
-								for(size_t i = 0;i<begans.size();i++){
-									memcpy(&ids[i],&(begans[i].dwID),sizeof(int));
-									xs[i] = static_cast<float>(begans[i].x);
-									ys[i] = static_cast<float>(begans[i].y);
-								}
-
-								this->getOpenGLView()->handleTouchesBegin(begans.size(),ids,xs,ys);
-
-								delete[] ids;
-								delete[] xs;
-								delete[] ys;
-							}
-
-							if(moves.size()){
-								int* ids = new int[moves.size()];
-								float* xs = new float[moves.size()];
-								float* ys = new float[moves.size()];
-
-								for(size_t i = 0;i<moves.size();i++){
-									memcpy(&ids[i],&(moves[i].dwID),sizeof(int));
-									xs[i] = static_cast<float>(moves[i].x);
-									ys[i] = static_cast<float>(moves[i].y);
-								}
-
-								this->getOpenGLView()->handleTouchesMove(moves.size(),ids,xs,ys);
-
-								delete[] ids;
-								delete[] xs;
-								delete[] ys;
-							}
-
-							if(ends.size()){
-								int* ids = new int[ends.size()];
-								float* xs = new float[ends.size()];
-								float* ys = new float[ends.size()];
-
-								for(size_t i = 0;i<ends.size();i++){
-									memcpy(&ids[i],&(ends[i].dwID),sizeof(int));
-									xs[i] = static_cast<float>(ends[i].x);
-									ys[i] = static_cast<float>(ends[i].y);
-								}
-
-								this->getOpenGLView()->handleTouchesEnd(ends.size(),ids,xs,ys);
-
-								delete[] ids;
-								delete[] xs;
-								delete[] ys;
-							}
 
 							handled = true;
 						}else{
