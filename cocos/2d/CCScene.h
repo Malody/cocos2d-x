@@ -30,7 +30,6 @@ THE SOFTWARE.
 
 #include <string>
 #include "2d/CCNode.h"
-#include "physics/CCPhysicsWorld.h"
 
 NS_CC_BEGIN
 

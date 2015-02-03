@@ -10,9 +10,6 @@
     <Filter Include="GUI\CCScrollView">
       <UniqueIdentifier>{46797895-f71d-4ddb-b381-d0884e678d39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="physics_nodes">
-      <UniqueIdentifier>{d5806151-7ae1-4fef-af5a-2fa1d1c7377b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GUI\CCEditBox">
       <UniqueIdentifier>{5d186e3d-0aaf-4904-a5d8-e5cb0f35f4cc}</UniqueIdentifier>
     </Filter>
@@ -77,12 +74,6 @@
     </ClCompile>
     <ClCompile Include="..\assets-manager\AssetsManager.cpp">
       <Filter>AssetsManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\physics-nodes\CCPhysicsDebugNode.cpp">
-      <Filter>physics_nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\physics-nodes\CCPhysicsSprite.cpp">
-      <Filter>physics_nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,12 +141,6 @@
     </ClInclude>
     <ClInclude Include="..\assets-manager\AssetsManager.h">
       <Filter>AssetsManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\physics-nodes\CCPhysicsDebugNode.h">
-      <Filter>physics_nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\physics-nodes\CCPhysicsSprite.h">
-      <Filter>physics_nodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -117,8 +117,6 @@
     <ClCompile Include="..\GUI\CCScrollView\CCScrollView.cpp" />
     <ClCompile Include="..\GUI\CCScrollView\CCTableView.cpp" />
     <ClCompile Include="..\GUI\CCScrollView\CCTableViewCell.cpp" />
-    <ClCompile Include="..\physics-nodes\CCPhysicsDebugNode.cpp" />
-    <ClCompile Include="..\physics-nodes\CCPhysicsSprite.cpp" />
     <ClCompile Include="Win32InputBox.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -144,8 +142,6 @@
     <ClInclude Include="..\ExtensionMacros.h" />
     <ClInclude Include="..\GUI\CCScrollView\CCTableView.h" />
     <ClInclude Include="..\GUI\CCScrollView\CCTableViewCell.h" />
-    <ClInclude Include="..\physics-nodes\CCPhysicsDebugNode.h" />
-    <ClInclude Include="..\physics-nodes\CCPhysicsSprite.h" />
     <ClInclude Include="Win32InputBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

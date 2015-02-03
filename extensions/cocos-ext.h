@@ -10,8 +10,6 @@
 #include "GUI/CCEditBox/CCEditBox.h"
 
 // Physics integration
-#include "physics-nodes/CCPhysicsDebugNode.h"
-#include "physics-nodes/CCPhysicsSprite.h"
 
 #include "assets-manager/AssetsManager.h"
 
