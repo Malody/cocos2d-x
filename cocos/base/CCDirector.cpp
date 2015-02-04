@@ -1340,11 +1340,16 @@ void DisplayLinkDirector::mainLoop()
 	//这里会在glfw处理事件之前，先行拦截接下来要发生的事件，因此PeekMessage的参数应该是PM_NOREMOVE
 	//另一个可以考虑放置此代码的地方在CCApplication.cpp, 144行后面，在glview->pollEvents()之后再人工解决
 	
+	/*
 	MSG msg;
-	if(::PeekMessage(&msg,NULL,NULL,NULL,PM_NOREMOVE)){
+	if(::GetMessage(&msg,NULL,NULL,NULL)){
 		switch(msg.message){
+
 		case WM_TOUCH:
 			{
+
+				std::cout<<"Director - Touch event detected: ";
+
 				//先提取三个基本信息
 				HWND hwnd = msg.hwnd;
 				LPARAM lParam = msg.lParam;
@@ -1355,6 +1360,9 @@ void DisplayLinkDirector::mainLoop()
 						BOOL handled = false;
 						//Input的数量
 						UINT cInputs = LOWORD(wParam);
+
+						std::cout<<cInputs<<" touches"<<std::endl;
+
 						//准备一个数组
 						PTOUCHINPUT pInputs = new TOUCHINPUT[cInputs];
 						//new出错了，处理一下吧
@@ -1363,6 +1371,17 @@ void DisplayLinkDirector::mainLoop()
 						}
 
 						if(GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam),cInputs,pInputs,sizeof(TOUCHINPUT))){
+							
+							TOUCHINPUT begins[10];
+							TOUCHINPUT moves[10];
+							TOUCHINPUT ends[10];
+
+							int ctBeg = 0;
+							int ctMv = 0;
+							int ctEnd = 0;
+
+							
+
 							for(UINT i = 0; i< cInputs; i++){
 								TOUCHINPUT ti = pInputs[i];
 
@@ -1376,7 +1395,69 @@ void DisplayLinkDirector::mainLoop()
 								//TOUCHEVENTF_DOWN = 0x0002，发生了一次按下，也就是begin
 								//TOUCHEVENTF_UP = 0x0004， 发生了一次抬起，也就是end
 								//那么我们要做的就是将其整理为分门别类的三个数组，并且分别送到Begin, Move和EndOrCancel三个函数中
-								
+								int id = static_cast<int>(ti.dwID);
+								switch(ti.dwFlags){
+								case TOUCHEVENTF_DOWN:
+									{
+										if(ctBeg >= 10){
+											break;
+										}
+										begins[ctBeg] = ti;
+										ctBeg++;
+									}break;
+								case TOUCHEVENTF_UP:
+									{
+										if(ctEnd >= 10){
+											break;
+										}
+										ends[ctEnd] = ti;
+										ctEnd++;
+									}break;
+								case TOUCHEVENTF_MOVE:
+									{
+										if(ctMv >= 10){
+											break;
+										}
+										moves[ctMv] = ti;
+										ctMv++;
+									}break;
+								}
+
+								int ids[10];
+								float xs[10];
+								float ys[10];
+
+								if(ctBeg > 0){
+									for(int i=0;i<ctBeg;i++){
+										ids[i] = static_cast<int>(begins[i].dwID);
+										xs[i] = static_cast<float>(begins[i].x);
+										ys[i] = static_cast<float>(begins[i].y);
+
+										std::cout<<"Begin - "<<ids[i]<<" - "<<xs[i]<<'|'<<ys[i]<<endl;
+									}
+									this->getOpenGLView()->handleTouchesBegin(ctBeg,ids,xs,ys);
+								}
+
+								if(ctMv > 0){
+									for(int i=0;i<ctMv;i++){
+										ids[i] = static_cast<int>(moves[i].dwID);
+										xs[i] = static_cast<float>(moves[i].x);
+										ys[i] = static_cast<float>(moves[i].y);
+
+										std::cout<<"Move - "<<ids[i]<<" - "<<xs[i]<<'|'<<ys[i]<<endl;
+									}
+									this->getOpenGLView()->handleTouchesBegin(ctMv,ids,xs,ys);
+								}
+								if(ctEnd > 0){
+									for(int i=0;i<ctEnd;i++){
+										ids[i] = static_cast<int>(ends[i].dwID);
+										xs[i] = static_cast<float>(ends[i].x);
+										ys[i] = static_cast<float>(ends[i].y);
+
+										std::cout<<"End - "<<ids[i]<<" - "<<xs[i]<<'|'<<ys[i]<<endl;
+									}
+									this->getOpenGLView()->handleTouchesBegin(ctEnd,ids,xs,ys);
+								}
 							}
 
 							//这里，我们把提取到的数据整理出来，并且根据情况调用给cocos
@@ -1396,10 +1477,76 @@ void DisplayLinkDirector::mainLoop()
 					//这里处理出错的情况，需要将事件抛回去吗？由于是Peek出来的因此似乎不需要
 					//::DefWindowProc(hwnd,WM_TOUCH,wParam,lParam);
 				}
+				
 			}break;
+			case WM_GESTURE:
+				{
+					std::cout<<"Gesture captured!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_LBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Left Button Down!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_MBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Middle Button Down!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_RBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Right Button Down!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_XBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse X Button Down!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_NCLBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Left Button Down Outside!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_NCRBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Right Button Down Outside!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_NCMBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse Middle Button Down Outside!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
+			case WM_NCXBUTTONDOWN:
+				{
+					std::cout<<"Director - Mouse X Button Down Outside!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}
+			case WM_INPUT:
+				{
+					std::cout<<"Director - Raw Input Detected!"<<std::endl;
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}
+			default:
+				{
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}break;
 		}
 	}
-
+	*/
 #endif
     if (_purgeDirectorInNextLoop)
     {
