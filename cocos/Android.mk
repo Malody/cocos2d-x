@@ -73,15 +73,6 @@ cocos2d.cpp \
 2d/CCTransitionPageTurn.cpp \
 2d/CCTransitionProgress.cpp \
 2d/CCTweenFunction.cpp \
-3d/CCAnimate3D.cpp \
-3d/CCAnimation3D.cpp \
-3d/CCBundle3D.cpp \
-3d/CCBundleReader.cpp \
-3d/CCMesh.cpp \
-3d/CCMeshSkin.cpp \
-3d/CCSprite3DMaterial.cpp \
-3d/CCObjLoader.cpp \
-3d/CCSprite3D.cpp \
 platform/CCGLViewProtocol.cpp \
 platform/CCFileUtils.cpp \
 platform/CCSAXParser.cpp \
@@ -166,16 +157,6 @@ deprecated/CCString.cpp \
 deprecated/CCDictionary.cpp \
 deprecated/CCDeprecated.cpp \
 deprecated/CCNotificationCenter.cpp \
-physics/CCPhysicsBody.cpp \
-physics/CCPhysicsContact.cpp \
-physics/CCPhysicsJoint.cpp \
-physics/CCPhysicsShape.cpp \
-physics/CCPhysicsWorld.cpp \
-physics/chipmunk/CCPhysicsBodyInfo_chipmunk.cpp \
-physics/chipmunk/CCPhysicsContactInfo_chipmunk.cpp \
-physics/chipmunk/CCPhysicsJointInfo_chipmunk.cpp \
-physics/chipmunk/CCPhysicsShapeInfo_chipmunk.cpp \
-physics/chipmunk/CCPhysicsWorldInfo_chipmunk.cpp \
 ../external/ConvertUTF/ConvertUTFWrapper.cpp \
 ../external/ConvertUTF/ConvertUTF.c \
 ../external/tinyxml2/tinyxml2.cpp \
@@ -191,7 +172,6 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/platform/android \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
-                    $(LOCAL_PATH)/../external/chipmunk/include/chipmunk \
                     $(LOCAL_PATH)/../external/xxhash \
                     $(LOCAL_PATH)/../external/nslog
 
@@ -201,7 +181,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/../external \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
-                    $(LOCAL_PATH)/../external/chipmunk/include/chipmunk \
                     $(LOCAL_PATH)/../external/edtaa3func \
                     $(LOCAL_PATH)/../external/xxhash \
                     $(LOCAL_PATH)/../external/ConvertUTF \
@@ -213,7 +192,6 @@ LOCAL_EXPORT_LDLIBS := -lGLESv2 \
                        -landroid
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos_freetype2_static
-LOCAL_WHOLE_STATIC_LIBRARIES += chipmunk_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos2dxandroid_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_png_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_jpeg_static
@@ -229,7 +207,6 @@ LOCAL_EXPORT_CPPFLAGS := -Wno-deprecated-declarations -Wno-extern-c-compat
 include $(BUILD_STATIC_LIBRARY)
 
 $(call import-module,freetype2/prebuilt/android)
-$(call import-module,chipmunk)
 $(call import-module,platform/android)
 $(call import-module,jpeg/prebuilt/android)
 $(call import-module,png/prebuilt/android)

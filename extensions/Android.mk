@@ -26,12 +26,9 @@ GUI/CCEditBox/CCEditBoxImplWin.cpp \
 GUI/CCScrollView/CCScrollView.cpp \
 GUI/CCScrollView/CCTableView.cpp \
 GUI/CCScrollView/CCTableViewCell.cpp \
-physics-nodes/CCPhysicsDebugNode.cpp \
-physics-nodes/CCPhysicsSprite.cpp
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_curl_static
-LOCAL_WHOLE_STATIC_LIBRARIES += box2d_static
 
 LOCAL_CXXFLAGS += -fexceptions
 
@@ -46,4 +43,3 @@ include $(BUILD_STATIC_LIBRARY)
 
 $(call import-module,.)
 $(call import-module,curl/prebuilt/android)
-$(call import-module,Box2D)
