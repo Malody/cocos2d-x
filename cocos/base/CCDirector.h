@@ -535,18 +535,11 @@ class DisplayLinkDirector : public Director
 {
 public:
     DisplayLinkDirector() 
-		: _invalid(false),isMouseVisible(true)
+		: _invalid(false)
     {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-		cursor = LoadCursor(NULL,IDC_ARROW);
-#endif
 	}
     virtual ~DisplayLinkDirector(){
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-		if(tmpCursorFilepath.size()>0){
-			::DeleteFileW(tmpCursorFilepath.c_str());
-		}
-#endif
+
 	}
 
     //
@@ -556,15 +549,9 @@ public:
     virtual void setAnimationInterval(double value) override;
     virtual void startAnimation() override;
     virtual void stopAnimation() override;
-	void setMouseVisible(bool);
-	void loadMouseFromStream(std::istream& s);
+
 protected:
     bool _invalid;
-	bool isMouseVisible;
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-	HCURSOR cursor;
-	std::wstring tmpCursorFilepath;
-#endif
 };
 
 // end of base_node group

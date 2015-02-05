@@ -354,6 +354,8 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
 
+	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //Òþ²ØÊó±ê
+
     setFrameSize(rect.size.width, rect.size.height);
 
     // check OpenGL version at first

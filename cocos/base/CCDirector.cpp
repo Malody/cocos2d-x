@@ -104,14 +104,6 @@ Director::Director()
 {
 }
 
-void Director::setCursorVisible(bool value){
-	s_SharedDirector->setMouseVisible(value);
-}
-
-void Director::loadCursorFromStream(std::istream& s){
-	s_SharedDirector->loadMouseFromStream(s);
-}
-
 bool Director::init(void)
 {
     setDefaultValues();
@@ -1342,71 +1334,9 @@ void DisplayLinkDirector::startAnimation()
     setNextDeltaTimeZero(true);
 }
 
-void DisplayLinkDirector::setMouseVisible(bool value){
-	isMouseVisible = value;
-}
-
-void DisplayLinkDirector::loadMouseFromStream(std::istream& s){
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-	do
-	{
-		//Write stream to a temp file for use
-		size_t size = 0;
-		s.seekg(0,ios::end);
-		size = s.tellg();
-		s.seekg(0,ios::beg);
-
-		if(size==0){
-			break;
-		}
-
-		std::ofstream fout;
-		std::string filePath = FileUtils::getInstance()->getWritablePath() + "tmpcur.ico";
-
-		fout.open(filePath.c_str(),std::ios::binary);
-
-		if(!fout){
-			fout.close();
-			break;
-		}
-
-		for(size_t i=0;i<size;i++){
-			fout.put(s.get());
-		}
-
-		fout.close();
-
-		//Update tmpfile name
-		if(tmpCursorFilepath.size()>0){
-			::DeleteFileW(tmpCursorFilepath.c_str());
-		}
-		tmpCursorFilepath.clear();
-
-		int len;
-		int slen = static_cast<int>(filePath.length()+1);
-		len = ::MultiByteToWideChar(CP_ACP,0,filePath.c_str(),slen,0,0);
-		wchar_t* buf = new wchar_t[len];
-		::MultiByteToWideChar(CP_ACP,0,filePath.c_str(),slen,buf,len);
-		std::wstring r(buf);
-		delete[] buf;
-		tmpCursorFilepath = r;
-
-		//Load tmpfile to cursor
-		cursor = ::LoadCursorFromFile(tmpCursorFilepath.c_str());
-
-	}while(false);
-#endif
-}
-
 void DisplayLinkDirector::mainLoop()
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-	if(isMouseVisible){
-		SetCursor(cursor);
-	}else{
-		SetCursor(nullptr);
-	}
-
 	//这里会在glfw处理事件之前，先行拦截接下来要发生的事件，因此PeekMessage的参数应该是PM_NOREMOVE
 	//另一个可以考虑放置此代码的地方在CCApplication.cpp, 144行后面，在glview->pollEvents()之后再人工解决
 	
