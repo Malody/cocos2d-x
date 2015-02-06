@@ -354,7 +354,14 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
 
-	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //“˛≤ÿ Û±Í
+	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //ÈöêËóèÈº†Ê†á
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	glfwSwapInterval(0);
+#endif
+	/*typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
+	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = nullptr;
+	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)glfwGetProcAddress("wglSwapIntervalEXT");
+	wglSwapIntervalEXT(0);*/
 
     setFrameSize(rect.size.width, rect.size.height);
 
