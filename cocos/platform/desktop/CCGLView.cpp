@@ -621,8 +621,7 @@ void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     }
     
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+	Vec2 v = glPosToCocos(_mouseX, _mouseY);
 
     EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
     // Set current button
@@ -638,7 +637,7 @@ void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     {
         event.setMouseButton(GLFW_MOUSE_BUTTON_MIDDLE);
     }
-    event.setCursorPosition(cursorX, cursorY);
+    event.setCursorPosition(v.x, v.y);
     Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
 }
 
@@ -646,11 +645,10 @@ void GLView::onGLFWMouseScrollCallback(GLFWwindow* window, double x, double y)
 {
     EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+	Vec2 v = glPosToCocos(_mouseY, _mouseY);
 
     event.setScrollData((float)x, -(float)y);
-    event.setCursorPosition(cursorX, cursorY);
+    event.setCursorPosition(v.x, v.y);
     Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
 }
 
@@ -830,5 +828,34 @@ bool GLView::initGlew()
 
     return true;
 }
+
+Vec2 GLView::getCursorPos(){
+	double x = 0;
+	double y = 0;
+	glfwGetCursorPos(_mainWindow, &x, &y);
+	x /= this->getFrameZoomFactor();
+	y /= this->getFrameZoomFactor();
+	
+	if (_isInRetinaMonitor)
+	{
+		if (_retinaFactor == 1)
+		{
+			x *= 2;
+			y *= 2;
+		}
+	}
+	return glPosToCocos(x, y);
+}
+
+Vec2 GLView::glPosToCocos(float x, float y){
+	Vec2 v;
+	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
+	v.x = (x - _viewPortRect.origin.x) / _scaleX;
+	v.y = (_viewPortRect.origin.y + _viewPortRect.size.height - y) / _scaleY;
+	return v;
+}
+
+
+
 
 NS_CC_END // end of namespace cocos2d;

@@ -82,6 +82,7 @@ public:
 	
 	/* desktop only*/
 	cocos2d::Size getScreenSize();
+	Vec2 getCursorPos();
 protected:
     GLView();
     virtual ~GLView();
@@ -104,6 +105,8 @@ protected:
     void onGLFWWindowPosCallback(GLFWwindow* windows, int x, int y);
     void onGLFWframebuffersize(GLFWwindow* window, int w, int h);
     void onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height);
+	
+	Vec2 glPosToCocos(float x, float y);
 
     bool _captured;
     bool _supportTouch;
