@@ -53,6 +53,11 @@ public:
             _view->onGLFWMouseCallBack(window, button, action, modify);
     }
 
+	static void onGLFWTouchCallBack(GLFWwindow* window,int touch,int action,double x, double y){
+		if(_view)
+			_view->onGLFWWinTouchcallback(window,touch,action,x,y);
+	}
+
     static void onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     {
         if (_view)
@@ -353,6 +358,7 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
+	glfwSetTouchCallback(_mainWindow,GLFWEventHandler::onGLFWTouchCallBack);
 
 	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
@@ -595,6 +601,47 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
         event.setMouseButton(button);
         Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
     }
+}
+
+void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
+	switch(action){
+	case GLFW_PRESS:
+		{
+			_captured = true;
+			if(this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY))){
+				intptr_t id = touch;
+				this->handleTouchesBegin(1,&id,&_mouseX,&_mouseY);
+			}
+		}break;
+	case GLFW_MOVE:
+		{
+			_mouseX = (float)x;
+			_mouseY = (float)y;
+
+			_mouseX /= this->getFrameZoomFactor();
+			_mouseY /= this->getFrameZoomFactor();
+
+			if(_isInRetinaMonitor && (_retinaFactor == 1)){
+				_mouseX *= 2;
+				_mouseY *= 2;
+			}
+			if(_captured){
+				intptr_t id = touch;
+				this->handleTouchesMove(1,&id,&_mouseX,&_mouseY);
+			}
+		}break;
+	case GLFW_RELEASE:
+		{
+			if(_captured){
+				_captured = false;
+				intptr_t id = touch;
+				this->handleTouchesEnd(1,&id,&_mouseX,&_mouseY);
+			}
+		}break;
+	default:{
+
+			}break;
+	}
 }
 
 void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
