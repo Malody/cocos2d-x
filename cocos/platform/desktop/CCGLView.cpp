@@ -360,8 +360,9 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	glfwSetTouchCallback(_mainWindow,GLFWEventHandler::onGLFWTouchCallBack);
-
+#endif
 	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	glfwSwapInterval(0);
@@ -607,7 +608,7 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
         Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
     }
 }
-
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
 
 	std::cout<<"Touch detected id:"<<touch<<" action: "<<action<<"pos "<<x<<'|'<<y<<std::endl;
@@ -653,6 +654,7 @@ void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,doub
 			}break;
 	}
 }
+#endif
 
 void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
 {

@@ -156,7 +156,7 @@ Data FileUtilsAndroid::getData(const std::string& filename, bool forString)
         } else {
             relativePath += fullPath;
         }
-        LOGD("relative path = %s", relativePath.c_str());
+        //LOGD("relative path = %s", relativePath.c_str());
 
         if (nullptr == FileUtilsAndroid::assetmanager) {
             LOGD("... FileUtilsAndroid::assetmanager is nullptr");
