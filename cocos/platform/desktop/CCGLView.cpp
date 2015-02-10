@@ -34,6 +34,8 @@ THE SOFTWARE.
 
 #include <unordered_map>
 
+#include <iostream>
+
 NS_CC_BEGIN
 
 // GLFWEventHandler
@@ -561,6 +563,9 @@ void GLView::onGLFWError(int errorID, const char* errorDesc)
 
 void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify)
 {
+
+	std::cout<<"Mouse detected id:"<<button<<" action: "<<action<<std::endl;
+
     if(GLFW_MOUSE_BUTTON_LEFT == button)
     {
         if(GLFW_PRESS == action)
@@ -604,11 +609,16 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
 }
 
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
+
+	std::cout<<"Touch detected id:"<<touch<<" action: "<<action<<"pos "<<x<<'|'<<y<<std::endl;
+
 	switch(action){
 	case GLFW_PRESS:
 		{
 			_captured = true;
-			if(this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY))){
+			if(this->getViewPortRect().equals(Rect::ZERO)){
+				_mouseX = (float)x;
+				_mouseY = (float)y;
 				intptr_t id = touch;
 				this->handleTouchesBegin(1,&id,&_mouseX,&_mouseY);
 			}
