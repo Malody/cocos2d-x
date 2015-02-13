@@ -411,6 +411,14 @@ public:
      */
     float getFrameRate() const { return _frameRate; }
 
+
+	/* 
+		Allow to enable/disable mouse click/move
+	*/
+	bool getMouseEnable(void);
+	void setMouseEnable(bool v);
+
+
 protected:
     void purgeDirector();
     bool _purgeDirectorInNextLoop; // this flag will be set to true in end()

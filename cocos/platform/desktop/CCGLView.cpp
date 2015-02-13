@@ -269,6 +269,7 @@ GLView::GLView()
 , _monitor(nullptr)
 , _mouseX(0.0f)
 , _mouseY(0.0f)
+, _isMouseEnable(true)
 {
     _viewName = "cocos2dx";
     g_keyCodeMap.clear();
@@ -565,7 +566,7 @@ void GLView::onGLFWError(int errorID, const char* errorDesc)
 void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify)
 {
 
-	std::cout<<"Mouse detected id:"<<button<<" action: "<<action<<std::endl;
+	//std::cout<<"Mouse detected id:"<<button<<" action: "<<action<<std::endl;
 
     if(GLFW_MOUSE_BUTTON_LEFT == button)
     {
@@ -611,7 +612,7 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
 
-	std::cout<<"Touch detected id:"<<touch<<" action: "<<action<<"pos "<<x<<'|'<<y<<std::endl;
+	//std::cout<<"Touch detected id:"<<touch<<" action: "<<action<<"pos "<<x<<'|'<<y<<std::endl;
 
 	switch(action){
 	case GLFW_PRESS:
@@ -780,6 +781,20 @@ Size GLView::getScreenSize(){
 	
 	const GLFWvidmode* videoMode = glfwGetVideoMode(moni);
 	return Size(videoMode->width, videoMode->height);
+}
+
+bool GLView::getMouseEnable()const{
+	return this->_isMouseEnable;
+}
+void GLView::setMouseEnable(bool v){
+	if(v){
+		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+
+	}else{
+		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+	}
+	this->_isMouseEnable = v;
 }
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
