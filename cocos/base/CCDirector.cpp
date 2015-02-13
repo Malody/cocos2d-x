@@ -1312,6 +1312,23 @@ void Director::setEventDispatcher(EventDispatcher* dispatcher)
     }
 }
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+/* 
+	Allow to enable/disable mouse click/move
+*/
+bool Director::getMouseEnable(void){
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	return this->getOpenGLView()->getMouseEnable();
+#endif
+	return true;
+}
+void Director::setMouseEnable(bool v){
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	this->getOpenGLView()->setMouseEnable(v);
+#endif
+}
+#endif
+
 /***************************************************
 * implementation of DisplayLinkDirector
 **************************************************/

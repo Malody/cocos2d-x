@@ -83,6 +83,11 @@ public:
 	/* desktop only*/
 	cocos2d::Size getScreenSize();
 	Vec2 getCursorPos();
+
+	/* Mouse enabled */
+	bool getMouseEnable()const;
+	void setMouseEnable(bool v);
+
 protected:
     GLView();
     virtual ~GLView();
@@ -122,6 +127,8 @@ protected:
 
     float _mouseX;
     float _mouseY;
+
+	bool _isMouseEnable;
 
     friend class GLFWEventHandler;
 
