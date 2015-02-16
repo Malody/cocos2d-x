@@ -564,95 +564,100 @@ void GLView::onGLFWError(int errorID, const char* errorDesc)
 
 void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify)
 {
-	if(this->_isMouseEnable){
-		if(GLFW_MOUSE_BUTTON_LEFT == button)
+	//std::cout<<"Mouse Click - button: "<<button<<", action: "<<action; 
+
+	if(GLFW_MOUSE_BUTTON_LEFT == button)
+	{
+		if(GLFW_PRESS == action)
 		{
-			if(GLFW_PRESS == action)
+			_captured = true;
+			if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
 			{
-				_captured = true;
-				if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
-				{
+				if(this->_isMouseEnable){
 					intptr_t id = 0;
 					this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
 				}
 			}
-			else if(GLFW_RELEASE == action)
+		}
+		else if(GLFW_RELEASE == action)
+		{
+			if (_captured)
 			{
-				if (_captured)
-				{
+				if(this->_isMouseEnable){
 					_captured = false;
 					intptr_t id = 0;
 					this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
 				}
 			}
 		}
+	}
 
+	//std::cout<<", pos: "<<_mouseX<<'.'<<_mouseY<<std::endl;
     
-		//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-		float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-		float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
+	float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
+	float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
 
-		if(GLFW_PRESS == action)
-		{
-			EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
-			event.setCursorPosition(cursorX, cursorY);
-			event.setMouseButton(button);
-			Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-		}
-		else if(GLFW_RELEASE == action)
-		{
-			EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
-			event.setCursorPosition(cursorX, cursorY);
-			event.setMouseButton(button);
-			Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-		}
+	if(GLFW_PRESS == action)
+	{
+		EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
+		event.setCursorPosition(cursorX, cursorY);
+		event.setMouseButton(button);
+		Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+	}
+	else if(GLFW_RELEASE == action)
+	{
+		EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
+		event.setCursorPosition(cursorX, cursorY);
+		event.setMouseButton(button);
+		Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
 	}
 }
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
 
-	//std::cout<<"Touch detected id:"<<touch<<" action: "<<action<<"pos "<<x<<'|'<<y<<std::endl;
+	//std::cout<<"Touch detected id:"<<touch<<" action: "<<action;
+
+	_mouseX = (float)x;
+	_mouseY = (float)y;
+
+	_mouseX /= this->getFrameZoomFactor();
+	_mouseY /= this->getFrameZoomFactor();
+
+	if(_isInRetinaMonitor && (_retinaFactor == 1)){
+		_mouseX *= 2;
+		_mouseY *= 2;
+	}
 
 	switch(action){
 	case GLFW_PRESS:
 		{
-			_captured = true;
+			//_captured = true;
 			if(this->getViewPortRect().equals(Rect::ZERO)){
-				_mouseX = (float)x;
-				_mouseY = (float)y;
 				intptr_t id = touch;
 				this->handleTouchesBegin(1,&id,&_mouseX,&_mouseY);
 			}
 		}break;
 	case GLFW_MOVE:
 		{
-			_mouseX = (float)x;
-			_mouseY = (float)y;
-
-			_mouseX /= this->getFrameZoomFactor();
-			_mouseY /= this->getFrameZoomFactor();
-
-			if(_isInRetinaMonitor && (_retinaFactor == 1)){
-				_mouseX *= 2;
-				_mouseY *= 2;
-			}
-			if(_captured){
+			//if(_captured){
 				intptr_t id = touch;
 				this->handleTouchesMove(1,&id,&_mouseX,&_mouseY);
-			}
+			//}
 		}break;
 	case GLFW_RELEASE:
 		{
-			if(_captured){
-				_captured = false;
+			//if(_captured){
+				//_captured = false;
 				intptr_t id = touch;
 				this->handleTouchesEnd(1,&id,&_mouseX,&_mouseY);
-			}
+			//}
 		}break;
 	default:{
 
 			}break;
 	}
+	//std::cout<<"pos "<<_mouseX<<'|'<<_mouseY<<std::endl;
 }
 #endif
 
