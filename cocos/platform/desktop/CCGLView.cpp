@@ -361,11 +361,10 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
+
+	//glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	glfwSetTouchCallback(_mainWindow,GLFWEventHandler::onGLFWTouchCallBack);
-#endif
-	glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	glfwSwapInterval(0);
 #endif
 	/*typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
