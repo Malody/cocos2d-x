@@ -411,12 +411,10 @@ public:
      */
     float getFrameRate() const { return _frameRate; }
 
-
 	/* 
 		Allow to enable/disable mouse click/move
 	*/
-	bool getMouseEnable(void);
-	void setMouseEnable(bool v);
+	void setMouseEnable(bool value);
 
 
 protected:

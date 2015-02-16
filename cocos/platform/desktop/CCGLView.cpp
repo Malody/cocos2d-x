@@ -564,49 +564,49 @@ void GLView::onGLFWError(int errorID, const char* errorDesc)
 
 void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify)
 {
+	if(this->_isMouseEnable){
+		if(GLFW_MOUSE_BUTTON_LEFT == button)
+		{
+			if(GLFW_PRESS == action)
+			{
+				_captured = true;
+				if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
+				{
+					intptr_t id = 0;
+					this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
+				}
+			}
+			else if(GLFW_RELEASE == action)
+			{
+				if (_captured)
+				{
+					_captured = false;
+					intptr_t id = 0;
+					this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
+				}
+			}
+		}
 
-	//std::cout<<"Mouse detected id:"<<button<<" action: "<<action<<std::endl;
-
-    if(GLFW_MOUSE_BUTTON_LEFT == button)
-    {
-        if(GLFW_PRESS == action)
-        {
-            _captured = true;
-            if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
-            {
-                intptr_t id = 0;
-                this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
-            }
-        }
-        else if(GLFW_RELEASE == action)
-        {
-            if (_captured)
-            {
-                _captured = false;
-                intptr_t id = 0;
-                this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
-            }
-        }
-    }
     
-    //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+		//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
+		float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
+		float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
 
-    if(GLFW_PRESS == action)
-    {
-        EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
-        event.setCursorPosition(cursorX, cursorY);
-        event.setMouseButton(button);
-        Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-    }
-    else if(GLFW_RELEASE == action)
-    {
-        EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
-        event.setCursorPosition(cursorX, cursorY);
-        event.setMouseButton(button);
-        Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-    }
+		if(GLFW_PRESS == action)
+		{
+			EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
+			event.setCursorPosition(cursorX, cursorY);
+			event.setMouseButton(button);
+			Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+		}
+		else if(GLFW_RELEASE == action)
+		{
+			EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
+			event.setCursorPosition(cursorX, cursorY);
+			event.setMouseButton(button);
+			Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+		}
+	}
 }
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
@@ -781,19 +781,8 @@ Size GLView::getScreenSize(){
 	const GLFWvidmode* videoMode = glfwGetVideoMode(moni);
 	return Size(videoMode->width, videoMode->height);
 }
-
-bool GLView::getMouseEnable()const{
-	return this->_isMouseEnable;
-}
-void GLView::setMouseEnable(bool v){
-	if(v){
-		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
-		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
-
-	}else{
-		glfwSetInputMode(_mainWindow,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
-	}
-	this->_isMouseEnable = v;
+void GLView::setMouseEnable(bool value){
+	this->_isMouseEnable = value;
 }
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
@@ -927,8 +916,5 @@ Vec2 GLView::glPosToCocos(float x, float y){
 	v.y = (_viewPortRect.origin.y + _viewPortRect.size.height - y) / _scaleY;
 	return v;
 }
-
-
-
 
 NS_CC_END // end of namespace cocos2d;
