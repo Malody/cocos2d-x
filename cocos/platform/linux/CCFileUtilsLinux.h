@@ -51,6 +51,7 @@ public:
     /* override funtions */
     bool init();
     virtual std::string getWritablePath() const;
+	virtual std::string getWritablePath(FileUtils::AppleWritableTarget target)const;
 private:
     virtual bool isFileExistInternal(const std::string& strFilePath) const;
 };

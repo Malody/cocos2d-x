@@ -309,6 +309,10 @@ string FileUtilsWin32::getWritablePath() const
 	return writablePath;
 }
 
+string FileUtilsWin32::getWritablePath(FileUtils::AppleWritableTarget target)const{
+	return writablePath;
+}
+
 string FileUtilsWin32::getWritablePathInternal()
 {
     // Get full path of executable, e.g. c:\Program Files (x86)\My Game Folder\MyGame.exe

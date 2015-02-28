@@ -75,6 +75,8 @@ public:
     virtual Data getDataFromFile(const std::string& filename) override;
 
     virtual std::string getWritablePath() const;
+	virtual std::string getWritablePath(FileUtils::AppleWritableTarget target)const;
+
     virtual bool isAbsolutePath(const std::string& strPath) const;
     
 private:

@@ -100,6 +100,10 @@ string FileUtilsLinux::getWritablePath() const
     return _writablePath;
 }
 
+std::string FileUtilsLinux::getWritablePath(FileUtils::AppleWritableTarget target)const{
+	return this->getWritablePath();
+}
+
 bool FileUtilsLinux::isFileExistInternal(const std::string& strFilePath) const
 {
     if (strFilePath.empty())

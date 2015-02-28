@@ -387,6 +387,10 @@ string FileUtilsAndroid::getWritablePath() const
     }
 }
 
+std::string FileUtilsAndroid::getWritablePath(FileUtils::AppleWritableTarget target)const{
+	return this->getWritablePath();
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

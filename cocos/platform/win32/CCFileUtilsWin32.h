@@ -54,6 +54,7 @@ public:
     /* override funtions */
     bool init();
     virtual std::string getWritablePath() const;
+	virtual std::string getWritablePath(FileUtils::AppleWritableTarget target)const;
     virtual bool isAbsolutePath(const std::string& strPath) const;
 protected:
 	std::string writablePath;
