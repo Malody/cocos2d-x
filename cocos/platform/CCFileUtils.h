@@ -283,13 +283,26 @@ public:
      *  @lua NA
      */
     virtual const std::vector<std::string>& getSearchPaths() const;
-
+    
+    /**
+     *  Explicit the target where the writable path is in apple platform : ios or mac
+     *
+     *
+     */
+    enum AppleWritableTarget{
+        TargetDoc = 0x1,
+        TargetTmp = 0x2,
+        TargetCache = 0x3,
+        TargetLib = 0x4
+    };
+    
+    virtual std::string getWritablePath(AppleWritableTarget target)const = 0;
+    
     /**
      *  Gets the writable path.
      *  @return  The path that can be write/read a file in
      */
     virtual std::string getWritablePath() const = 0;
-    
     /**
      *  Checks whether a file exists.
      *

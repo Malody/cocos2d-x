@@ -44,6 +44,7 @@ class CC_DLL FileUtilsApple : public FileUtils
 {
 public:
     /* override funtions */
+    virtual std::string getWritablePath(AppleWritableTarget target) const override;
     virtual std::string getWritablePath() const override;
     virtual std::string getFullPathForDirectoryAndFilename(const std::string& directory, const std::string& filename) override;
     

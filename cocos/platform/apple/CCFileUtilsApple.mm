@@ -321,6 +321,48 @@ FileUtils* FileUtils::getInstance()
     return s_sharedFileUtils;
 }
 
+std::string FileUtilsApple::getWritablePath(FileUtils::AppleWritableTarget target)const{
+    std::string strRet;
+    
+    switch(target){
+        case AppleWritableTarget::TargetCache :
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            NSString *path = [paths objectAtIndex:0];
+            strRet = [path UTF8String];
+            strRet.append("/");
+        }break;
+        case AppleWritableTarget::TargetDoc :
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *path = [paths objectAtIndex:0];
+            strRet = [path UTF8String];
+            strRet.append("/");
+        }break;
+        case AppleWritableTarget::TargetTmp :
+        {
+            NSString *tmpDir = NSTemporaryDirectory();
+            strRet = [tmpDir UTF8String];
+            
+            //Different from /document and /cache, temp path has a '/' at the end
+            //strRet.append("/");
+        }break;
+        case AppleWritableTarget::TargetLib:
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+            NSString *path = [paths objectAtIndex:0];
+            strRet = [path UTF8String];
+            strRet.append("/");
+        }break;
+        default:
+        {
+            strRet = this->getWritablePath();
+        }
+    }
+    
+    return strRet;
+}
+
 
 std::string FileUtilsApple::getWritablePath() const
 {
