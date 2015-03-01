@@ -397,7 +397,9 @@ void Director::setOpenGLView(GLView *openGLView)
 }
 
 void Director::setMouseEnable(bool value){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	this->getOpenGLView()->setMouseEnable(value);
+#endif
 }
 
 
