@@ -19,8 +19,6 @@ set(EXTENSIONS_SRC
   GUI/CCScrollView/CCScrollView.cpp
   GUI/CCScrollView/CCTableView.cpp
   GUI/CCScrollView/CCTableViewCell.cpp
-  physics-nodes/CCPhysicsDebugNode.cpp
-  physics-nodes/CCPhysicsSprite.cpp
 )
 
 if(WIN32)

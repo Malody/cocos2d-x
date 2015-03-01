@@ -10,7 +10,6 @@ set(COCOS_SRC
 include(2d/CMakeLists.txt)
 include(3d/CMakeLists.txt)
 include(platform/CMakeLists.txt)
-include(physics/CMakeLists.txt)
 include(math/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
@@ -27,7 +26,6 @@ add_library(cocos2d STATIC
   ${COCOS_BASE_SRC}
   ${COCOS_RENDERER_SRC}
   ${COCOS_MATH_SRC}
-  ${COCOS_PHYSICS_SRC}
   ${COCOS_UI_SRC}
   ${COCOS_NETWORK_SRC}
   ${COCOS_STORAGE_SRC}
@@ -91,7 +89,6 @@ set(COCOS_LINK
 endif()
 
 target_link_libraries(cocos2d
-  chipmunk_static
   tinyxml2
   unzip
   xxhash

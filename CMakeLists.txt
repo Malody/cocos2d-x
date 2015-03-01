@@ -144,7 +144,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2
   ${CMAKE_CURRENT_SOURCE_DIR}/external/unzip
   ${CMAKE_CURRENT_SOURCE_DIR}/external/edtaa3func
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/chipmunk/include/chipmunk
   ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/include/${PLATFORM_FOLDER}
   ${CMAKE_CURRENT_SOURCE_DIR}/external/png/include/${PLATFORM_FOLDER}
   ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/include/${PLATFORM_FOLDER}
@@ -208,12 +207,6 @@ else()
 
 endif()
 
-# chipmunk library
-add_subdirectory(external/chipmunk/src)
-
-# box2d library
-add_subdirectory(external/Box2D)
-
 # unzip library
 add_subdirectory(external/unzip)
 
@@ -222,9 +215,6 @@ add_subdirectory(external/tinyxml2)
 
 # xxhash library
 add_subdirectory(external/xxhash)
-
-# audio
-add_subdirectory(cocos/audio)
 
 # cocos2d library
 add_subdirectory(cocos)
