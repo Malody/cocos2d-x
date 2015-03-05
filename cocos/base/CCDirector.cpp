@@ -547,6 +547,14 @@ void Director::popMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
+void Director::setCursorVisible(bool state){
+	if(state){
+		glfwSetInputMode(this->getOpenGLView()->getWindow(),GLFW_CURSOR,GLFW_CURSOR_NORMAL);
+	}else{
+		glfwSetInputMode(this->getOpenGLView()->getWindow(),GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+	}
+}
+
 void Director::loadIdentityMatrix(MATRIX_STACK_TYPE type)
 {
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
