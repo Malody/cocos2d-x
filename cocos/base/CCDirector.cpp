@@ -548,11 +548,13 @@ void Director::popMatrix(MATRIX_STACK_TYPE type)
 }
 
 void Director::setCursorVisible(bool state){
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	if(state){
 		glfwSetInputMode(this->getOpenGLView()->getWindow(),GLFW_CURSOR,GLFW_CURSOR_NORMAL);
 	}else{
 		glfwSetInputMode(this->getOpenGLView()->getWindow(),GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
 	}
+#endif
 }
 
 void Director::loadIdentityMatrix(MATRIX_STACK_TYPE type)
