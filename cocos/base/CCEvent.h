@@ -52,7 +52,8 @@ public:
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         GAME_CONTROLLER,
 #endif
-        CUSTOM
+        CUSTOM,
+        WINTOUCH
     };
     
 protected:

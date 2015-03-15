@@ -32,4 +32,9 @@ EventTouch::EventTouch()
     _touches.reserve(MAX_TOUCHES);
 }
 
+EventWinTouch::EventWinTouch():Event(Type::WINTOUCH)
+{
+    this->_touches.reserve(MAX_WINTOUCHES);
+}
+
 NS_CC_END

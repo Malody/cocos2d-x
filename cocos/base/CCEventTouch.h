@@ -67,10 +67,21 @@ private:
 class EventWinTouch : public Event
 {
 public:
-
+    static const int MAX_WINTOUCHES = 10;
+    
+    EventWinTouch();
+    
+    inline EventTouch::EventCode getEventCode()const{return _eventCode;};
+    inline const std::vector<Touch*>& getTouches()const{return _touches;};
+#if TOUCH_PERF_DEBUG
+    void setEventCode(EventTouch::EventCode code){_eventCode = code;};
+    void setTouches(const std::vector<Touch*>& touches){_touches = touches;};
+#endif
 protected:
-
-
+    EventTouch::EventCode _eventCode;
+    std::vector<Touch*> _touches;
+    
+    friend class GLViewProtocol;
 };
 
 
