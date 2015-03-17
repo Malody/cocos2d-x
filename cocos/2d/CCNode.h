@@ -544,6 +544,17 @@ public:
      */
     virtual Vec3 getRotation3D() const;
 
+	/**
+     * set rotation by quaternion
+     */
+    virtual void setRotationQuat(const Quaternion& quat);
+    
+    /**
+     * return the rotation by quaternion, Note that when _rotationZ_X == _rotationZ_Y, the returned quaternion equals to RotationZ_X * RotationY * RotationX, 
+     * it equals to RotationY * RotationX otherwise
+     */
+    virtual Quaternion getRotationQuat() const;
+
     /**
      * Sets the X rotation (angle) of the node in degrees which performs a horizontal rotational skew.
      *
@@ -1513,6 +1524,11 @@ protected:
     
     bool doEnumerate(std::string name, std::function<bool (Node *)> callback) const;
     bool doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const;
+
+	// update quaternion from Rotation3D
+    void updateRotationQuat();
+    // update Rotation3D from quaternion
+    void updateRotation3D();
     
 #if CC_USE_PHYSICS
     void updatePhysicsBodyTransform(Scene* layer);
@@ -1532,6 +1548,8 @@ protected:
     // rotation Z is decomposed in 2 to simulate Skew for Flash animations
     float _rotationZ_X;             ///< rotation angle on Z-axis, component X
     float _rotationZ_Y;             ///< rotation angle on Z-axis, component Y
+
+	Quaternion _rotationQuat;      ///rotation using quaternion, if _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX, else _rotationQuat = RotationY * RotationX
 
     float _scaleX;                  ///< scaling factor on x-axis
     float _scaleY;                  ///< scaling factor on y-axis

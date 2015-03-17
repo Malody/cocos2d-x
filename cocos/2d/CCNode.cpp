@@ -554,6 +554,44 @@ void Node::setPositionZ(float positionZ)
     setGlobalZOrder(positionZ);
 }
 
+void Node::updateRotationQuat()
+{
+    // convert Euler angle to quaternion
+    // when _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX
+    // when _rotationZ_X != _rotationZ_Y, _rotationQuat = RotationY * RotationX
+    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f), halfRady = CC_DEGREES_TO_RADIANS(_rotationY / 2.f), halfRadz = _rotationZ_X == _rotationZ_Y ? -CC_DEGREES_TO_RADIANS(_rotationZ_X / 2.f) : 0;
+    float coshalfRadx = cosf(halfRadx), sinhalfRadx = sinf(halfRadx), coshalfRady = cosf(halfRady), sinhalfRady = sinf(halfRady), coshalfRadz = cosf(halfRadz), sinhalfRadz = sinf(halfRadz);
+    _rotationQuat.x = sinhalfRadx * coshalfRady * coshalfRadz - coshalfRadx * sinhalfRady * sinhalfRadz;
+    _rotationQuat.y = coshalfRadx * sinhalfRady * coshalfRadz + sinhalfRadx * coshalfRady * sinhalfRadz;
+    _rotationQuat.z = coshalfRadx * coshalfRady * sinhalfRadz - sinhalfRadx * sinhalfRady * coshalfRadz;
+    _rotationQuat.w = coshalfRadx * coshalfRady * coshalfRadz + sinhalfRadx * sinhalfRady * sinhalfRadz;
+}
+
+void Node::updateRotation3D()
+{
+    //convert quaternion to Euler angle
+    float x = _rotationQuat.x, y = _rotationQuat.y, z = _rotationQuat.z, w = _rotationQuat.w;
+    _rotationX = atan2f(2.f * (w * x + y * z), 1.f - 2.f * (x * x + y * y));
+    _rotationY = asinf(2.f * (w * y - z * x));
+    _rotationZ_X = atanf(2.f * (w * z + x * y) / (1.f - 2.f * (y * y + z * z)));
+    
+    _rotationX = CC_RADIANS_TO_DEGREES(_rotationX);
+    _rotationY = CC_RADIANS_TO_DEGREES(_rotationY);
+    _rotationZ_X = _rotationZ_Y = -CC_RADIANS_TO_DEGREES(_rotationZ_X);
+}
+
+void Node::setRotationQuat(const Quaternion& quat)
+{
+    _rotationQuat = quat;
+    updateRotation3D();
+    _transformUpdated = _transformDirty = _inverseDirty = true;
+}
+
+Quaternion Node::getRotationQuat() const
+{
+    return _rotationQuat;
+}
+
 /// position getter
 const Vec2& Node::getNormalizedPosition() const
 {
@@ -1584,7 +1622,7 @@ AffineTransform Node::getNodeToParentAffineTransform() const
 
 const Mat4& Node::getNodeToParentTransform() const
 {
-    if (_transformDirty)
+    /*if (_transformDirty)
     {
         // Translate values
         float x = _position.x;
@@ -1686,6 +1724,105 @@ const Mat4& Node::getNodeToParentTransform() const
             _transform = _transform * _additionalTransform;
         }
 
+        _transformDirty = false;
+    }*/
+
+	if (_transformDirty)
+    {
+        // Translate values
+        float x = _position.x;
+        float y = _position.y;
+        float z = _positionZ;
+        
+        if (_ignoreAnchorPointForPosition)
+        {
+            x += _anchorPointInPoints.x;
+            y += _anchorPointInPoints.y;
+        }
+        
+        bool needsSkewMatrix = ( _skewX || _skewY );
+        
+        
+        Vec2 anchorPoint(_anchorPointInPoints.x * _scaleX, _anchorPointInPoints.y * _scaleY);
+        
+        // caculate real position
+        if (! needsSkewMatrix && !_anchorPointInPoints.equals(Vec2::ZERO))
+        {
+            x += -anchorPoint.x;
+            y += -anchorPoint.y;
+        }
+        
+        // Build Transform Matrix = translation * rotation * scale
+        Mat4 translation;
+        //move to anchor point first, then rotate
+        Mat4::createTranslation(x + anchorPoint.x, y + anchorPoint.y, z, &translation);
+        
+        Mat4::createRotation(_rotationQuat, &_transform);
+        
+        if (_rotationZ_X != _rotationZ_Y)
+        {
+            // Rotation values
+            // Change rotation code to handle X and Y
+            // If we skew with the exact same value for both x and y then we're simply just rotating
+            float radiansX = -CC_DEGREES_TO_RADIANS(_rotationZ_X);
+            float radiansY = -CC_DEGREES_TO_RADIANS(_rotationZ_Y);
+            float cx = cosf(radiansX);
+            float sx = sinf(radiansX);
+            float cy = cosf(radiansY);
+            float sy = sinf(radiansY);
+            
+            float m0 = _transform.m[0], m1 = _transform.m[1], m4 = _transform.m[4], m5 = _transform.m[5], m8 = _transform.m[8], m9 = _transform.m[9];
+            _transform.m[0] = cy * m0 - sx * m1, _transform.m[4] = cy * m4 - sx * m5, _transform.m[8] = cy * m8 - sx * m9;
+            _transform.m[1] = sy * m0 + cx * m1, _transform.m[5] = sy * m4 + cx * m5, _transform.m[9] = sy * m8 + cx * m9;
+        }
+        _transform = translation * _transform;
+        //move by (-anchorPoint.x, -anchorPoint.y, 0) after rotation
+        _transform.translate(-anchorPoint.x, -anchorPoint.y, 0);
+        
+        
+        if (_scaleX != 1.f)
+        {
+            _transform.m[0] *= _scaleX, _transform.m[1] *= _scaleX, _transform.m[2] *= _scaleX;
+        }
+        if (_scaleY != 1.f)
+        {
+            _transform.m[4] *= _scaleY, _transform.m[5] *= _scaleY, _transform.m[6] *= _scaleY;
+        }
+        if (_scaleZ != 1.f)
+        {
+            _transform.m[8] *= _scaleZ, _transform.m[9] *= _scaleZ, _transform.m[10] *= _scaleZ;
+        }
+        
+        // FIXME:: Try to inline skew
+        // If skew is needed, apply skew and then anchor point
+        if (needsSkewMatrix)
+        {
+            float skewMatArray[16] =
+            {
+                1, (float)tanf(CC_DEGREES_TO_RADIANS(_skewY)), 0, 0,
+                (float)tanf(CC_DEGREES_TO_RADIANS(_skewX)), 1, 0, 0,
+                0,  0,  1, 0,
+                0,  0,  0, 1
+            };
+            Mat4 skewMatrix(skewMatArray);
+            
+            _transform = _transform * skewMatrix;
+            
+            // adjust anchor point
+            if (!_anchorPointInPoints.equals(Vec2::ZERO))
+            {
+                // FIXME:: Argh, Mat4 needs a "translate" method.
+                // FIXME:: Although this is faster than multiplying a vec4 * mat4
+                _transform.m[12] += _transform.m[0] * -_anchorPointInPoints.x + _transform.m[4] * -_anchorPointInPoints.y;
+                _transform.m[13] += _transform.m[1] * -_anchorPointInPoints.x + _transform.m[5] * -_anchorPointInPoints.y;
+            }
+        }
+        
+        if (_useAdditionalTransform)
+        {
+            _transform = _transform * _additionalTransform;
+        }
+        
         _transformDirty = false;
     }
 
