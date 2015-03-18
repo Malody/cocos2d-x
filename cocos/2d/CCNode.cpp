@@ -311,6 +311,7 @@ void Node::setRotation3D(const Vec3& rotation)
 
     // rotation Z is decomposed in 2 to simulate Skew for Flash animations
     _rotationZ_Y = _rotationZ_X = rotation.z;
+	updateRotationQuat();
 
 #if CC_USE_PHYSICS
     if (_physicsBody != nullptr)
@@ -1314,9 +1315,7 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
 
 Mat4 Node::transform(const Mat4& parentTransform)
 {
-    Mat4 ret = this->getNodeToParentTransform();
-    ret  = parentTransform * ret;
-    return ret;
+	return parentTransform * this->getNodeToParentTransform();
 }
 
 void Node::onEnter()
@@ -2170,7 +2169,7 @@ void Node::updateDisplayedOpacity(GLubyte parentOpacity)
     
     if (_cascadeOpacityEnabled)
     {
-        for(auto child : _children){
+        for(const auto& child : _children){
             child->updateDisplayedOpacity(_displayedOpacity);
         }
     }
@@ -2216,7 +2215,7 @@ void Node::disableCascadeOpacity()
 {
     _displayedOpacity = _realOpacity;
     
-    for(auto child : _children){
+    for(const auto& child : _children){
         child->updateDisplayedOpacity(255);
     }
 }
@@ -2290,7 +2289,7 @@ void Node::updateCascadeColor()
 
 void Node::disableCascadeColor()
 {
-    for(auto child : _children){
+    for(const auto& child : _children){
         child->updateDisplayedColor(Color3B::WHITE);
     }
 }

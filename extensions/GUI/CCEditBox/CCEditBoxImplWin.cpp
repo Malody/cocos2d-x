@@ -242,13 +242,14 @@ void EditBoxImplWin::openKeyboard()
     }
     
     EditBox* pEditBox = this->getEditBox();
+#if CC_ENABLE_SCRIPT_BINDING
     if (nullptr != pEditBox && 0 != pEditBox->getScriptEditBoxHandler())
     {
         CommonScriptData data(pEditBox->getScriptEditBoxHandler(), "began",pEditBox);
         ScriptEvent event(kCommonEvent,(void*)&data);
         ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
     }
-    
+#endif
 	std::string placeHolder = _labelPlaceHolder->getString();
 	if (placeHolder.length() == 0)
 		placeHolder = "Enter value";
