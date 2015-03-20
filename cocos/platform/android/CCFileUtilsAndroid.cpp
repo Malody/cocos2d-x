@@ -169,7 +169,7 @@ Data FileUtilsAndroid::getData(const std::string& filename, bool forString)
                                relativePath.c_str(),
                                AASSET_MODE_UNKNOWN);
         if (nullptr == asset) {
-            LOGD("asset is nullptr");
+            //LOGD("asset is nullptr");
             return Data::Null;
         }
 

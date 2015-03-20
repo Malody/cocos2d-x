@@ -31,6 +31,14 @@ THE SOFTWARE.
 
 #include "base/CCData.h"
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#include <android/log.h>
+#define  LOG_TAG    "CCImage.cpp"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+#else
+#define  LOGD(...)  {}
+#endif
+
 
 #ifdef EMSCRIPTEN
 #include <SDL/SDL.h>
