@@ -257,6 +257,8 @@ public:
 
     // overrides
     virtual void setContentSize(const Size & size) override;
+	
+	virtual void setDesignSize(const Size & size);
     /**
      * @js NA
      * @lua NA

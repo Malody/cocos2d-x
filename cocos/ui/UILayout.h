@@ -190,6 +190,8 @@ public:
     const Color3B& getBackGroundImageColor()const;
     
     GLubyte getBackGroundImageOpacity()const;
+	
+	virtual void setDesignSize(const cocos2d::Size &contentSize);
     
     /**
      * Remove the background image of layout.

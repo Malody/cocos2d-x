@@ -387,6 +387,12 @@ void Scale9Sprite::setContentSize(const Size &size)
     this->_positionsAreDirty = true;
 }
 
+void Scale9Sprite::setDesignSize(const Size& size){
+	Size _size(size.width / _scaleX, size.height / _scaleY);
+	Node::setContentSize(_size);
+	this->_positionsAreDirty = true;
+}
+
 void Scale9Sprite::updatePositions()
 {
     // Check that instances are non-nullptr

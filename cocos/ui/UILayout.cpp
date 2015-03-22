@@ -961,6 +961,11 @@ void Layout::requestDoLayout()
 {
     _doLayoutDirty = true;
 }
+	
+void Layout::setDesignSize(const cocos2d::Size &contentSize){
+	Size _size(contentSize.width / _scaleX, contentSize.height / _scaleY);
+	Widget::setContentSize(_size);
+}
     
 Size Layout::getLayoutContentSize()const
 {
