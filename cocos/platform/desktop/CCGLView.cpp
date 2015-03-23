@@ -617,7 +617,7 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
 
 	//std::cout<<"Touch detected id:"<<touch<<" action: "<<action;
-
+	/*
 	_mouseX = (float)x;
 	_mouseY = (float)y;
 
@@ -656,8 +656,45 @@ void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,doub
 	default:{
 
 			}break;
-	}
+	}*/
 	//std::cout<<"pos "<<_mouseX<<'|'<<_mouseY<<std::endl;
+
+	//Use new WinTouchEvent to instead of Original Touch Event
+
+	static float _touchX = static_cast<float>(x);
+	static float _touchY = static_cast<float>(y);
+
+	_touchX /= this->getFrameZoomFactor();
+	_touchY /= this->getFrameZoomFactor();
+
+	if(_isInRetinaMonitor && (_retinaFactor == 1)){
+		_touchX *= 2;
+		_touchY *= 2;
+	}
+
+	switch(action){
+	case GLFW_PRESS:
+		{
+			if(this->getViewPortRect().equals(Rect::ZERO)){
+				int id = touch;
+				this->handleWinTouchesBegin(id,x,y);
+			}
+		}break;
+	case GLFW_MOVE:
+		{
+			int id = touch;
+			this->handleWinTouchesMove(id,x,y);
+		}break;
+	case GLFW_RELEASE:
+		{
+			int id = touch;
+			this->handleWinTouchesEnd(id,x,y);
+		}break;
+	default:
+		{
+
+		}break;
+	}
 }
 #endif
 

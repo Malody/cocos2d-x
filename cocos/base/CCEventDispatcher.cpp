@@ -799,7 +799,14 @@ void EventDispatcher::dispatchEvent(Event* event)
     {
         dispatchTouchEvent(static_cast<EventTouch*>(event));
         return;
-    }
+	}
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	else if(event->getType() == Event::Type::WINTOUCH)
+	{
+		dispatchWinTouchEvent(static_cast<EventWinTouch*>(event));
+		return;
+	}
+#endif
     
     auto listenerID = __getListenerID(event);
     
@@ -828,6 +835,12 @@ void EventDispatcher::dispatchCustomEvent(const std::string &eventName, void *op
     ev.setUserData(optionalUserData);
     dispatchEvent(&ev);
 }
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+void EventDispatcher::dispatchWinTouchEvent(cocos2d::EventWinTouch* event){
+
+}
+#endif
 
 
 void EventDispatcher::dispatchTouchEvent(EventTouch* event)

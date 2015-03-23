@@ -165,6 +165,13 @@ public:
     virtual void handleTouchesEnd(int num, intptr_t ids[], float xs[], float ys[]);
     virtual void handleTouchesCancel(int num, intptr_t ids[], float xs[], float ys[]);
 
+	/* WinTouch Event for WinTouch Deviced Only	*/
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	virtual void handleWinTouchesBegin(int id, float x,float y);
+	virtual void handleWinTouchesMove(int id,float x,float y);
+	virtual void handleWinTouchesEnd(int id,float x,float y);
+#endif
+
     /**
      * Get the opengl view port rectangle.
      */
@@ -200,6 +207,10 @@ protected:
     float _scaleX;
     float _scaleY;
     ResolutionPolicy _resolutionPolicy;
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+
+#endif
 };
 
 // end of platform group

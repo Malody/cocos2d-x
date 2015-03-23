@@ -40,6 +40,7 @@ NS_CC_BEGIN
 
 class Event;
 class EventTouch;
+class EventWinTouch;
 class Node;
 class EventCustom;
 class EventListenerCustom;
@@ -220,6 +221,10 @@ protected:
 
     /** Touch event needs to be processed different with other events since it needs support ALL_AT_ONCE and ONE_BY_NONE mode. */
     void dispatchTouchEvent(EventTouch* event);
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	void dispatchWinTouchEvent(cocos2d::EventWinTouch* event);
+#endif
     
     /** Associates node with event listener */
     void associateNodeAndEventListener(Node* node, EventListener* listener);
