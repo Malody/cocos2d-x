@@ -102,6 +102,8 @@ public:
 
     //override "ignoreContentAdaptWithSize" method of widget.
     virtual void ignoreContentAdaptWithSize(bool ignore) override;
+	
+	void setDesignSize(const Size& size);
 
     /**
      * Returns the "class name" of widget.

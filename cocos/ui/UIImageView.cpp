@@ -259,6 +259,15 @@ void ImageView::setCapInsets(const Rect &capInsets)
     }
     STATIC_CAST_SCALE9SPRITE->setCapInsets(capInsets);
 }
+	
+void ImageView::setDesignSize(const cocos2d::Size &size){
+	if(_scale9Enabled){
+		Size _size(size.width / _scaleX, size.height / _scaleY);
+		setContentSize(_size);
+	}else{
+		setContentSize(size);
+	}
+}
 
 const Rect& ImageView::getCapInsets()const
 {
