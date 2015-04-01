@@ -81,6 +81,8 @@ public:
      */
     CC_DEPRECATED_ATTRIBUTE void setText(const std::string& text){this->setString(text);}
     void setString(const std::string& text);
+	
+	void setString(const std::string& text, int maxLen);
 
     /**
      * Gets the string value of label.
