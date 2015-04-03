@@ -1122,6 +1122,14 @@ Vec2 Layout::getWorldCenterPoint(Widget* widget)const
 }
 
 void Layout::interceptTouchEvent(Widget::TouchEventType event,Widget* sender, Touch* touch){
+	//touch事件在child触发, 父级也应该持有同样的touch点
+	if(event == TouchEventType::BEGAN){
+		_touchBeganPosition = touch->getLocation();
+	}else if(event == TouchEventType::MOVED){
+		_touchMovePosition = touch->getLocation();
+	}else if(event == TouchEventType::ENDED){
+		_touchEndPosition = touch->getLocation();
+	}
 	if (_touchEventCallback) {
 		_touchEventCallback(this, event);
 	}else{
