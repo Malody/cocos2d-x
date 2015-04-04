@@ -746,7 +746,7 @@ void GLView::onGLFWMouseScrollCallback(GLFWwindow* window, double x, double y)
 {
     EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-	Vec2 v = glPosToCocos(_mouseY, _mouseY);
+	Vec2 v = glPosToCocos(_mouseX, _mouseY);
 
     event.setScrollData((float)x, -(float)y);
     event.setCursorPosition(v.x, v.y);

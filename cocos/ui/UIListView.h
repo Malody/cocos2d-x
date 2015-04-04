@@ -173,6 +173,7 @@ public:
 	virtual void removeChild(Node* child, bool cleaup = true) override;
     
     ssize_t getCurSelectedIndex() const;
+	void setSelectedIndex(ssize_t idx);
     
     CC_DEPRECATED_ATTRIBUTE void addEventListenerListView(Ref* target, SEL_ListViewEvent selector);
     void addEventListener(const ccListViewCallback& callback);
