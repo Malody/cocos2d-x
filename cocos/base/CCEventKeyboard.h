@@ -207,7 +207,9 @@ public:
 		KEY_ALT_LEFT,
 		KEY_SHIFT_RIGHT,
 		KEY_CTRL_RIGHT,
-		KEY_ALT_RIGHT
+		KEY_ALT_RIGHT,
+		KEY_MOUSE_LEFT,
+		KEY_MOUSE_RIGHT
     };
     
     EventKeyboard(KeyCode keyCode, bool isPressed);
