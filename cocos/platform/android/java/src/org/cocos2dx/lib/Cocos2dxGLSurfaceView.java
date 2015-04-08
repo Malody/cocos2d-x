@@ -33,6 +33,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
+import java.security.Key;
+
 public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 	// ===========================================================
 	// Constants
@@ -289,12 +291,32 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 	@Override
 	protected void onSizeChanged(final int pNewSurfaceWidth, final int pNewSurfaceHeight, final int pOldSurfaceWidth, final int pOldSurfaceHeight) {
 		if(!this.isInEditMode()) {
+			if(pNewSurfaceWidth == pOldSurfaceWidth && pNewSurfaceHeight == pOldSurfaceHeight){
+				return;
+			}
 			this.mCocos2dxRenderer.setScreenWidthAndHeight(pNewSurfaceWidth, pNewSurfaceHeight);
 		}
 	}
 
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pKeyEvent) {
+		boolean canSend = false;
+		if(pKeyCode >= KeyEvent.KEYCODE_0 && pKeyCode <= KeyEvent.KEYCODE_9){
+			canSend = true;
+		}else if(pKeyCode >= KeyEvent.KEYCODE_A && pKeyCode <= KeyEvent.KEYCODE_SPACE){
+			canSend = true;
+		}else if(pKeyCode == KeyEvent.KEYCODE_CTRL_LEFT || pKeyCode == KeyEvent.KEYCODE_CTRL_RIGHT){
+			canSend = true;
+		}
+		if(canSend){
+			this.queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleKeyDown(pKeyCode);
+				}
+			});
+			return true;
+		}
 		switch (pKeyCode) {
 			case KeyEvent.KEYCODE_BACK:
 				Cocos2dxVideoHelper.mVideoHandler.sendEmptyMessage(Cocos2dxVideoHelper.KeyEventBack);

@@ -74,6 +74,19 @@ extern "C" {
 #define KEYCODE_ENTER 0x42
 #define KEYCODE_PLAY  0x7e
 #define KEYCODE_DPAD_CENTER  0x17
+#define KEYCODE_0 7
+#define KEYCODE_9 16
+#define KEYCODE_A 29
+#define KEYCODE_Z 54
+#define KEYCODE_F1 131
+#define KEYCODE_F12 142
+#define KEYCODE_ALT_LEFT 57
+#define KEYCODE_ALT_RIGHT 58
+#define KEYCODE_SHIFT_LEFT 59
+#define KEYCODE_SHIFT_RIGHT 60
+#define KEYCODE_SPACE 62
+#define KEYCODE_CTRL_LEFT 113
+#define KEYCODE_CTRL_RIGHT 114
     
     
     static std::unordered_map<int, cocos2d::EventKeyboard::KeyCode> g_keyCodeMap = {
@@ -86,18 +99,43 @@ extern "C" {
         { KEYCODE_ENTER  , cocos2d::EventKeyboard::KeyCode::KEY_ENTER},
         { KEYCODE_PLAY  , cocos2d::EventKeyboard::KeyCode::KEY_PLAY},
         { KEYCODE_DPAD_CENTER  , cocos2d::EventKeyboard::KeyCode::KEY_DPAD_CENTER},
+        { KEYCODE_CTRL_LEFT, cocos2d::EventKeyboard::KeyCode::KEY_CTRL_LEFT},
+        { KEYCODE_CTRL_RIGHT, cocos2d::EventKeyboard::KeyCode::KEY_CTRL_RIGHT},
+        { KEYCODE_SHIFT_LEFT, cocos2d::EventKeyboard::KeyCode::KEY_SHIFT_LEFT},
+        { KEYCODE_SHIFT_RIGHT, cocos2d::EventKeyboard::KeyCode::KEY_SHIFT_RIGHT},
+        { KEYCODE_ALT_LEFT, cocos2d::EventKeyboard::KeyCode::KEY_ALT_LEFT},
+        { KEYCODE_ALT_RIGHT, cocos2d::EventKeyboard::KeyCode::KEY_ALT_RIGHT},
+        { KEYCODE_SPACE, cocos2d::EventKeyboard::KeyCode::KEY_SPACE}
         
     };
     
     JNIEXPORT jboolean JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyDown(JNIEnv * env, jobject thiz, jint keyCode) {
         Director* pDirector = Director::getInstance();
         
-        auto iterKeyCode = g_keyCodeMap.find(keyCode);
-        if (iterKeyCode == g_keyCodeMap.end()) {
-            return JNI_FALSE;
+        bool canSend = false;
+        int code = (int)keyCode;
+        cocos2d::EventKeyboard::KeyCode cocos2dKey;
+        if(code >= KEYCODE_0 && code <= KEYCODE_9){
+            canSend = true;
+            cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_0 + code - KEYCODE_0);
+        }else if(code >= KEYCODE_A && code <= KEYCODE_Z){
+            canSend = true;
+            cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_A + code - KEYCODE_A);
+        }else if(code >= KEYCODE_F1 && code <= KEYCODE_F12){
+            canSend = true;
+            cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_F1 + code - KEYCODE_F1);
         }
-        
-        cocos2d::EventKeyboard::KeyCode cocos2dKey = g_keyCodeMap.at(keyCode);
+        if(!canSend){
+            auto iterKeyCode = g_keyCodeMap.find(code);
+            if (iterKeyCode != g_keyCodeMap.end()) {
+                canSend = true;
+                cocos2dKey = g_keyCodeMap.at(code);
+            }
+        }
+        if(!canSend){
+            return JNI_FALSE;   
+        }
+               
         cocos2d::EventKeyboard event(cocos2dKey, true);
         cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
         return JNI_TRUE;
