@@ -1084,8 +1084,7 @@ void Director::closeWindow()
 	if (window)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	Application::getInstance()->applicationWillShutdown();
-    this->end();
+	this->end();
 #endif
 }
 

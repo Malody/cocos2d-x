@@ -60,6 +60,7 @@ int Application::run()
     // Initialize instance and cocos2d.
     if (! applicationDidFinishLaunching())
     {
+		applicationWillShutdown();
         return 0;
     }
     
