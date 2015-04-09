@@ -118,6 +118,8 @@ public:
 
     /** returns whether or not a rectangle is visible or not */
     bool checkVisibility(const Mat4& transform, const Size& size);
+	
+	bool checkVisibility3d(const Mat4& transform, const Size& size, const Size& parent);
 
 protected:
 

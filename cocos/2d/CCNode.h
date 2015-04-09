@@ -946,6 +946,9 @@ public:
     * @lua NA
     */
     virtual const Ref* getUserObject() const { return _userObject; }
+	
+	void setNeed3dCheck(bool need){_need3dCheck = need;}
+	bool isNeed3dCheck() {return _need3dCheck;}
 
     /**
      * Returns a user assigned Object
@@ -1636,6 +1639,7 @@ protected:
     Color3B     _realColor;
     bool		_cascadeColorEnabled;
     bool        _cascadeOpacityEnabled;
+	bool		_need3dCheck;
 
     static int s_globalOrderOfArrival;
     

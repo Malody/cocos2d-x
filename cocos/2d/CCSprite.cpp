@@ -592,7 +592,13 @@ void Sprite::updateTransform(void)
 void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
     // Don't do calculate the culling if the transform was not updated
-    _insideBounds = (flags & FLAGS_TRANSFORM_DIRTY) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
+	if(flags & FLAGS_TRANSFORM_DIRTY){
+		if(getParent()->isNeed3dCheck()){
+			_insideBounds = renderer->checkVisibility3d(transform, _contentSize, _parent->getContentSize());
+		}else{
+			_insideBounds = renderer->checkVisibility(transform, _contentSize);		
+		}
+	}
 
     if(_insideBounds)
     {
