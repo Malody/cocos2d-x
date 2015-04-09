@@ -128,7 +128,6 @@ Node::Node(void)
 , _usingNormalizedPosition(false)
 , _name("")
 , _hashOfName(0)
-, _need3dCheck(false)
 {
     // set default scheduler and actionManager
     _director = Director::getInstance();
