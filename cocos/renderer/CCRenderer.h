@@ -119,6 +119,7 @@ public:
     /** returns whether or not a rectangle is visible or not */
     bool checkVisibility(const Mat4& transform, const Size& size);
 
+	void setScaleY(float scale) { _scaleY = scale;}
 protected:
 
     void setupIndices();
@@ -158,6 +159,8 @@ protected:
     int _numQuads;
     
     bool _glViewAssigned;
+	
+	float _scaleY;
 
     // stats
     ssize_t _drawnBatches;

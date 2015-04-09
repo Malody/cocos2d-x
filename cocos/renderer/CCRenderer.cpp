@@ -112,6 +112,7 @@ Renderer::Renderer()
 ,_numQuads(0)
 ,_glViewAssigned(false)
 ,_isRendering(false)
+,_scaleY(1)
 #if CC_ENABLE_CACHE_TEXTURE_DATA
 ,_cacheTextureListener(nullptr)
 #endif
@@ -546,6 +547,7 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     Size screen_half = Director::getInstance()->getWinSize();
     screen_half.width /= 2;
     screen_half.height /= 2;
+	screen_half.height *= _scaleY;  //f@ck cocos2dx
 
     float hSizeX = size.width/2;
     float hSizeY = size.height/2;
