@@ -122,6 +122,7 @@ bool Director::init(void)
     _FPSLabel = _drawnBatchesLabel = _drawnVerticesLabel = nullptr;
     _totalFrames = _frames = 0;
     _lastUpdate = new struct timeval;
+	_calcuFPS = false;
 
     // paused ?
     _paused = false;
@@ -301,7 +302,9 @@ void Director::drawScene()
     if (_displayStats)
     {
         showStats();
-    }
+	}else if(_calcuFPS){
+		updateFPS();
+	}
 
     _renderer->render();
     _eventDispatcher->dispatchEvent(_eventAfterDraw);
@@ -316,7 +319,7 @@ void Director::drawScene()
         _openGLView->swapBuffers();
     }
 
-    if (_displayStats)
+    if (_displayStats || _calcuFPS)
     {
         calculateMPF();
     }
@@ -1152,6 +1155,17 @@ void Director::resume()
     _deltaTime = 0;
     // fix issue #3509, skip one fps to avoid incorrect time calculation.
     setNextDeltaTimeZero(true);
+}
+
+void Director::updateFPS(){
+	++_frames;
+	_accumDt += _deltaTime;
+	if (_accumDt > CC_DIRECTOR_STATS_INTERVAL)
+	{
+		_frameRate = _frames / _accumDt;
+		_frames = 0;
+		_accumDt = 0;
+	}
 }
 
 // display the FPS using a LabelAtlas

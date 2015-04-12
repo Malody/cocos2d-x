@@ -165,7 +165,7 @@ public:
     inline bool isDisplayStats() { return _displayStats; }
     /** Display the FPS on the bottom-left corner */
     inline void setDisplayStats(bool displayStats) { _displayStats = displayStats; }
-    
+	inline void setCalculateFPS(bool calcu) { _calcuFPS = calcu;}
     /** seconds per frame */
     inline float getSecondsPerFrame() { return _secondsPerFrame; }
 
@@ -427,6 +427,7 @@ protected:
     void setNextScene();
     
     void showStats();
+	void updateFPS();
     void createStatsLabel();
     void calculateMPF();
     void getFPSImageData(unsigned char** datapointer, ssize_t* length);
@@ -470,6 +471,7 @@ protected:
     bool _landscape;
     
     bool _displayStats;
+	bool _calcuFPS;
     float _accumDt;
     float _frameRate;
     
