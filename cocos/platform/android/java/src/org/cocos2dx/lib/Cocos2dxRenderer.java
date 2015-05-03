@@ -166,7 +166,7 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 	}
 
     public void handleKeyUp(final int pKeyCode){
-        Cocos2dxRenderer.nativeKeyDown(pKeyCode);
+        Cocos2dxRenderer.nativeKeyUp(pKeyCode);
     }
 
 	public void handleOnPause() {
