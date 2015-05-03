@@ -108,31 +108,30 @@ extern "C" {
         { KEYCODE_SPACE, cocos2d::EventKeyboard::KeyCode::KEY_SPACE}
         
     };
-    
-    JNIEXPORT jboolean JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyDown(JNIEnv * env, jobject thiz, jint keyCode) {
-        Director* pDirector = Director::getInstance();
-        
-        bool canSend = false;
-        int code = (int)keyCode;
-        cocos2d::EventKeyboard::KeyCode cocos2dKey;
+	
+	cocos2d::EventKeyboard::KeyCode toCocosKeyCode(int code){
+		cocos2d::EventKeyboard::KeyCode cocos2dKey = cocos2d::EventKeyboard::KeyCode::KEY_NONE;
         if(code >= KEYCODE_0 && code <= KEYCODE_9){
-            canSend = true;
             cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_0 + code - KEYCODE_0);
         }else if(code >= KEYCODE_A && code <= KEYCODE_Z){
-            canSend = true;
             cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_A + code - KEYCODE_A);
         }else if(code >= KEYCODE_F1 && code <= KEYCODE_F12){
-            canSend = true;
             cocos2dKey = (cocos2d::EventKeyboard::KeyCode)((int)cocos2d::EventKeyboard::KeyCode::KEY_F1 + code - KEYCODE_F1);
         }
-        if(!canSend){
+        if(cocos2dKey == cocos2d::EventKeyboard::KeyCode::KEY_NONE){
             auto iterKeyCode = g_keyCodeMap.find(code);
             if (iterKeyCode != g_keyCodeMap.end()) {
-                canSend = true;
                 cocos2dKey = g_keyCodeMap.at(code);
             }
         }
-        if(!canSend){
+		return cocos2dKey;
+	}
+    
+    JNIEXPORT jboolean JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyDown(JNIEnv * env, jobject thiz, jint keyCode) {      
+        int code = (int)keyCode;
+        cocos2d::EventKeyboard::KeyCode cocos2dKey = toCocosKeyCode(code);
+		
+        if(cocos2dKey == cocos2d::EventKeyboard::KeyCode::KEY_NONE){
             return JNI_FALSE;   
         }
                
@@ -140,4 +139,19 @@ extern "C" {
         cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
         return JNI_TRUE;
         
-    }}
+    }
+	
+	JNIEXPORT jboolean JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyUp(JNIEnv * env, jobject thiz, jint keyCode) {      
+        int code = (int)keyCode;
+        cocos2d::EventKeyboard::KeyCode cocos2dKey = toCocosKeyCode(code);
+
+        if(cocos2dKey == cocos2d::EventKeyboard::KeyCode::KEY_NONE){
+            return JNI_FALSE;   
+        }
+               
+        cocos2d::EventKeyboard event(cocos2dKey, false);
+        cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+        return JNI_TRUE;
+        
+    }
+}

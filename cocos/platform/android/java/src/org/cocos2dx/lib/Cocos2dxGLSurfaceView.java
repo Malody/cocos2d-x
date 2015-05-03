@@ -298,16 +298,37 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 		}
 	}
 
+    private boolean canSendThisKey(int pKeyCode){
+        boolean canSend = false;
+        if(pKeyCode >= KeyEvent.KEYCODE_0 && pKeyCode <= KeyEvent.KEYCODE_9){
+            canSend = true;
+        }else if(pKeyCode >= KeyEvent.KEYCODE_A && pKeyCode <= KeyEvent.KEYCODE_SPACE){
+            canSend = true;
+        }else if(pKeyCode == KeyEvent.KEYCODE_CTRL_LEFT || pKeyCode == KeyEvent.KEYCODE_CTRL_RIGHT){
+            canSend = true;
+        }
+        if(canSend){
+            return true;
+        }
+        switch (pKeyCode) {
+            case KeyEvent.KEYCODE_BACK:
+            case KeyEvent.KEYCODE_MENU:
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_ENTER:
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                return true;
+        }
+        return false;
+    }
+
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pKeyEvent) {
-		boolean canSend = false;
-		if(pKeyCode >= KeyEvent.KEYCODE_0 && pKeyCode <= KeyEvent.KEYCODE_9){
-			canSend = true;
-		}else if(pKeyCode >= KeyEvent.KEYCODE_A && pKeyCode <= KeyEvent.KEYCODE_SPACE){
-			canSend = true;
-		}else if(pKeyCode == KeyEvent.KEYCODE_CTRL_LEFT || pKeyCode == KeyEvent.KEYCODE_CTRL_RIGHT){
-			canSend = true;
-		}
+		boolean canSend = canSendThisKey(pKeyCode);
+
 		if(canSend){
 			this.queueEvent(new Runnable() {
 				@Override
@@ -317,7 +338,9 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 			});
 			return true;
 		}
-		switch (pKeyCode) {
+        return super.onKeyDown(pKeyCode, pKeyEvent);
+
+/*        switch (pKeyCode) {
 			case KeyEvent.KEYCODE_BACK:
 				Cocos2dxVideoHelper.mVideoHandler.sendEmptyMessage(Cocos2dxVideoHelper.KeyEventBack);
 			case KeyEvent.KEYCODE_MENU:
@@ -336,11 +359,26 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 				});
 				return true;
 			default:
-				return super.onKeyDown(pKeyCode, pKeyEvent);
-		}
+		}*/
 	}
 
-	// ===========================================================
+    @Override
+    public boolean onKeyUp(final int keyCode, KeyEvent event) {
+        boolean canSend = canSendThisKey(keyCode);
+
+        if(canSend){
+            this.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleKeyUp(keyCode);
+                }
+            });
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    // ===========================================================
 	// Methods
 	// ===========================================================
 
