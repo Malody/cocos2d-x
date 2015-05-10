@@ -107,7 +107,7 @@ protected:
     void onGLFWframebuffersize(GLFWwindow* window, int w, int h);
     void onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height);
 	void onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y);
-
+	void onGLFWDropCallback(GLFWwindow* window, int count, const char** paths);
 	Vec2 glPosToCocos(float x, float y);
 
     bool _captured;

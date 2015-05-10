@@ -101,6 +101,12 @@ public:
         if (_view)
             _view->onGLFWWindowSizeFunCallback(window, width, height);
     }
+	
+	static void onGLFWDrop(GLFWwindow* window, int count, const char** paths){
+		if(_view){
+			_view->onGLFWDropCallback(window, count, paths);
+		}
+	}
 
     static void setGLView(GLView* view)
     {
@@ -361,6 +367,7 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
+	glfwSetDropCallback(_mainWindow, GLFWEventHandler::onGLFWDrop);
 
 	//glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
@@ -813,6 +820,10 @@ void GLView::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int heig
         Director::getInstance()->setViewport();
     }
 	Director::getInstance()->updateViewport();
+}
+
+void GLView::onGLFWDropCallback(GLFWwindow *window, int count, const char **paths){
+	CCLOG("file drop!!!!");
 }
 
 Size GLView::getScreenSize(){
