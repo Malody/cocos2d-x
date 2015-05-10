@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventMouse.h"
+#include "base/CCEventCustom.h"
 #include "base/CCIMEDispatcher.h"
 #include "base/ccUtils.h"
 
@@ -823,7 +824,16 @@ void GLView::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int heig
 }
 
 void GLView::onGLFWDropCallback(GLFWwindow *window, int count, const char **paths){
-	CCLOG("file drop!!!!");
+	std::string name = "drop";
+	auto event = new EventCustom(name);
+	
+	event->setUserData(paths);  //我们假定这里面只有1个元素, 不带count直接传下去
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(event);
+//	for(int i=0;i<count;i++){
+//		if(paths[i]){
+//			event->setUserData(paths[i]);
+//		}
+//	}
 }
 
 Size GLView::getScreenSize(){
