@@ -77,7 +77,9 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual void editBoxReturn(EditBox* editBox) = 0;
+	virtual void editBoxReturn(EditBox* editBox) {};
+	
+	virtual void editBoxControlKey(EditBox* editBox, int key) {};
     
 };
 

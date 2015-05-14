@@ -111,6 +111,8 @@ protected:
     * @lua NA
     */
     virtual void deleteBackward() {}
+	
+	virtual void controlKey(int key) {}
 
     /**
     @brief    Called by IMEDispatcher for text stored in delegate.

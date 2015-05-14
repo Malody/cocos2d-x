@@ -156,6 +156,13 @@
         [sender resignFirstResponder];
     }
     return NO;
+	/*editState_ = YES;
+	cocos2d::extension::EditBoxDelegate* pDelegate = getEditBoxImplMac()->getDelegate();
+	if (pDelegate != NULL)
+	{
+		pDelegate->editBoxReturn(getEditBoxImplMac()->getEditBox());
+	}
+	return YES;*/
 }
 
 -(void)animationSelector

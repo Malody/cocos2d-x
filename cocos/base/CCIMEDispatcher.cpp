@@ -240,6 +240,18 @@ void IMEDispatcher::dispatchDeleteBackward()
     } while (0);
 }
 
+void IMEDispatcher::dispatchControl(int key){
+	do 
+	{
+		CC_BREAK_IF(! _impl);
+		
+		// there is no delegate attached to IME
+		CC_BREAK_IF(! _impl->_delegateWithIme);
+		
+		_impl->_delegateWithIme->controlKey(key);
+	} while (0);
+}
+
 const std::string& IMEDispatcher::getContentText()
 {
     if (_impl && _impl->_delegateWithIme)
