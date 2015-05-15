@@ -40,6 +40,7 @@ EditBox::EditBox(void)
 , _placeholderFontSize(-1)
 , _colText(Color3B::WHITE)
 , _colPlaceHolder(Color3B::GRAY)
+, _highlight(Color3B::WHITE)
 , _maxLength(0)
 , _adjustHeight(0.0f)
 #if CC_ENABLE_SCRIPT_BINDING
@@ -414,6 +415,7 @@ void EditBox::keyboardDidHide(IMEKeyboardNotificationInfo& info)
 {
 	
 }
+
 
 #if CC_ENABLE_SCRIPT_BINDING
 void EditBox::registerScriptEditBoxHandler(int handler)

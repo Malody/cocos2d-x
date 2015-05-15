@@ -324,6 +324,8 @@ public:
      * Not supported on IOS.
      */
     void setPlaceholderFontColor(const Color3B& color);
+	
+	void setHighlightColor(const Color3B& color) { _highlight = color; };
     
     /**
      * Set a text in the edit box that acts as a placeholder when an
@@ -418,7 +420,8 @@ public:
      * @lua NA
      */
     void touchDownAction(Ref *sender, Control::EventType controlEvent);
-    
+	
+
 protected:
     void updatePosition(float dt);
     EditBoxImpl*      _editBoxImpl;
@@ -439,6 +442,7 @@ protected:
     
     Color3B _colText;
     Color3B _colPlaceHolder;
+	Color3B _highlight;
     
     int   _maxLength;
     float _adjustHeight;

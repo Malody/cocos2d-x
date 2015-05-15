@@ -75,7 +75,9 @@
         editState_ = NO;
         self.textField = [[[NSTextField alloc] initWithFrame:frameRect] autorelease];
         self.secureTextField = [[[NSSecureTextField alloc] initWithFrame:frameRect] autorelease];
-
+		self.textField.delegate = self;
+		self.secureTextField.delegate = self;
+		
         NSFont *font = [NSFont systemFontOfSize:frameRect.size.height*2/3]; //TODO need to delete hard code here.
         textField_.font = font;
         secureTextField_.font = font;
@@ -260,6 +262,35 @@
     }
 #endif
 }
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
+{
+//	NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+	cocos2d::extension::EditBoxDelegate* pDelegate = getEditBoxImplMac()->getDelegate();
+	if (pDelegate == NULL)
+	{
+		return NO;
+	}
+	if (commandSelector == @selector(insertNewline:)) {
+		//Do something against ENTER key
+		pDelegate->editBoxReturn(getEditBoxImplMac()->getEditBox());
+		return YES;
+	} else if (commandSelector == @selector(deleteForward:)) {
+		//Do something against DELETE key
+		
+	} else if (commandSelector == @selector(deleteBackward:)) {
+		//Do something against BACKSPACE key
+		
+	} else if (commandSelector == @selector(insertTab:)) {
+		//Do something against TAB key
+		pDelegate->editBoxControlKey(getEditBoxImplMac()->getEditBox(), (int)cocos2d::EventKeyboard::KeyCode::KEY_TAB);
+		return YES;
+	} else if(commandSelector == @selector(cancelOperation:)){
+		pDelegate->editBoxControlKey(getEditBoxImplMac()->getEditBox(), (int)cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE);
+		return YES;
+	}
+	return NO;
+} 
 
 @end
 
