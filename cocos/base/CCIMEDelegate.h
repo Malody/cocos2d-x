@@ -66,6 +66,8 @@ public:
      */
     virtual bool detachWithIME();
 
+	virtual bool isAttached();
+
 protected:
     friend class IMEDispatcher;
 

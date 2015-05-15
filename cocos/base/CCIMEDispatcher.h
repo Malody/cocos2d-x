@@ -120,6 +120,7 @@ protected:
     */
     bool attachDelegateWithIME(IMEDelegate * delegate);
     bool detachDelegateWithIME(IMEDelegate * delegate);
+	bool isAttached(IMEDelegate* delegate);
 
     /**
     @brief Remove the delegate from the delegates which receive IME messages.
