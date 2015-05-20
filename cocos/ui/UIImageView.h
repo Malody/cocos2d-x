@@ -81,6 +81,8 @@ public:
      * It will call setTextureRect:rotated:untrimmedSize with rotated = NO, and utrimmedSize = rect.size.
      */
     void setTextureRect(const Rect& rect);
+	
+	Rect getTextureRect();
 
     /**
      * Sets if imageview is using scale9 renderer.

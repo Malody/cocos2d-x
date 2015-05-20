@@ -174,6 +174,14 @@ void ImageView::setTextureRect(const Rect &rect)
         STATIC_CAST_CCSPRITE->setTextureRect(rect);
     }
 }
+	
+Rect ImageView::getTextureRect(){
+	if(_scale9Enabled){
+		return Rect::ZERO;
+	}else{
+		return STATIC_CAST_CCSPRITE->getTextureRect();
+	}
+}
     
 void ImageView::updateFlippedX()
 {
