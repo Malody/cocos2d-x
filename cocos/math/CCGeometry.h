@@ -105,6 +105,7 @@ public:
      * @lua NA
      */
     void setSize(float width, float height);
+	void setSize(Size& target);
     /**
      * @js NA
      */

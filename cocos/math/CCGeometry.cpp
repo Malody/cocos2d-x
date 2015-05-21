@@ -88,6 +88,11 @@ void Size::setSize(float w, float h)
     this->height = h;
 }
 
+void Size::setSize(Size& target){
+	this->width = target.width;
+	this->height = target.height;
+}
+
 bool Size::equals(const Size& target) const
 {
     return (fabs(this->width  - target.width)  < FLT_EPSILON)
