@@ -41,6 +41,14 @@ THE SOFTWARE.
 #include "math/TransformUtils.h"
 
 #include "deprecated/CCString.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#include <android/log.h>
+
+#define  LOG_TAG    "FrameCache"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+#else
+#define LOGD(...) {}
+#endif
 
 
 using namespace std;
@@ -190,7 +198,6 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
                                                          spriteOffset,
                                                          spriteSourceSize);
         }
-
         // add sprite frame
         _spriteFrames.insert(spriteFrameName, spriteFrame);
     }
@@ -221,6 +228,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const s
     }
     else
     {
+		LOGD("add fail:%s", textureFileName.c_str());
         CCLOG("cocos2d: SpriteFrameCache: couldn't load texture file. File not found %s", textureFileName.c_str());
     }
 }
@@ -395,6 +403,7 @@ SpriteFrame* SpriteFrameCache::getSpriteFrameByName(const std::string& name)
     SpriteFrame* frame = _spriteFrames.at(name);
     if (!frame)
     {
+		LOGD("get frame fail %s", name.c_str());
         // try alias dictionary
         std::string key = _spriteFramesAliases[name].asString();
         if (!key.empty())

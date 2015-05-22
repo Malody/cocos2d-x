@@ -41,6 +41,12 @@ THE SOFTWARE.
 
 #include "deprecated/CCString.h"
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#define  LOG_TAG    "TextureCache"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+#else
+#define LOGD(...) {}
+#endif
 
 #ifdef EMSCRIPTEN
 #include <emscripten/emscripten.h>
@@ -337,10 +343,10 @@ Texture2D * TextureCache::addImage(const std::string &path)
         {
             image = new Image();
             CC_BREAK_IF(nullptr == image);
-
+		
             bool bRet = image->initWithImageFile(fullpath);
             CC_BREAK_IF(!bRet);
-
+			
             texture = new Texture2D();
 
             if( texture && texture->initWithImage(image) )
