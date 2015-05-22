@@ -74,9 +74,12 @@ public class Cocos2dxHandler extends Handler {
 	}
 	
 	private void showDialog(Message msg) {
-		Cocos2dxActivity theActivity = this.mActivity.get();
+		Cocos2dxActivity activity = this.mActivity.get();
+		if(activity == null || activity.isFinishing()){
+			return;
+		}
 		DialogMessage dialogMessage = (DialogMessage)msg.obj;
-		new AlertDialog.Builder(theActivity)
+		new AlertDialog.Builder(activity)
 		.setTitle(dialogMessage.titile)
 		.setMessage(dialogMessage.message)
 		.setPositiveButton("Ok", 
@@ -92,13 +95,22 @@ public class Cocos2dxHandler extends Handler {
 	
 	private void showEditBoxDialog(Message msg) {
 		EditBoxMessage editBoxMessage = (EditBoxMessage)msg.obj;
-		new Cocos2dxEditBoxDialog(this.mActivity.get(),
+		Cocos2dxActivity activity = this.mActivity.get();
+		if(activity == null || activity.isFinishing()){
+			return;
+		}
+		Cocos2dxEditBoxDialog dialog = new Cocos2dxEditBoxDialog(activity,
 				editBoxMessage.title,
 				editBoxMessage.content,
 				editBoxMessage.inputMode,
 				editBoxMessage.inputFlag,
 				editBoxMessage.returnType,
-				editBoxMessage.maxLength).show();
+				editBoxMessage.maxLength);
+		try{
+			dialog.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	// ===========================================================
