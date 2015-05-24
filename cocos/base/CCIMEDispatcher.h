@@ -104,7 +104,7 @@ public:
      * @lua NA
      */
     void dispatchKeyboardDidHide(IMEKeyboardNotificationInfo& info);
-
+	void removeAll();
 protected:
     friend class IMEDelegate;
 
@@ -126,7 +126,7 @@ protected:
     @brief Remove the delegate from the delegates which receive IME messages.
     */
     void removeDelegate(IMEDelegate * delegate);
-
+	
 private:
     IMEDispatcher();
     

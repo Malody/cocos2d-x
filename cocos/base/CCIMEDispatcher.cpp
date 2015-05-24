@@ -96,6 +96,11 @@ public:
         return end;
     }
 
+	void clearAll(){
+		_delegateList.clear();
+		_delegateWithIme = nullptr;
+	}
+
     DelegateList    _delegateList;
     IMEDelegate*  _delegateWithIme;
 };
@@ -219,6 +224,12 @@ void IMEDispatcher::removeDelegate(IMEDelegate* delegate)
         }
         _impl->_delegateList.erase(iter);
     } while (0);
+}
+
+void IMEDispatcher::removeAll(){
+	if(_impl){
+		_impl->clearAll();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
