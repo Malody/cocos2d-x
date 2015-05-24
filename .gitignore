@@ -115,7 +115,6 @@ project.properties
 
 # Ignore prebuilt libraries folder
 /external/xxhash/
-/external/curl/
 /external/edtaa3func/
 /external/freetype2/
 /external/glfw3/
@@ -123,7 +122,6 @@ project.properties
 /external/json/
 /external/linux-specific/
 /external/lua/
-/external/png/
 /external/sqlite3/
 /external/tiff/
 /external/tinyxml2/
