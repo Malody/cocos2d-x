@@ -222,7 +222,7 @@ protected:
 protected:
 	//renderer caches and callbacks
 	void onBegin();
-	void onEnd();
+	virtual void onEnd();
 	
 	void onClear();
 	void onClearDepth();

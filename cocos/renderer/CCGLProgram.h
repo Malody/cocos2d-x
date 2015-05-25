@@ -263,6 +263,7 @@ public:
      */
     void setUniformLocationWith4f(GLint location, GLfloat f1, GLfloat f2, GLfloat f3, GLfloat f4);
 
+    void setUniformLocationWith1fv(GLint location, const GLfloat* floats, unsigned int numberOfArrays);
     /** calls glUniform2fv only if the values are different than the previous call for this same shader program. */
     void setUniformLocationWith2fv(GLint location, const GLfloat* floats, unsigned int numberOfArrays);
 
