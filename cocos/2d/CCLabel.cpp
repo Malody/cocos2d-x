@@ -902,7 +902,7 @@ void Label::createSpriteWithFontDefinition()
     _textSprite = Sprite::createWithTexture(texture);
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     this->setContentSize(_textSprite->getContentSize());
-    texture->release();
+	CC_SAFE_RELEASE(texture);
     if (_blendFuncDirty)
     {
         _textSprite->setBlendFunc(_blendFunc);

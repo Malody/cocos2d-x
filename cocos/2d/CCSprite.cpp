@@ -156,7 +156,9 @@ bool Sprite::initWithTexture(Texture2D *texture)
     CCASSERT(texture != nullptr, "Invalid texture for sprite");
 
     Rect rect = Rect::ZERO;
-    rect.size = texture->getContentSize();
+	if(texture){
+		rect.size = texture->getContentSize();
+	}
 
     return initWithTexture(texture, rect);
 }
