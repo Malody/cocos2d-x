@@ -6,7 +6,6 @@ LOCAL_MODULE    := cocos_extension_static
 LOCAL_MODULE_FILENAME := libextension
 
 LOCAL_SRC_FILES := \
-assets-manager/AssetsManager.cpp \
 GUI/CCControlExtension/CCControl.cpp \
 GUI/CCControlExtension/CCControlButton.cpp \
 GUI/CCControlExtension/CCControlColourPicker.cpp \

@@ -317,6 +317,9 @@ public class Cocos2dxBitmap {
 		String[] ret = null;
 		final FontMetricsInt fm = paint.getFontMetricsInt();
 		final int heightPerLine = (int) Math.ceil(fm.bottom - fm.top);
+		if(heightPerLine == 0){
+			return lines;
+		}
 		final int maxLines = maxHeight / heightPerLine;
 
 		if (maxWidth != 0) {

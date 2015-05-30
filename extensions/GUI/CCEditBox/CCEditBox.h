@@ -419,7 +419,7 @@ public:
      * @js NA
      * @lua NA
      */
-    void touchDownAction(Ref *sender, Control::EventType controlEvent);
+    virtual void touchDownAction(Ref *sender, Control::EventType controlEvent);
 	
 
 protected:
