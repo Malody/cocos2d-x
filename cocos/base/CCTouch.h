@@ -79,6 +79,12 @@ public:
             _startPointCaptured = true;
         }
     }
+
+	//直接替换当前点, 注意使用场景
+	void setTouchInfo(float x, float y){
+		_point.x = x;
+		_point.y = y;
+	}
     /**
      * @js getId
      * @lua getId
