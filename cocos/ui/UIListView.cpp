@@ -244,16 +244,17 @@ namespace ui {
 		
 	}
 	
-	void ListView::pushBackDefaultItem()
+	Widget* ListView::pushBackDefaultItem()
 	{
 		if (!_model)
 		{
-			return;
+			return nullptr;
 		}
 		Widget* newItem = _model->clone();
 		remedyLayoutParameter(newItem);
 		addChild(newItem);
 		_refreshViewDirty = true;
+		return newItem;
 	}
 	
 	void ListView::insertDefaultItem(ssize_t index)

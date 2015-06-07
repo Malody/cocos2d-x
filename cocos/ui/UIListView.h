@@ -93,7 +93,7 @@ public:
     /**
      * Push back a default item(create by a cloned model) into listview.
      */
-    void pushBackDefaultItem();
+    Widget* pushBackDefaultItem();
     
     /**
      * Insert a default item(create by a cloned model) into listview.

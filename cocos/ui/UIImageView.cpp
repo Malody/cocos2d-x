@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "ui/UIImageView.h"
 #include "extensions/GUI/CCControlExtension/CCScale9Sprite.h"
 #include "2d/CCSprite.h"
+#include "2d/CCSpriteFrameCache.h"
 
 NS_CC_BEGIN
 
@@ -123,6 +124,14 @@ void ImageView::loadTexture(const std::string& fileName, TextureResType texType)
     {
         return;
     }
+	//texType默认是local, 如果指定为plist, 那么当plist不存在时, 也退化为local
+	//这样是兼容一些存在于plist中, 但允许被外部替换的素材
+	if(texType == TextureResType::PLIST){
+		auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(fileName);
+		if(!frame){
+			texType = TextureResType::LOCAL;
+		}
+	}
     _textureFile = fileName;
     _imageTexType = texType;
     switch (_imageTexType)
