@@ -200,6 +200,49 @@ void HttpClient::networkThreadAlone(HttpRequest* request)
     });
 }
 
+int HttpClient::downloadImmediate(const std::string& url, const std::string& path,long& code){
+	//set code as 404 first
+	code = 404;
+	if(url.empty() || path.empty()){
+		return -1;
+	}
+	
+	CURL* curl = nullptr;
+	//check target status
+	std::ofstream fout;
+	fout.open(path,std::ios::binary);
+	if(!fout){
+		return -1;
+	}
+	fout.close();
+
+	CURLcode _code;
+
+	curl = curl_easy_init();
+	int ret = -1;
+	if(curl){
+		FILE * fp = fopen(path.c_str(),"wb");
+		curl_easy_setopt(curl,CURLOPT_URL,url);
+		curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,NULL);
+		curl_easy_setopt(curl,CURLOPT_WRITEDATA,fp);
+		if(CURLE_OK != curl_easy_perform(curl)){
+			//fail
+		}else{
+			_code = curl_easy_getinfo(curl,CURLINFO_RESPONSE_CODE,&code);
+			if(_code != CURLE_OK || code >= 200 && code < 300){
+				CCLOG("CURL curl_easy_getinfo failed: %s",curl_easy_strerror(_code));
+			}
+		}
+		curl_easy_cleanup(curl);
+
+		//get file size
+		fseek(fp,0L,SEEK_END);
+		ret = ftell(fp);
+		fclose(fp);
+	}
+	return ret;
+}
+
 //Configure curl's timeout property
 static bool configureCURL(CURL *handle, char *errorBuffer)
 {

@@ -31,6 +31,7 @@
 #include "network/HttpResponse.h"
 #include "network/HttpClient.h"
 
+
 NS_CC_BEGIN
 
 namespace network {
@@ -96,6 +97,16 @@ public:
      * @return int
      */
     inline int getTimeoutForRead() {return _timeoutForRead;};
+
+	/**
+	 * By Sco: Download a file immediately, not async
+	 * @url target url
+	 * @path local abs path
+	 * @code http response code
+	 * @return how many bytes downloaded
+	*/
+
+	static int downloadImmediate(const std::string& url, const std::string& path,long& code);
         
 private:
     HttpClient();
