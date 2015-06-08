@@ -94,12 +94,17 @@ static size_t writeHeaderData(void *ptr, size_t size, size_t nmemb, void *stream
     return sizes;
 }
 
+static size_t write_file(void *ptr, size_t size, size_t nmemb, void *stream) {
+	size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
+	return written;
+}
+
 
 static int processGetTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 static int processPostTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 static int processPutTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 static int processDeleteTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
-// int processDownloadTask(HttpRequest *task, write_callback callback, void *stream, int32_t *errorCode);
+static int processDownloadTask(HttpRequest *request, int32_t *errorCode, write_callback headerCallback, void *headerStream, char* errorBuffer);
 static void processResponse(HttpResponse* response, char* errorBuffer);
 
 // Worker thread
@@ -295,6 +300,8 @@ public:
             curl_slist_free_all(_headers);
     }
 
+	CURL* getCURL(){ return _curl;}
+
     template <class T>
     bool setOption(CURLoption option, T data)
     {
@@ -403,6 +410,44 @@ static int processDeleteTask(HttpRequest *request, write_callback callback, void
     return ok ? 0 : 1;
 }
 
+static int processDownloadTask(HttpRequest *request, write_callback callback, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
+{
+	CURLRaii curl;
+	FILE* fp;
+	fp = fopen(request->getFilename(), "wb");
+	if(!fp){
+		return 1;
+	}
+	bool ok = curl.init(request, callback, fp, headerCallback, headerStream, errorBuffer)
+		&& curl.setOption(CURLOPT_CUSTOMREQUEST, "GET")
+		&& curl.setOption(CURLOPT_FOLLOWLOCATION, true)
+		&& curl.setOption(CURLOPT_TIMEOUT, 240L)
+		&& curl.setOption(CURLOPT_CONNECTTIMEOUT, 0L)
+		&& curl.perform(responseCode);
+
+	long size = ftell(fp);
+	fclose(fp);
+
+	if(!ok){
+		remove(request->getFilename());
+		return 1;
+	}
+
+	//compare file size and content length
+	
+	double contentLength = 0;
+	auto _curl = curl.getCURL();
+	curl_easy_getinfo(_curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+	long _contentLength = floor(contentLength + 0.5);
+
+	if(size != _contentLength){
+		remove(request->getFilename());
+		return 1;
+	}
+	
+	return 0;
+}
+
 
 // Process Response
 static void processResponse(HttpResponse* response, char* errorBuffer)
@@ -453,7 +498,14 @@ static void processResponse(HttpResponse* response, char* errorBuffer)
             response->getResponseHeader(),
             errorBuffer);
         break;
-
+	case HttpRequest::Type::DOWNLOAD:
+		retValue = processDownloadTask(request,
+			write_file,
+			&responseCode,
+			writeHeaderData,
+			response->getResponseHeader(),
+			errorBuffer);
+		break;
     default:
         CCASSERT(true, "CCHttpClient: unkown request type, only GET and POSt are supported");
         break;

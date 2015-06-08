@@ -65,6 +65,7 @@ public:
         POST,
         PUT,
         DELETE,
+		DOWNLOAD,
         UNKNOWN,
     };
     
@@ -129,6 +130,16 @@ public:
     {
         return _url.c_str();
     };
+
+	inline void setFilename(const char* path)
+	{
+		_filename = path;
+	};
+	/** Get back the setted url */
+	inline const char* getFilename()
+	{
+		return _filename.c_str();
+	};
     
     /** Option field. You can set your post data here
      */
@@ -258,6 +269,7 @@ protected:
     // properties
     Type                        _requestType;    /// kHttpRequestGet, kHttpRequestPost or other enums
     std::string                 _url;            /// target url that this request is sent to
+	std::string				_filename;
     std::vector<char>           _requestData;    /// used for POST
     std::string                 _tag;            /// user defined tag, to identify different requests in response callback
 	int							_inttag;
