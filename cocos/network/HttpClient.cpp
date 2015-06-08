@@ -205,7 +205,7 @@ void HttpClient::networkThreadAlone(HttpRequest* request)
     });
 }
 
-int HttpClient::downloadImmediate(const std::string& url, const std::string& path,long& code){
+/*int HttpClient::downloadImmediate(const std::string& url, const std::string& path,long& code){
 	//set code as 404 first
 	code = 404;
 	if(url.empty() || path.empty()){
@@ -246,7 +246,7 @@ int HttpClient::downloadImmediate(const std::string& url, const std::string& pat
 		fclose(fp);
 	}
 	return ret;
-}
+}*/
 
 //Configure curl's timeout property
 static bool configureCURL(CURL *handle, char *errorBuffer)

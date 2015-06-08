@@ -106,7 +106,7 @@ public:
 	 * @return how many bytes downloaded
 	*/
 
-	static int downloadImmediate(const std::string& url, const std::string& path,long& code);
+	//static int downloadImmediate(const std::string& url, const std::string& path,long& code);
         
 private:
     HttpClient();
