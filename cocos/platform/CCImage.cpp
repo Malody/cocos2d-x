@@ -505,6 +505,10 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
             unpackedLen = dataLen;
         }
 
+		if(unpackedData == nullptr){
+			break;
+		}
+
         _fileType = detectFormat(unpackedData, unpackedLen);
 
         switch (_fileType)

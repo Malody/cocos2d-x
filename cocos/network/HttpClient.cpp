@@ -430,6 +430,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 
 	if(!ok){
 		remove(request->getFilename());
+		(*responseCode) = 600; //force an internal error
 		return 1;
 	}
 
@@ -442,6 +443,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 
 	if(size != _contentLength){
 		remove(request->getFilename());
+		(*responseCode) = 600; //force an internal error
 		return 1;
 	}
 	
