@@ -441,7 +441,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 	curl_easy_getinfo(_curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
 	long _contentLength = floor(contentLength + 0.5);
 
-	if(size != _contentLength){
+	if(size == 0 || size != _contentLength){
 		remove(request->getFilename());
 		(*responseCode) = 600; //force an internal error
 		return 1;

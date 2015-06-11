@@ -181,14 +181,14 @@ static Data getData(const std::string& filename, bool forString)
 
     if (buffer == nullptr || size == 0)
     {
-        std::string msg = "Get data from file(";
+        /*std::string msg = "Get data from file(";
         // Gets error code.
         DWORD errorCode = ::GetLastError();
         char errorCodeBuffer[20] = {0};
         snprintf(errorCodeBuffer, sizeof(errorCodeBuffer), "%d", errorCode);
 
         msg = msg + filename + ") failed, error code is " + errorCodeBuffer;
-        CCLOG("%s", msg.c_str());
+        CCLOG("%s", msg.c_str());*/
 		if(buffer)
 			free(buffer);
     }
