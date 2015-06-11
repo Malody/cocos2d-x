@@ -370,7 +370,6 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
 	glfwSetDropCallback(_mainWindow, GLFWEventHandler::onGLFWDrop);
 
-	//glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); //隐藏鼠标
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	glfwSetTouchCallback(_mainWindow,GLFWEventHandler::onGLFWTouchCallBack);
 	glfwSwapInterval(0);
@@ -572,6 +571,9 @@ void GLView::onGLFWError(int errorID, const char* errorDesc)
 
 void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify)
 {
+	if(!_isMouseEnable){
+		return;
+	}
 	//std::cout<<"Mouse Click - button: "<<button<<", action: "<<action; 
 
 	if(GLFW_MOUSE_BUTTON_LEFT == button)
@@ -581,21 +583,17 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
 			_captured = true;
 			if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
 			{
-				if(this->_isMouseEnable){
-					intptr_t id = 0;
-					this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
-				}
+				intptr_t id = 0;
+				this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
 			}
 		}
 		else if(GLFW_RELEASE == action)
 		{
 			if (_captured)
 			{
-				if(this->_isMouseEnable){
-					_captured = false;
-					intptr_t id = 0;
-					this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
-				}
+				_captured = false;
+				intptr_t id = 0;
+				this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
 			}
 		}
 	}
@@ -622,10 +620,11 @@ void GLView::onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int
 	}
 }
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+
 void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,double x,double y){
 
 	//std::cout<<"Touch detected id:"<<touch<<" action: "<<action;
-	/*
+	
 	_mouseX = (float)x;
 	_mouseY = (float)y;
 
@@ -640,74 +639,34 @@ void GLView::onGLFWWinTouchcallback(GLFWwindow* window,int touch,int action,doub
 	switch(action){
 	case GLFW_PRESS:
 		{
-			//_captured = true;
-			if(this->getViewPortRect().equals(Rect::ZERO)){
+			if(this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY))){
 				intptr_t id = touch;
 				this->handleTouchesBegin(1,&id,&_mouseX,&_mouseY);
 			}
 		}break;
 	case GLFW_MOVE:
 		{
-			//if(_captured){
-				intptr_t id = touch;
-				this->handleTouchesMove(1,&id,&_mouseX,&_mouseY);
-			//}
+			intptr_t id = touch;
+			this->handleTouchesMove(1,&id,&_mouseX,&_mouseY);
 		}break;
 	case GLFW_RELEASE:
 		{
-			//if(_captured){
-				//_captured = false;
-				intptr_t id = touch;
-				this->handleTouchesEnd(1,&id,&_mouseX,&_mouseY);
-			//}
+			intptr_t id = touch;
+			this->handleTouchesEnd(1,&id,&_mouseX,&_mouseY);
 		}break;
 	default:{
 
 			}break;
-	}*/
+	}
 	//std::cout<<"pos "<<_mouseX<<'|'<<_mouseY<<std::endl;
-
-	//Use new WinTouchEvent to instead of Original Touch Event
-
-	static float _touchX = static_cast<float>(x);
-	static float _touchY = static_cast<float>(y);
-
-	_touchX /= this->getFrameZoomFactor();
-	_touchY /= this->getFrameZoomFactor();
-
-	if(_isInRetinaMonitor && (_retinaFactor == 1)){
-		_touchX *= 2;
-		_touchY *= 2;
-	}
-
-	switch(action){
-	case GLFW_PRESS:
-		{
-			if(this->getViewPortRect().equals(Rect::ZERO)){
-				int id = touch;
-				this->handleWinTouchesBegin(id,x,y);
-			}
-		}break;
-	case GLFW_MOVE:
-		{
-			int id = touch;
-			this->handleWinTouchesMove(id,x,y);
-		}break;
-	case GLFW_RELEASE:
-		{
-			int id = touch;
-			this->handleWinTouchesEnd(id,x,y);
-		}break;
-	default:
-		{
-
-		}break;
-	}
 }
 #endif
 
 void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
 {
+	if(!_isMouseEnable){
+		return;
+	}
     _mouseX = (float)x;
     _mouseY = (float)y;
 
@@ -752,6 +711,9 @@ void GLView::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
 
 void GLView::onGLFWMouseScrollCallback(GLFWwindow* window, double x, double y)
 {
+	if(!_isMouseEnable){
+		return;
+	}
     EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
 	Vec2 v = glPosToCocos(_mouseX, _mouseY);

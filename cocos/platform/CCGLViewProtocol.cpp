@@ -237,42 +237,6 @@ const std::string& GLViewProtocol::getViewName() const
     return _viewName;
 }
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-void GLViewProtocol::handleWinTouchesBegin(int id, float x,float y){
-	auto iter = g_winTouchIdMap.find(id);
-	if(iter == g_winTouchIdMap.end()){
-		int idx = getUnUsedIndex();
-
-		if(idx == -1){
-			return;
-		}
-
-		Touch* touch = g_touches[idx] = new Touch();
-		touch->setTouchInfo(
-					idx,
-					(x - _viewPortRect.origin.x) / _scaleX,
-					(y - _viewPortRect.origin.y) / _scaleY);
-		g_winTouchIdMap.insert(std::make_pair(id,idx));
-
-		EventWinTouch winTouchEvent;
-		winTouchEvent._touches.push_back(touch);
-
-		winTouchEvent._eventCode = EventTouch::EventCode::BEGAN;
-		auto dispatcher = Director::getInstance()->getEventDispatcher();
-		dispatcher->dispatchEvent(&winTouchEvent);
-	}
-}
-
-void GLViewProtocol::handleWinTouchesMove(int id, float x,float y){
-
-}
-
-void GLViewProtocol::handleWinTouchesEnd(int id, float x,float y){
-
-}
-#endif
-
-
 void GLViewProtocol::handleTouchesBegin(int num, intptr_t ids[], float xs[], float ys[])
 {
     intptr_t id = 0;

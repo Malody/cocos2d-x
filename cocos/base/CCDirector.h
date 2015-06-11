@@ -415,7 +415,7 @@ public:
 		Allow to enable/disable mouse click/move
 	*/
 	void setMouseEnable(bool value);
-
+	void setTouchEnable(bool enable);
 
 protected:
     void purgeDirector();

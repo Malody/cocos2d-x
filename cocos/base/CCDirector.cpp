@@ -405,6 +405,16 @@ void Director::setMouseEnable(bool value){
 #endif
 }
 
+void Director::setTouchEnable(bool enable){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	if(enable){
+		glfwSetInputMode(getOpenGLView()->getWindow(), GLFW_TOUCH, GL_TRUE);
+	}else{
+		glfwSetInputMode(getOpenGLView()->getWindow(), GLFW_TOUCH, GL_FALSE);
+	}
+#endif
+}
+
 
 void Director::centerOpenGLWindow(GLView *openGLView)
 {
