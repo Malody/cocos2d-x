@@ -652,34 +652,23 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
 
 Mat4 Director::getMatrix(MATRIX_STACK_TYPE type)
 {
-    Mat4 result;
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
     {
-        result = _modelViewMatrixStack.top();
+        return _modelViewMatrixStack.top();
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
-        result = _projectionMatrixStack.top();
+        return _projectionMatrixStack.top();
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
-        result = _textureMatrixStack.top();
+        return _textureMatrixStack.top();
     }
     else
     {
         CCASSERT(false, "unknow matrix stack type, will return modelview matrix instead");
-        result =  _modelViewMatrixStack.top();
+        return _modelViewMatrixStack.top();
     }
-//    float diffResult(0);
-//    for (int index = 0; index <16; ++index)
-//    {
-//        diffResult += abs(result2.mat[index] - result.mat[index]);
-//    }
-//    if(diffResult > 1e-30)
-//    {
-//        CCASSERT(false, "Error in director matrix stack");
-//    }
-    return result;
 }
 
 void Director::setProjection(Projection projection)
@@ -810,16 +799,14 @@ static void GLToClipTransform(Mat4 *transformOut)
     Director* director = Director::getInstance();
     CCASSERT(nullptr != director, "Director is null when seting matrix stack");
     
-    Mat4 projection;
-    projection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    Mat4 projection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
     //if needed, we need to undo the rotation for Landscape orientation in order to get the correct positions
     projection = Director::getInstance()->getOpenGLView()->getReverseOrientationMatrix() * projection;
 #endif
 
-    Mat4 modelview;
-    modelview = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    Mat4 modelview = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     *transformOut = projection * modelview;
 }
 

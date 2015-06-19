@@ -416,6 +416,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 	FILE* fp;
 	fp = fopen(request->getFilename(), "wb");
 	if(!fp){
+		(*responseCode) = 601;  //无法写入本地文件
 		return 1;
 	}
 	bool ok = curl.init(request, callback, fp, headerCallback, headerStream, errorBuffer)
