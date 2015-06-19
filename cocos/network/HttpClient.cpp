@@ -414,7 +414,10 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 {
 	CURLRaii curl;
 	FILE* fp;
-	fp = fopen(request->getFilename(), "wb");
+    fp = request->getFilePointer();
+    if(fp == nullptr){
+        fp = fopen(request->getFilename(), "wb");
+    }
 	if(!fp){
 		(*responseCode) = 601;  //无法写入本地文件
 		return 1;
@@ -427,7 +430,12 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 		&& curl.perform(responseCode);
 
 	long size = ftell(fp);
-	fclose(fp);
+	//fclose(fp);
+    if(nullptr != request->getFilePointer()){
+        request->closeFile();
+    }else{
+        ::fclose(fp);
+    }
 
 	if(!ok){
 		remove(request->getFilename());

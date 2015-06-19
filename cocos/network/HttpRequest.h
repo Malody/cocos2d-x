@@ -85,6 +85,7 @@ public:
         _pSelector = nullptr;
         _pCallback = nullptr;
         _pUserData = nullptr;
+        pFile = nullptr;
     };
     
     /** Destructor */
@@ -93,6 +94,10 @@ public:
         if (_pTarget)
         {
             _pTarget->release();
+        }
+        if(this->pFile != nullptr){
+            ::fclose(this->pFile);
+            this->pFile = nullptr;
         }
     };
     
@@ -130,16 +135,39 @@ public:
     {
         return _url.c_str();
     };
-
+    
+    /* As soon as the filename is set, the file pointer will be closed and set to null */
 	inline void setFilename(const char* path)
 	{
 		_filename = path;
+        if(this->pFile != nullptr){
+            ::fclose(this->pFile);
+            this->pFile = nullptr;
+        }
 	};
 	/** Get back the setted url */
 	inline const char* getFilename()
 	{
 		return _filename.c_str();
 	};
+    
+    /* As soon as valid fp is set, it will be used instead of the _filename. The passing fp may not be closed out side the request. it will be closed by the request itself */
+    inline void setFilePointer(FILE* fp){
+        if(fp!=nullptr){
+            this->pFile = fp;
+        }
+    }
+    
+    inline void closeFile(void){
+        if(this->pFile != nullptr){
+            ::fclose(this->pFile);
+            this->pFile == nullptr;
+        }
+    }
+    
+    inline FILE * getFilePointer(void){
+        return this->pFile;
+    }
     
     /** Option field. You can set your post data here
      */
@@ -270,6 +298,7 @@ protected:
     Type                        _requestType;    /// kHttpRequestGet, kHttpRequestPost or other enums
     std::string                 _url;            /// target url that this request is sent to
 	std::string				_filename;
+    FILE*                   pFile;               /// A File Pointer to the Target. pFile will be closed and set to null when _filename is assigned.
     std::vector<char>           _requestData;    /// used for POST
     std::string                 _tag;            /// user defined tag, to identify different requests in response callback
 	int							_inttag;
