@@ -153,6 +153,9 @@ public:
     
     /* As soon as valid fp is set, it will be used instead of the _filename. The passing fp may not be closed out side the request. it will be closed by the request itself */
     inline void setFilePointer(FILE* fp){
+		if(pFile != nullptr && pFile != fp){
+			closeFile();
+		}
         if(fp!=nullptr){
             this->pFile = fp;
         }

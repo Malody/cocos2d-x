@@ -438,7 +438,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
     }
 
 	if(!ok){
-		remove(request->getFilename());
+		remove(request->getFilename());  //todo wstring
 		(*responseCode) = 600; //force an internal error
 		return 1;
 	}
