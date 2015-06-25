@@ -178,7 +178,9 @@ bool Sprite::initWithFile(const std::string& filename)
         Rect rect = Rect::ZERO;
         rect.size = texture->getContentSize();
         return initWithTexture(texture, rect);
-    }
+	}else{
+		return initWithTexture(nullptr, Rect::ZERO );
+	}
 
     // don't release here.
     // when load texture failed, it's better to get a "transparent" sprite then a crashed program
@@ -194,7 +196,9 @@ bool Sprite::initWithFile(const std::string &filename, const Rect& rect)
     if (texture)
     {
         return initWithTexture(texture, rect);
-    }
+	}else{
+		return initWithTexture(nullptr, Rect::ZERO );
+	}
 
     // don't release here.
     // when load texture failed, it's better to get a "transparent" sprite then a crashed program
