@@ -328,7 +328,10 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pKeyEvent) {
 		boolean canSend = canSendThisKey(pKeyCode);
-
+		//android 的keydown会重复触发, 我们不需要这个特性
+		if(pKeyEvent.getRepeatCount() > 0){
+			return true;
+		}
 		if(canSend){
 			this.queueEvent(new Runnable() {
 				@Override
@@ -365,7 +368,6 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
     @Override
     public boolean onKeyUp(final int keyCode, KeyEvent event) {
         boolean canSend = canSendThisKey(keyCode);
-
         if(canSend){
             this.queueEvent(new Runnable() {
                 @Override
