@@ -597,7 +597,7 @@ bool HttpClient::lazyInitThreadSemphore()
 }
 
 //Add a get task to queue
-void HttpClient::send(HttpRequest* request)
+void HttpClient::send(HttpRequest* request,  bool highPriority)
 {    
     if (false == lazyInitThreadSemphore()) 
     {
@@ -613,7 +613,11 @@ void HttpClient::send(HttpRequest* request)
     
     if (nullptr != s_requestQueue) {
         s_requestQueueMutex.lock();
-        s_requestQueue->push_back(request);
+		if(highPriority){
+			s_requestQueue->push_front(request);
+		}else{
+			s_requestQueue->push_back(request);	
+		}
         s_requestQueueMutex.unlock();
         
         // Notify thread start to work

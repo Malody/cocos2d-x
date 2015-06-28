@@ -62,7 +62,7 @@ public:
      * @param request a HttpRequest object, which includes url, response callback etc.
                       please make sure request->_requestData is clear before calling "send" here.
      */
-    void send(HttpRequest* request);
+    void send(HttpRequest* request, bool highPriority = false);
 
     /**
      * Immediate send a request
