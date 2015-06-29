@@ -418,7 +418,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
     if(fp == nullptr){
         fp = fopen(request->getFilename(), "wb");
     }
-	if(!fp){
+	if(nullptr == fp){
 		(*responseCode) = 601;  //无法写入本地文件
 		return 1;
 	}
