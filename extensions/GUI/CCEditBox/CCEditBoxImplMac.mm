@@ -274,6 +274,7 @@
 	if (commandSelector == @selector(insertNewline:)) {
 		//Do something against ENTER key
 		pDelegate->editBoxReturn(getEditBoxImplMac()->getEditBox());
+		pDelegate->editBoxControlKey(getEditBoxImplMac()->getEditBox(), (int)cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER);
 		return YES;
 	} else if (commandSelector == @selector(deleteForward:)) {
 		//Do something against DELETE key
