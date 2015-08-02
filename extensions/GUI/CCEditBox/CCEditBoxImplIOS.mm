@@ -187,6 +187,7 @@ static const int CC_EDIT_BOX_PADDING = 5;
     {
         pDelegate->editBoxEditingDidEnd(getEditBoxImplIOS()->getEditBox());
         pDelegate->editBoxReturn(getEditBoxImplIOS()->getEditBox());
+		pDelegate->editBoxControlKey(getEditBoxImplIOS()->getEditBox(), (int)cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER);
     }
     
 #if CC_ENABLE_SCRIPT_BINDING

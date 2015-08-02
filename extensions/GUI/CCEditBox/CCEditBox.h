@@ -421,7 +421,7 @@ public:
      */
     virtual void touchDownAction(Ref *sender, Control::EventType controlEvent);
 	
-
+	void closeKeyboard();
 protected:
     void updatePosition(float dt);
     EditBoxImpl*      _editBoxImpl;

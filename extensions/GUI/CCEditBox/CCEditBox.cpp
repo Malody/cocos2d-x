@@ -416,6 +416,14 @@ void EditBox::keyboardDidHide(IMEKeyboardNotificationInfo& info)
 	
 }
 
+void EditBox::closeKeyboard(){
+	if (_editBoxImpl != nullptr)
+	{
+		// remove system edit control
+		_editBoxImpl->closeKeyboard();
+	}
+}
+
 
 #if CC_ENABLE_SCRIPT_BINDING
 void EditBox::registerScriptEditBoxHandler(int handler)

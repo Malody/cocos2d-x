@@ -255,6 +255,7 @@ static void editBoxCallbackFunc(const char* pText, void* ctx)
         thiz->getDelegate()->editBoxTextChanged(thiz->getEditBox(), thiz->getText());
         thiz->getDelegate()->editBoxEditingDidEnd(thiz->getEditBox());
         thiz->getDelegate()->editBoxReturn(thiz->getEditBox());
+        thiz->getDelegate()->editBoxControlKey(thiz->getEditBox(), (int)cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER);
     }
     
 #if CC_ENABLE_SCRIPT_BINDING
