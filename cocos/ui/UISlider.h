@@ -171,14 +171,14 @@ public:
      *
      * @param percent    percent value from 1 to 100.
      */
-    void setPercent(int percent);
+    void setPercent(float percent);
     
     /**
      * Gets the progress direction of slider.
      *
      * @return percent    percent value from 1 to 100.
      */
-    int getPercent()const;
+    float getPercent()const;
     
     /**
      * Add call back function called when slider's percent has changed to slider.
@@ -235,7 +235,7 @@ protected:
     Node* _slidBallRenderer;
     
     float _barLength;
-    int _percent;
+    float _percent;
     
     bool _scale9Enabled;
     bool _prevIgnoreSize;

@@ -353,7 +353,7 @@ void Slider::loadSlidBallTexturePressed(const std::string& pressed,TextureResTyp
     }
 }
 
-void Slider::setPercent(int percent)
+void Slider::setPercent(float percent)
 {
     if (percent > 100)
     {
@@ -448,7 +448,7 @@ void Slider::percentChangedEvent()
     }
 }
 
-int Slider::getPercent()const
+float Slider::getPercent()const
 {
     return _percent;
 }
