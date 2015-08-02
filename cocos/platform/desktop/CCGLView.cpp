@@ -733,7 +733,7 @@ void GLView::onGLFWKeyCallback(GLFWwindow *window, int key, int scancode, int ac
         if (action == GLFW_PRESS) {
 			if(key == GLFW_KEY_BACKSPACE)
 				IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
-			else if(key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB)
+			else if(key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB || key == GLFW_KEY_KP_ENTER)
 				IMEDispatcher::sharedDispatcher()->dispatchControl((int)g_keyCodeMap[key]);
         }
     }
