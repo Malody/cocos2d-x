@@ -95,6 +95,19 @@ Layer *Layer::create()
     }
 }
 
+void Layer::cleanup(){
+	Node::cleanup();
+	if(_touchListener){
+		_eventDispatcher->removeEventListener(_touchListener);
+		_touchListener = nullptr;
+	}
+	
+	if(_keyboardListener){
+		_eventDispatcher->removeEventListener(_keyboardListener);
+		_keyboardListener = nullptr;
+	}
+}
+
 int Layer::executeScriptTouchHandler(EventTouch::EventCode eventType, Touch* touch, Event* event)
 {
 #if CC_ENABLE_SCRIPT_BINDING

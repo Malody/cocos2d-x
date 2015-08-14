@@ -91,6 +91,8 @@ public:
     virtual void onTouchesMoved(const std::vector<Touch*>& touches, Event *unused_event);
     virtual void onTouchesEnded(const std::vector<Touch*>& touches, Event *unused_event);
     virtual void onTouchesCancelled(const std::vector<Touch*>&touches, Event *unused_event);
+
+	virtual void cleanup(); 
     /** @deprecated Please override onAcceleration */
     CC_DEPRECATED_ATTRIBUTE virtual void didAccelerate(Acceleration* accelerationValue) final {};
 
