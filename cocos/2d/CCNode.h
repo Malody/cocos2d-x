@@ -513,7 +513,10 @@ public:
      */
     virtual bool isVisible() const;
 
-
+	/**
+	 Consider visible from parent
+	 */
+	virtual bool isVisibleRoot();
     /**
      * Sets the rotation (angle) of the node in degrees.
      *

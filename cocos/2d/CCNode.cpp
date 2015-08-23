@@ -621,6 +621,17 @@ bool Node::isVisible() const
     return _visible;
 }
 
+bool Node::isVisibleRoot(){
+	Node* curr = this;
+	while(curr->_visible){
+		curr = curr->_parent;
+		if(curr == nullptr){
+			return true;
+		}
+	}
+	return curr->_visible;
+}
+
 /// isVisible setter
 void Node::setVisible(bool visible)
 {
