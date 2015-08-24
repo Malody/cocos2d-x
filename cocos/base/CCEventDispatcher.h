@@ -278,6 +278,9 @@ protected:
     bool _isEnabled;
     
     int _nodePriorityIndex;
+	
+	/** 是否有listener需要在下一次事件时移除*/
+	bool _hasPendingRemovable;
     
     std::set<std::string> _internalCustomListenerIDs;
 };

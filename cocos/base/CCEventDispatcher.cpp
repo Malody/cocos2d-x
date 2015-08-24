@@ -204,6 +204,7 @@ EventDispatcher::EventDispatcher()
 : _inDispatch(0)
 , _isEnabled(false)
 , _nodePriorityIndex(0)
+, _hasPendingRemovable(false)
 {
     _toAddedListeners.reserve(50);
     
@@ -621,7 +622,9 @@ void EventDispatcher::removeEventListener(EventListener* listener)
                 {
                     listeners->erase(iter);
                     CC_SAFE_RELEASE(l);
-                }
+				}else{
+					_hasPendingRemovable = true;
+				}
                 
                 isFound = true;
                 break;
@@ -1042,6 +1045,7 @@ void EventDispatcher::updateListeners(Event* event)
     
     auto onUpdateListeners = [this](const EventListener::ListenerID& listenerID)
     {
+		_hasPendingRemovable = false;
         auto listenersIter = _listenerMap.find(listenerID);
         if (listenersIter == _listenerMap.end())
             return;
@@ -1051,6 +1055,7 @@ void EventDispatcher::updateListeners(Event* event)
         auto fixedPriorityListeners = listeners->getFixedPriorityListeners();
         auto sceneGraphPriorityListeners = listeners->getSceneGraphPriorityListeners();
         
+		bool changed = false;
         if (sceneGraphPriorityListeners)
         {
             for (auto iter = sceneGraphPriorityListeners->begin(); iter != sceneGraphPriorityListeners->end();)
@@ -1077,12 +1082,16 @@ void EventDispatcher::updateListeners(Event* event)
                 {
                     iter = fixedPriorityListeners->erase(iter);
                     l->release();
+					changed = true;
                 }
                 else
                 {
                     ++iter;
                 }
             }
+			if(changed){
+				sortEventListenersOfFixedPriority(listenerID);
+			}
         }
         
         if (sceneGraphPriorityListeners && sceneGraphPriorityListeners->empty())
@@ -1096,16 +1105,17 @@ void EventDispatcher::updateListeners(Event* event)
         }
     };
 
-    
-    if (event->getType() == Event::Type::TOUCH)
-    {
-        onUpdateListeners(EventListenerTouchOneByOne::LISTENER_ID);
-        onUpdateListeners(EventListenerTouchAllAtOnce::LISTENER_ID);
-    }
-    else
-    {
-        onUpdateListeners(__getListenerID(event));
-    }
+	if(_hasPendingRemovable){
+		if (event->getType() == Event::Type::TOUCH)
+		{
+			onUpdateListeners(EventListenerTouchOneByOne::LISTENER_ID);
+			onUpdateListeners(EventListenerTouchAllAtOnce::LISTENER_ID);
+		}
+		else
+		{
+			onUpdateListeners(__getListenerID(event));
+		}
+	}
     
     if (_inDispatch > 1)
         return;
@@ -1300,6 +1310,7 @@ void EventDispatcher::removeEventListenersForListenerID(const EventListener::Lis
                 }
                 else
                 {
+					_hasPendingRemovable = true;
                     ++iter;
                 }
             }
