@@ -75,6 +75,7 @@ public:
      */
     void loadTexture(const std::string& fileName,TextureResType texType = TextureResType::LOCAL);
 	std::string& getTexturePath();
+	void setBlendFunc(const BlendFunc &blendFunc);
 
     /**
      * Updates the texture rect of the ImageView in points.

@@ -184,6 +184,16 @@ void ImageView::setTextureRect(const Rect &rect)
     }
 }
 	
+void ImageView::setBlendFunc(const BlendFunc &blendFunc){
+	if (_scale9Enabled)
+	{
+	}
+	else
+	{
+		STATIC_CAST_CCSPRITE->setBlendFunc(blendFunc);
+	}
+}
+	
 Rect ImageView::getTextureRect(){
 	if(_scale9Enabled){
 		return Rect::ZERO;
