@@ -712,7 +712,7 @@ void Director::setProjection(Projection projection)
             }
 #endif
             // issue #1334
-            Mat4::createPerspective(60, (GLfloat)size.width/size.height, 10, zeye+size.height*3, &matrixPerspective);
+            Mat4::createPerspective(60, (GLfloat)size.width/size.height, 10, zeye+size.height*4, &matrixPerspective);
 
             multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, matrixPerspective);
 
