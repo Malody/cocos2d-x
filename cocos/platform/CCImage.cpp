@@ -1969,6 +1969,25 @@ bool Image::initWithRawData(const unsigned char * data, ssize_t dataLen, int wid
     return bRet;
 }
 
+bool Image::initWithDataBuffer(void* buffer, ssize_t datalen,int width, int height,int bitsPerComponent,bool preMulti){
+	bool bRet = false;
+	do{
+		CC_BREAK_IF(0 == width || 0 == height || nullptr == buffer || 0 == datalen);
+
+		_height = height;
+		_width = width;
+		_preMulti = preMulti;
+		_renderFormat = Texture2D::PixelFormat::RGBA8888;
+
+		int bytesPerComponent = 4;
+		this->_data = static_cast<unsigned char*>(buffer);
+		this->_dataLen = datalen;
+		bRet = true;
+	}while(0);
+
+	return bRet;
+}
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 #define CC_MAX_PATH 512
 #endif

@@ -119,6 +119,9 @@ public:
     // @warning kFmtRawData only support RGBA8888
     bool initWithRawData(const unsigned char * data, ssize_t dataLen, int width, int height, int bitsPerComponent, bool preMulti = false);
 
+	//Hack method, BE AWARE!! the buffer will be released by image but not caller
+	bool initWithDataBuffer(void* buffer, ssize_t datalen,int width, int height,int bitsPerComponent,bool preMulti = false);
+
     // Getters
     inline unsigned char *   getData()               { return _data; }
     inline ssize_t           getDataLen()            { return _dataLen; }
