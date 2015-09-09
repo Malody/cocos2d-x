@@ -488,7 +488,7 @@ void Label::setAlignment(TextHAlignment hAlignment,TextVAlignment vAlignment)
     }
 }
 
-void Label::setMaxLineWidth(unsigned int maxLineWidth)
+void Label::setMaxLineWidth(float maxLineWidth)
 {
     if (_labelWidth == 0 && _maxLineWidth != maxLineWidth)
     {
@@ -497,7 +497,7 @@ void Label::setMaxLineWidth(unsigned int maxLineWidth)
     }
 }
 
-void Label::setDimensions(unsigned int width,unsigned int height)
+void Label::setDimensions(float width,float height)
 {
     if (height != _labelHeight || width != _labelWidth)
     {
