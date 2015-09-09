@@ -82,6 +82,7 @@ public:
     void  addTexture(Texture2D *texture, int slot);
     float getLineHeight() const { return _lineHeight; }
     void  setLineHeight(float newHeight);
+	float getLineOffset() const;
     
     Texture2D* getTexture(int slot);
     const Font* getFont() const { return _font; }
@@ -118,6 +119,7 @@ protected:
     std::unordered_map<ssize_t, Texture2D*> _atlasTextures;
     std::unordered_map<char16_t, FontLetterDefinition> _letterDefinitions;
     float _lineHeight;
+	float _lineOffset;
     Font* _font;
     FontFreeType* _fontFreeType;
     void* _iconv;
@@ -131,7 +133,8 @@ protected:
     int _letterPadding;
     int _letterEdgeExtend;
 
-    int _fontAscender;
+    float _fontAscender;
+	float _fontDescender;
     EventListenerCustom* _rendererRecreatedListener;
     bool _antialiasEnabled;
     int _currLineHeight;

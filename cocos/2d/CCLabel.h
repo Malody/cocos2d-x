@@ -555,6 +555,7 @@ protected:
 
     //layout relevant properties.
     float _lineHeight;
+	float _lineOffset;
     float _additionalKerning;
     int* _horizontalKernings;
     bool _lineBreakWithoutSpaces;

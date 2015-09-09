@@ -49,6 +49,7 @@ FontAtlas::FontAtlas(Font &theFont)
 , _iconv(nullptr)
 , _currentPageData(nullptr)
 , _fontAscender(0)
+, _fontDescender(0)
 , _rendererRecreatedListener(nullptr)
 , _antialiasEnabled(true)
 , _currLineHeight(0)
@@ -60,6 +61,8 @@ FontAtlas::FontAtlas(Font &theFont)
     {
         _lineHeight = _font->getFontMaxHeight();
         _fontAscender = _fontFreeType->getFontAscender();
+		_fontDescender = _fontFreeType->getFontDescender();
+		_lineOffset = (_lineHeight + _fontAscender + _fontDescender) * 0.5f;
         auto texture = new (std::nothrow) Texture2D;
         _currentPage = 0;
         _currentPageOrigX = 0;
@@ -321,7 +324,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16Text)
             tempDef.width = tempRect.size.width + _letterPadding + _letterEdgeExtend;
             tempDef.height = tempRect.size.height + _letterPadding + _letterEdgeExtend;
             tempDef.offsetX = tempRect.origin.x + adjustForDistanceMap + adjustForExtend;
-            tempDef.offsetY = _fontAscender + tempRect.origin.y - adjustForDistanceMap - adjustForExtend;
+            tempDef.offsetY = _lineOffset + tempRect.origin.y - adjustForDistanceMap - adjustForExtend;
 
             if (bitmapHeight > _currLineHeight)
             {
@@ -409,6 +412,11 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16Text)
     _atlasTextures[_currentPage]->updateWithData(data, 0, startY, CacheTextureWidth, _currentPageOrigY - startY + _lineHeight);
 
     return true;
+}
+
+float FontAtlas::getLineOffset() const
+{
+	return _lineOffset;
 }
 
 void FontAtlas::addTexture(Texture2D *texture, int slot)

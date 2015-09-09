@@ -266,9 +266,14 @@ int  FontFreeType::getHorizontalKerningForChars(unsigned short firstChar, unsign
     return (static_cast<int>(kerning.x >> 6));
 }
 
-int FontFreeType::getFontAscender() const
+float FontFreeType::getFontAscender() const
 {
-    return (static_cast<int>(_fontRef->size->metrics.ascender >> 6));
+    return _fontRef->size->metrics.ascender / 64.0f;
+}
+
+float FontFreeType::getFontDescender() const
+{
+	return _fontRef->size->metrics.descender / 64.f;
 }
 
 unsigned char* FontFreeType::getGlyphBitmap(unsigned short theChar, long &outWidth, long &outHeight, Rect &outRect,int &xAdvance)

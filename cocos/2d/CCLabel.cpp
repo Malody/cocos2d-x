@@ -346,6 +346,7 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
 , _shadowNode(nullptr)
 , _fontAtlas(nullptr)
 , _reusedLetter(nullptr)
+, _lineOffset(0.0f)
 , _horizontalKernings(nullptr)
 {
     setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -445,6 +446,7 @@ void Label::reset()
     }
     _additionalKerning = 0.f;
     _lineHeight = 0.f;
+	_lineOffset = 0.f;
     _maxLineWidth = 0.f;
     _labelDimensions.width = 0.f;
     _labelDimensions.height = 0.f;
@@ -532,6 +534,7 @@ void Label::setFontAtlas(FontAtlas* atlas,bool distanceFieldEnabled /* = false *
     if (_fontAtlas)
     {
         _lineHeight = _fontAtlas->getLineHeight();
+		_lineOffset = _fontAtlas->getLineOffset();
         _contentDirty = true;
     }
     _useDistanceField = distanceFieldEnabled;
@@ -1295,7 +1298,7 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         _shadowDirty = false;
     }
 
-    if (_children.empty() && !_textSprite)
+    if (false && _children.empty() && !_textSprite)
     {
         return;
     }
