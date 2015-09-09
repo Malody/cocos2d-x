@@ -83,8 +83,8 @@ int Application::run()
     {
         lastTime = getCurrentMillSecond();
         
+		glview->pollEvents();
         director->mainLoop();
-        glview->pollEvents();
 
         curTime = getCurrentMillSecond();
         if (curTime - lastTime < _animationInterval)

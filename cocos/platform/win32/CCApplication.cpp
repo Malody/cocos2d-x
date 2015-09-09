@@ -140,8 +140,9 @@ int Application::run()
 			}
 
 
-            director->mainLoop();
             glview->pollEvents();
+            director->mainLoop();
+            
 			slept = false;
         }
         else
