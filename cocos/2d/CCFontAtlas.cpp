@@ -372,12 +372,12 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16Text)
             _fontFreeType->renderCharAt(_currentPageData, _currentPageOrigX + adjustForExtend, _currentPageOrigY + adjustForExtend, bitmap, bitmapWidth, bitmapHeight);
 
             tempDef.U = _currentPageOrigX;
-            tempDef.V = _currentPageOrigY;
+            tempDef.V = _currentPageOrigY + 1;
             tempDef.textureID = _currentPage;
-            _currentPageOrigX += tempDef.width + 1;
+            _currentPageOrigX += tempDef.width + 1;  //+1 和 下面 -2是为了消除部分字体过于紧密, 产生的上下白线
             // take from pixels to points
             tempDef.width = tempDef.width / scaleFactor;
-            tempDef.height = tempDef.height / scaleFactor;
+            tempDef.height = (tempDef.height - 2) / scaleFactor;
             tempDef.U = tempDef.U / scaleFactor;
             tempDef.V = tempDef.V / scaleFactor;
         }
