@@ -365,6 +365,11 @@ namespace ui {
 		_labelRenderer->disableEffect();
 	}
 	
+	void Text::setBreakMaxWidth(float w){
+		_labelRenderer->setWidth(w);
+		_labelRenderer->setLineBreakWithoutSpace(true);
+	}
+	
 	Widget* Text::createCloneInstance()
 	{
 		return Text::create();

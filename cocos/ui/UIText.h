@@ -183,6 +183,8 @@ public:
     
     /** disable shadow/outline/glow rendering */
     void disableEffect();
+	
+	void setBreakMaxWidth(float w);
     
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
