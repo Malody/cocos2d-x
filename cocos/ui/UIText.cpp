@@ -366,7 +366,7 @@ namespace ui {
 	}
 	
 	void Text::setBreakMaxWidth(float w){
-		_labelRenderer->setWidth(w);
+		_labelRenderer->setWidth(w / _scaleX);
 		_labelRenderer->setLineBreakWithoutSpace(true);
 	}
 	
