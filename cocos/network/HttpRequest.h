@@ -164,7 +164,7 @@ public:
     inline void closeFile(void){
         if(this->pFile != nullptr){
             ::fclose(this->pFile);
-            this->pFile == nullptr;
+            this->pFile = nullptr;
         }
     }
     
