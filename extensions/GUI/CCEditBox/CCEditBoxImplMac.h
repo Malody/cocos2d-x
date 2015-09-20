@@ -37,6 +37,10 @@
 #include "CCEditBoxImpl.h"
 
 
+@interface NSTextField(copypaste)
+- (BOOL)performKeyEquivalent:(NSEvent *)event;
+@end
+
 @interface CCEditBoxImplMac : NSObject <NSTextFieldDelegate>
 {
     void* editBox_;
