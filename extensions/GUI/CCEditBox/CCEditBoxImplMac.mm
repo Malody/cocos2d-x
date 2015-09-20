@@ -125,6 +125,7 @@
     [textField setHidden:NO];
     [textField setWantsLayer:YES];
     [textField setDelegate:self];
+	textField.lineBreakMode = NSLineBreakByTruncatingHead;
 }
 
 -(void) doAnimationWhenKeyboardMoveWithDuration:(float)duration distance:(float)distance

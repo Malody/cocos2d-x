@@ -127,7 +127,7 @@ Application::Platform Application::getTargetPlatform()
 
 Application* Application::getInstance()
 {
-    CCASSERT(sm_pSharedApplication, "sm_pSharedApplication not set");
+    //CCASSERT(sm_pSharedApplication, "sm_pSharedApplication not set");
     return sm_pSharedApplication;
 }
 
