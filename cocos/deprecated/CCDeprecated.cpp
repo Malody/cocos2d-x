@@ -68,10 +68,6 @@ const char* kCCShader_PositionLengthTexureColor = GLProgram::SHADER_NAME_POSITIO
 const char* kCCUniformPMatrix_s = GLProgram::UNIFORM_NAME_P_MATRIX;
 const char* kCCUniformMVMatrix_s = GLProgram::UNIFORM_NAME_MV_MATRIX;
 const char* kCCUniformMVPMatrix_s = GLProgram::UNIFORM_NAME_MVP_MATRIX;
-const char* kCCUniformTime_s = GLProgram::UNIFORM_NAME_TIME;
-const char* kCCUniformSinTime_s = GLProgram::UNIFORM_NAME_SIN_TIME;
-const char* kCCUniformCosTime_s	= GLProgram::UNIFORM_NAME_COS_TIME;
-const char* kCCUniformRandom01_s = GLProgram::UNIFORM_NAME_RANDOM01;
 const char* kCCUniformSampler_s	= GLProgram::UNIFORM_NAME_SAMPLER0;
 const char* kCCUniformAlphaTestValue = GLProgram::UNIFORM_NAME_ALPHA_TEST_VALUE;
 

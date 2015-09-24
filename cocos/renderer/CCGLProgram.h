@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 #include <unordered_map>
 
+#include "base/CCDirector.h"
 #include "base/ccMacros.h"
 #include "base/CCRef.h"
 #include "base/ccTypes.h"
@@ -99,14 +100,7 @@ public:
         UNIFORM_P_MATRIX,
         UNIFORM_MV_MATRIX,
         UNIFORM_MVP_MATRIX,
-        UNIFORM_TIME,
-        UNIFORM_SIN_TIME,
-        UNIFORM_COS_TIME,
-        UNIFORM_RANDOM01,
         UNIFORM_SAMPLER0,
-        UNIFORM_SAMPLER1,
-        UNIFORM_SAMPLER2,
-        UNIFORM_SAMPLER3,
 
         UNIFORM_MAX,
     };
@@ -138,14 +132,7 @@ public:
     static const char* UNIFORM_NAME_P_MATRIX;
     static const char* UNIFORM_NAME_MV_MATRIX;
     static const char* UNIFORM_NAME_MVP_MATRIX;
-    static const char* UNIFORM_NAME_TIME;
-    static const char* UNIFORM_NAME_SIN_TIME;
-    static const char* UNIFORM_NAME_COS_TIME;
-    static const char* UNIFORM_NAME_RANDOM01;
     static const char* UNIFORM_NAME_SAMPLER0;
-    static const char* UNIFORM_NAME_SAMPLER1;
-    static const char* UNIFORM_NAME_SAMPLER2;
-    static const char* UNIFORM_NAME_SAMPLER3;
     static const char* UNIFORM_NAME_ALPHA_TEST_VALUE;
     
     // Attribute names
@@ -328,6 +315,7 @@ protected:
     GLint             _builtInUniforms[UNIFORM_MAX];
     struct _hashUniformEntry* _hashForUniforms;
 	bool              _hasShaderCompiler;
+	Director*		  _director;
         
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
     std::string       _shaderId;

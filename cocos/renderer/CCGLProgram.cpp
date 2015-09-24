@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <alloca.h>
 #endif
 
-#include "base/CCDirector.h"
+
 #include "base/ccMacros.h"
 #include "base/uthash.h"
 #include "renderer/ccGLStateCache.h"
@@ -80,14 +80,7 @@ const char* GLProgram::SHADER_3D_SKINPOSITION_TEXTURE = "Shader3DSkinPositionTex
 const char* GLProgram::UNIFORM_NAME_P_MATRIX = "CC_PMatrix";
 const char* GLProgram::UNIFORM_NAME_MV_MATRIX = "CC_MVMatrix";
 const char* GLProgram::UNIFORM_NAME_MVP_MATRIX  = "CC_MVPMatrix";
-const char* GLProgram::UNIFORM_NAME_TIME = "CC_Time";
-const char* GLProgram::UNIFORM_NAME_SIN_TIME = "CC_SinTime";
-const char* GLProgram::UNIFORM_NAME_COS_TIME = "CC_CosTime";
-const char* GLProgram::UNIFORM_NAME_RANDOM01 = "CC_Random01";
 const char* GLProgram::UNIFORM_NAME_SAMPLER0 = "CC_Texture0";
-const char* GLProgram::UNIFORM_NAME_SAMPLER1 = "CC_Texture1";
-const char* GLProgram::UNIFORM_NAME_SAMPLER2 = "CC_Texture2";
-const char* GLProgram::UNIFORM_NAME_SAMPLER3 = "CC_Texture3";
 const char* GLProgram::UNIFORM_NAME_ALPHA_TEST_VALUE = "CC_alpha_value";
 
 // Attribute names
@@ -133,6 +126,7 @@ GLProgram::GLProgram()
 , _hashForUniforms(nullptr)
 , _flags()
 {
+	_director = Director::getInstance();
     memset(_builtInUniforms, 0, sizeof(_builtInUniforms));
 }
 
@@ -415,14 +409,7 @@ bool GLProgram::compileShader(GLuint * shader, GLenum type, const GLchar* source
         "uniform mat4 CC_PMatrix;\n"
         "uniform mat4 CC_MVMatrix;\n"
         "uniform mat4 CC_MVPMatrix;\n"
-        "uniform vec4 CC_Time;\n"
-        "uniform vec4 CC_SinTime;\n"
-        "uniform vec4 CC_CosTime;\n"
-        "uniform vec4 CC_Random01;\n"
         "uniform sampler2D CC_Texture0;\n"
-        "uniform sampler2D CC_Texture1;\n"
-        "uniform sampler2D CC_Texture2;\n"
-        "uniform sampler2D CC_Texture3;\n"
         "//CC INCLUDES END\n\n",
         source,
     };
@@ -477,39 +464,20 @@ void GLProgram::updateUniforms()
     _builtInUniforms[UNIFORM_P_MATRIX] = glGetUniformLocation(_program, UNIFORM_NAME_P_MATRIX);
     _builtInUniforms[UNIFORM_MV_MATRIX] = glGetUniformLocation(_program, UNIFORM_NAME_MV_MATRIX);
     _builtInUniforms[UNIFORM_MVP_MATRIX] = glGetUniformLocation(_program, UNIFORM_NAME_MVP_MATRIX);
-    
-    _builtInUniforms[UNIFORM_TIME] = glGetUniformLocation(_program, UNIFORM_NAME_TIME);
-    _builtInUniforms[UNIFORM_SIN_TIME] = glGetUniformLocation(_program, UNIFORM_NAME_SIN_TIME);
-    _builtInUniforms[UNIFORM_COS_TIME] = glGetUniformLocation(_program, UNIFORM_NAME_COS_TIME);
-
-    _builtInUniforms[UNIFORM_RANDOM01] = glGetUniformLocation(_program, UNIFORM_NAME_RANDOM01);
 
     _builtInUniforms[UNIFORM_SAMPLER0] = glGetUniformLocation(_program, UNIFORM_NAME_SAMPLER0);
-    _builtInUniforms[UNIFORM_SAMPLER1] = glGetUniformLocation(_program, UNIFORM_NAME_SAMPLER1);
-    _builtInUniforms[UNIFORM_SAMPLER2] = glGetUniformLocation(_program, UNIFORM_NAME_SAMPLER2);
-    _builtInUniforms[UNIFORM_SAMPLER3] = glGetUniformLocation(_program, UNIFORM_NAME_SAMPLER3);
 
     _flags.usesP = _builtInUniforms[UNIFORM_P_MATRIX] != -1;
     _flags.usesMV = _builtInUniforms[UNIFORM_MV_MATRIX] != -1;
     _flags.usesMVP = _builtInUniforms[UNIFORM_MVP_MATRIX] != -1;
-    _flags.usesTime = (
-                       _builtInUniforms[UNIFORM_TIME] != -1 ||
-                       _builtInUniforms[UNIFORM_SIN_TIME] != -1 ||
-                       _builtInUniforms[UNIFORM_COS_TIME] != -1
-                       );
-    _flags.usesRandom = _builtInUniforms[UNIFORM_RANDOM01] != -1;
+    _flags.usesTime = false;
+    _flags.usesRandom = false;
 
     this->use();
     
     // Since sample most probably won't change, set it to 0,1,2,3 now.
     if(_builtInUniforms[UNIFORM_SAMPLER0] != -1)
        setUniformLocationWith1i(_builtInUniforms[UNIFORM_SAMPLER0], 0);
-    if(_builtInUniforms[UNIFORM_SAMPLER1] != -1)
-        setUniformLocationWith1i(_builtInUniforms[UNIFORM_SAMPLER1], 1);
-    if(_builtInUniforms[UNIFORM_SAMPLER2] != -1)
-        setUniformLocationWith1i(_builtInUniforms[UNIFORM_SAMPLER2], 2);
-    if(_builtInUniforms[UNIFORM_SAMPLER3] != -1)
-        setUniformLocationWith1i(_builtInUniforms[UNIFORM_SAMPLER3], 3);
 }
 
 bool GLProgram::link()
@@ -844,18 +812,12 @@ void GLProgram::setUniformLocationWithMatrix4fv(GLint location, const GLfloat* m
 
 void GLProgram::setUniformsForBuiltins()
 {
-    Director* director = Director::getInstance();
-    CCASSERT(nullptr != director, "Director is null when seting matrix stack");
-    
-    Mat4 matrixMV;
-    matrixMV = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-
-    setUniformsForBuiltins(matrixMV);
+    setUniformsForBuiltins(_director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW));
 }
 
 void GLProgram::setUniformsForBuiltins(const Mat4 &matrixMV)
 {
-    Mat4 matrixP = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    auto& matrixP = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 
     if(_flags.usesP)
         setUniformLocationWithMatrix4fv(_builtInUniforms[UNIFORM_P_MATRIX], matrixP.m, 1);
@@ -867,21 +829,6 @@ void GLProgram::setUniformsForBuiltins(const Mat4 &matrixMV)
         Mat4 matrixMVP = matrixP * matrixMV;
         setUniformLocationWithMatrix4fv(_builtInUniforms[UNIFORM_MVP_MATRIX], matrixMVP.m, 1);
     }
-
-    if(_flags.usesTime) {
-        Director *director = Director::getInstance();
-        // This doesn't give the most accurate global time value.
-        // Cocos2D doesn't store a high precision time value, so this will have to do.
-        // Getting Mach time per frame per shader using time could be extremely expensive.
-        float time = director->getTotalFrames() * director->getAnimationInterval();
-        
-        setUniformLocationWith4f(_builtInUniforms[GLProgram::UNIFORM_TIME], time/10.0, time, time*2, time*4);
-        setUniformLocationWith4f(_builtInUniforms[GLProgram::UNIFORM_SIN_TIME], time/8.0, time/4.0, time/2.0, sinf(time));
-        setUniformLocationWith4f(_builtInUniforms[GLProgram::UNIFORM_COS_TIME], time/8.0, time/4.0, time/2.0, cosf(time));
-    }
-    
-    if(_flags.usesRandom)
-        setUniformLocationWith4f(_builtInUniforms[GLProgram::UNIFORM_RANDOM01], CCRANDOM_0_1(), CCRANDOM_0_1(), CCRANDOM_0_1(), CCRANDOM_0_1());
 }
 
 void GLProgram::reset()

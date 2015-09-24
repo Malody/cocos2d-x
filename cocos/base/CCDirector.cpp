@@ -650,7 +650,7 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
-Mat4 Director::getMatrix(MATRIX_STACK_TYPE type)
+const Mat4& Director::getMatrix(MATRIX_STACK_TYPE type)
 {
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
     {

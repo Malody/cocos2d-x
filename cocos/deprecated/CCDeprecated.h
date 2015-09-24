@@ -812,10 +812,6 @@ CC_DEPRECATED_ATTRIBUTE const int kCCVertexAttrib_MAX = GLProgram::VERTEX_ATTRIB
 CC_DEPRECATED_ATTRIBUTE const int kCCUniformPMatrix = GLProgram::UNIFORM_P_MATRIX;
 CC_DEPRECATED_ATTRIBUTE const int kCCUniformMVMatrix = GLProgram::UNIFORM_MV_MATRIX;
 CC_DEPRECATED_ATTRIBUTE const int kCCUniformMVPMatrix = GLProgram::UNIFORM_MVP_MATRIX;
-CC_DEPRECATED_ATTRIBUTE const int kCCUniformTime = GLProgram::UNIFORM_TIME;
-CC_DEPRECATED_ATTRIBUTE const int kCCUniformSinTime = GLProgram::UNIFORM_SIN_TIME;
-CC_DEPRECATED_ATTRIBUTE const int kCCUniformCosTime = GLProgram::UNIFORM_COS_TIME;
-CC_DEPRECATED_ATTRIBUTE const int kCCUniformRandom01 = GLProgram::UNIFORM_RANDOM01;
 CC_DEPRECATED_ATTRIBUTE const int kCCUniformSampler = GLProgram::UNIFORM_SAMPLER0;
 CC_DEPRECATED_ATTRIBUTE const int kCCUniform_MAX = GLProgram::UNIFORM_MAX;
 
@@ -832,10 +828,6 @@ CC_DEPRECATED_ATTRIBUTE extern const char* kCCShader_PositionLengthTexureColor;
 CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformPMatrix_s;
 CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformMVMatrix_s;
 CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformMVPMatrix_s;
-CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformTime_s;
-CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformSinTime_s;
-CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformCosTime_s;
-CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformRandom01_s;
 CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformSampler_s;
 CC_DEPRECATED_ATTRIBUTE extern const char* kCCUniformAlphaTestValue;
 

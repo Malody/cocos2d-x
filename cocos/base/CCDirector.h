@@ -105,7 +105,7 @@ public:
     void loadIdentityMatrix(MATRIX_STACK_TYPE type);
     void loadMatrix(MATRIX_STACK_TYPE type, const Mat4& mat);
     void multiplyMatrix(MATRIX_STACK_TYPE type, const Mat4& mat);
-    Mat4 getMatrix(MATRIX_STACK_TYPE type);
+    const Mat4& getMatrix(MATRIX_STACK_TYPE type);
     void resetMatrixStack();
 
 	void setCursorVisible(bool);
