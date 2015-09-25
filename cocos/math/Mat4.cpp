@@ -50,6 +50,13 @@ Mat4::Mat4(Mat4 && M){
 	memcpy(m, M.m, MATRIX_SIZE);
 }
 
+const Mat4& Mat4::operator = (const Mat4& M){
+    if(&M!=this){
+        memcpy(m, M.m, MATRIX_SIZE);
+    }
+    return *this;
+}
+
 Mat4::~Mat4()
 {
 }

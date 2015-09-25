@@ -143,7 +143,9 @@ public:
      * Destructor.
      */
     ~Mat4();
-
+    
+    const Mat4& operator = (const Mat4& M);
+    
     /**
      * Creates a view matrix based on the specified input parameters.
      *
