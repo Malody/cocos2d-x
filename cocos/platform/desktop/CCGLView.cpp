@@ -741,13 +741,18 @@ void GLView::onGLFWKeyCallback(GLFWwindow *window, int key, int scancode, int ac
 
 void GLView::onGLFWCharCallback(GLFWwindow *window, unsigned int character)
 {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	if(character < 128){
 		IMEDispatcher::sharedDispatcher()->dispatchInsertText((const char*) &character, 1);
-	}else{
+	}
+    else{
 		char szUTF8[8]={0};
 		int nLen = WideCharToMultiByte(CP_UTF8,0,(LPCWSTR)&character,1,szUTF8,sizeof(szUTF8),NULL,NULL);
 		IMEDispatcher::sharedDispatcher()->dispatchInsertText(szUTF8,nLen);
 	}
+#else
+    IMEDispatcher::sharedDispatcher()->dispatchInsertText((const char*) &character, 1);
+#endif
 }
 
 void GLView::onGLFWWindowPosCallback(GLFWwindow *windows, int x, int y)
