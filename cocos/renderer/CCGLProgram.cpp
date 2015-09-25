@@ -817,7 +817,7 @@ void GLProgram::setUniformsForBuiltins()
 
 void GLProgram::setUniformsForBuiltins(const Mat4 &matrixMV)
 {
-    auto& matrixP = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    Mat4 matrixP(_director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION));
 
     if(_flags.usesP)
         setUniformLocationWithMatrix4fv(_builtInUniforms[UNIFORM_P_MATRIX], matrixP.m, 1);

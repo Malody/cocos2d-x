@@ -650,18 +650,21 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
     }
 }
 
-const Mat4& Director::getMatrix(MATRIX_STACK_TYPE type)
+Mat4 Director::getMatrix(MATRIX_STACK_TYPE type)
 {
     if(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW == type)
     {
+		CCASSERT(_modelViewMatrixStack.size(),"Empty module view matrix stack size");
         return _modelViewMatrixStack.top();
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION == type)
     {
+		CCASSERT(_projectionMatrixStack.size(),"Empty projection matrix stack size");
         return _projectionMatrixStack.top();
     }
     else if(MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE == type)
     {
+		CCASSERT(_textureMatrixStack.size(),"Empty texture matrix stack size");
         return _textureMatrixStack.top();
     }
     else

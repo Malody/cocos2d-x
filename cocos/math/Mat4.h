@@ -132,7 +132,13 @@ public:
      * @param copy The matrix to copy.
      */
     Mat4(const Mat4& copy);
-
+	/**
+	* Move constructor for r-value
+	*
+	* @param the matrix will be disposed instead
+	*
+	*/
+	Mat4(Mat4 && M);
     /**
      * Destructor.
      */

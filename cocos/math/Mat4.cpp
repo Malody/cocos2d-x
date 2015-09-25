@@ -46,6 +46,10 @@ Mat4::Mat4(const Mat4& copy)
     memcpy(m, copy.m, MATRIX_SIZE);
 }
 
+Mat4::Mat4(Mat4 && M){
+	memcpy(m, M.m, MATRIX_SIZE);
+}
+
 Mat4::~Mat4()
 {
 }
