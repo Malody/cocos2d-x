@@ -592,6 +592,9 @@ void LayerColor::updateColor()
 
 void LayerColor::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
+	if(!_visible || _displayedOpacity == 0){
+		return;
+	}
     _customCommand.init(_globalZOrder);
     _customCommand.func = CC_CALLBACK_0(LayerColor::onDraw, this, transform, flags);
     renderer->addCommand(&_customCommand);

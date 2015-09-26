@@ -90,7 +90,8 @@ _backGroundImageColor(Color3B::WHITE),
 _backGroundImageOpacity(255),
 _passFocusToChild(true),
 _loopFocus(false),
-_isFocusPassing(false)
+_isFocusPassing(false),
+_groupCommand(nullptr)
 {
     //no-op
 }
@@ -98,6 +99,7 @@ _isFocusPassing(false)
 Layout::~Layout()
 {
     CC_SAFE_RELEASE(_clippingStencil);
+	CC_SAFE_DELETE(_groupCommand);
 }
     
 void Layout::onEnter()
@@ -250,10 +252,10 @@ void Layout::stencilClippingVisit(Renderer *renderer, const Mat4& parentTransfor
     director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
     //Add group command
 
-    _groupCommand.init(_globalZOrder);
-    renderer->addCommand(&_groupCommand);
+    _groupCommand->init(_globalZOrder);
+    renderer->addCommand(_groupCommand);
     
-    renderer->pushGroup(_groupCommand.getRenderQueueID());
+    renderer->pushGroup(_groupCommand->getRenderQueueID());
     
     _beforeVisitCmdStencil.init(_globalZOrder);
     _beforeVisitCmdStencil.func = CC_CALLBACK_0(Layout::onBeforeVisitStencil, this);
@@ -439,6 +441,9 @@ void Layout::setClippingEnabled(bool able)
                 }
                 _clippingStencil->retain();
                 setStencilClippingSize(_contentSize);
+				if(_groupCommand == nullptr){
+					_groupCommand = new GroupCommand;
+				}
             }
             else
             {

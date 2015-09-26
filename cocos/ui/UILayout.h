@@ -505,7 +505,7 @@ protected:
     GLubyte _backGroundImageOpacity;
     
     GLint _mask_layer_le;
-    GroupCommand _groupCommand;
+    GroupCommand* _groupCommand;
     CustomCommand _beforeVisitCmdStencil;
     CustomCommand _afterDrawStencilCmd;
     CustomCommand _afterVisitCmdStencil;
