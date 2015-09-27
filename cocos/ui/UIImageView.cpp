@@ -172,6 +172,18 @@ void ImageView::loadTexture(const std::string& fileName, TextureResType texType)
     updateContentSizeWithTextureSize(_imageTextureSize);
     _imageRendererAdaptDirty = true;
 }
+	
+void ImageView::clearTexture(){
+	_textureFile.clear();
+	_imageTextureSize.setSize(0, 0);
+	if(_scale9Enabled){
+		
+	}else{
+		auto img = STATIC_CAST_CCSPRITE;
+		img->setTexture((Texture2D*)nullptr);
+	}
+	_imageRendererAdaptDirty = true;
+}
 
 void ImageView::setTextureRect(const Rect &rect)
 {

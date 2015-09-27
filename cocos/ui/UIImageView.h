@@ -74,6 +74,7 @@ public:
      * @param texType    @see TextureResType
      */
     void loadTexture(const std::string& fileName,TextureResType texType = TextureResType::LOCAL);
+	void clearTexture();
 	std::string& getTexturePath();
 	void setBlendFunc(const BlendFunc &blendFunc);
 
