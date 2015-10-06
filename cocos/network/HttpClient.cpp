@@ -473,10 +473,29 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
     
     std::ifstream fin;
     fin.open(firsttar,std::ios::binary);
+
+	//cannot open downloaded file
+	if(!fin.is_open()){
+		for(auto& p : list){
+			remove(p.first.c_str());
+		}
+		(*responseCode)=600;
+		return 1;
+	}
+
     fin.seekg(0,std::ios::end);
     size_t len = fin.tellg();
     fin.seekg(0,std::ios::beg);
     
+	if(len == 0 || len == 0xffffffff){
+		fin.close();
+		for(auto& p : list){
+			remove(p.first.c_str());
+		}
+		(*responseCode)=600;
+		return 1;
+	}
+
     char* buffer = new char[len];
     fin.close();
     
@@ -488,6 +507,10 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
         }
         fout.open(p.first,std::ios::binary);
         
+		if(!fout.is_open()){
+			continue;
+		}
+
         fout.write(buffer,len);
         
         fout.close();
