@@ -413,16 +413,28 @@ static int processDeleteTask(HttpRequest *request, write_callback callback, void
 static int processDownloadTask(HttpRequest *request, write_callback callback, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 {
 	CURLRaii curl;
-	FILE* fp;
-    fp = request->getFilePointer();
-    if(fp == nullptr){
-        fp = fopen(request->getFilename(), "wb");
+	FILE* fp = nullptr;
+    
+    auto& list = request->getTargetFileList();
+    
+    if(list.empty()){
+        return 1;
     }
-	if(nullptr == fp){
-		(*responseCode) = 601;  //无法写入本地文件
-		return 1;
-	}
-	bool ok = curl.init(request, callback, fp, headerCallback, headerStream, errorBuffer)
+    
+    std::string firsttar;
+    for(auto& fs : list){
+        if(fs.second != nullptr){
+            fp = fs.second;
+            firsttar = fs.first;
+            break;
+        }
+    }
+    
+    if(fp == nullptr){
+        return -1;
+    }
+    
+    	bool ok = curl.init(request, callback, fp, headerCallback, headerStream, errorBuffer)
 		&& curl.setOption(CURLOPT_CUSTOMREQUEST, "GET")
 		&& curl.setOption(CURLOPT_FOLLOWLOCATION, true)
 		&& curl.setOption(CURLOPT_TIMEOUT, 240L)
@@ -430,13 +442,68 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 		&& curl.perform(responseCode);
 
 	long size = ftell(fp);
+    //adjust all the other logics
+    
+    fp = nullptr;
+    request->closeAllFiles();
+    
+    
+    if(!ok){
+        for(auto& p : list){
+            remove(p.first.c_str());
+        }
+        (*responseCode)=600;
+        return 1;
+    }
+    
+    double contentLength = 0;
+    auto _curl = curl.getCURL();
+    curl_easy_getinfo(_curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+    long _contentLength = floor(contentLength + 0.5);
+    
+    if(size == 0 || size != _contentLength){
+        for(auto& p : list){
+            remove(p.first.c_str());
+        }
+        (*responseCode)=600;
+        return 1;
+    }
+    
+    //Correct, copy content to other files;
+    
+    std::ifstream fin;
+    fin.open(firsttar,std::ios::binary);
+    fin.seekg(0,std::ios::end);
+    size_t len = fin.tellg();
+    fin.seekg(0,std::ios::beg);
+    
+    char* buffer = new char[len];
+    fin.close();
+    
+    std::ofstream fout;
+    
+    for(auto& p : list){
+        if(p.first == firsttar){
+            continue;
+        }
+        fout.open(p.first,std::ios::binary);
+        
+        fout.write(buffer,len);
+        
+        fout.close();
+        
+    }
+    
+    delete[] buffer;
+    /*
 	//fclose(fp);
     if(nullptr != request->getFilePointer()){
         request->closeFile();
     }else{
         ::fclose(fp);
     }
-
+    
+    //
 	if(!ok){
 		remove(request->getFilename());  //todo wstring
 		(*responseCode) = 600; //force an internal error
@@ -455,7 +522,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
 		(*responseCode) = 600; //force an internal error
 		return 1;
 	}
-	
+	*/
 	return 0;
 }
 

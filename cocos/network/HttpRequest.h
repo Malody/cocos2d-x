@@ -85,7 +85,6 @@ public:
         _pSelector = nullptr;
         _pCallback = nullptr;
         _pUserData = nullptr;
-        pFile = nullptr;
     };
     
     /** Destructor */
@@ -95,10 +94,7 @@ public:
         {
             _pTarget->release();
         }
-        if(this->pFile != nullptr){
-            ::fclose(this->pFile);
-            this->pFile = nullptr;
-        }
+        this->closeAllFiles();
     };
     
     /** Override autorelease method to avoid developers to call it */
@@ -136,7 +132,47 @@ public:
         return _url.c_str();
     };
     
-    /* As soon as the filename is set, the file pointer will be closed and set to null */
+    inline void addFileTarget(const char* path, FILE* fp){
+        std::string target(path);
+        auto it = _filePacks.find(path);
+        if(it != _filePacks.end()){
+            if(it->second != nullptr){
+                ::fclose(it->second);
+            }
+            it->second = fp;
+        }else{
+            _filePacks.insert(std::make_pair(target,fp));
+        }
+    }
+    
+    inline void closeFile(const char* path){
+        auto it = _filePacks.find(path);
+        if(it!=_filePacks.end()){
+            if(it->second != nullptr){
+                ::fclose(it->second);
+                it->second = nullptr;
+            }
+        }
+    }
+    
+    inline void closeAllFiles(){
+        for(auto& f : _filePacks){
+            if(f.second != nullptr){
+                ::fclose(f.second);
+                f.second = nullptr;
+            }
+        }
+       // _filePacks.clear();
+    }
+    
+    inline const std::map<std::string, FILE*>& getTargetFileList()const{
+        return _filePacks;
+    }
+    
+    
+    
+    /* this part is not used anymore, multiple file target is supported now
+    /* As soon as the filename is set, the file pointer will be closed and set to null
 	inline void setFilename(const char* path)
 	{
 		_filename = path;
@@ -145,13 +181,13 @@ public:
             this->pFile = nullptr;
         }
 	};
-	/** Get back the setted url */
+	/** Get back the setted url
 	inline const char* getFilename()
 	{
 		return _filename.c_str();
 	};
     
-    /* As soon as valid fp is set, it will be used instead of the _filename. The passing fp may not be closed out side the request. it will be closed by the request itself */
+    /* As soon as valid fp is set, it will be used instead of the _filename. The passing fp may not be closed out side the request. it will be closed by the request itself
     inline void setFilePointer(FILE* fp){
 		if(pFile != nullptr && pFile != fp){
 			closeFile();
@@ -171,7 +207,7 @@ public:
     inline FILE * getFilePointer(void){
         return this->pFile;
     }
-    
+    */
     /** Option field. You can set your post data here
      */
     inline void setRequestData(const char* buffer, size_t len)
@@ -297,11 +333,13 @@ public:
    	}
     
 protected:
+    
     // properties
     Type                        _requestType;    /// kHttpRequestGet, kHttpRequestPost or other enums
     std::string                 _url;            /// target url that this request is sent to
-	std::string				_filename;
-    FILE*                   pFile;               /// A File Pointer to the Target. pFile will be closed and set to null when _filename is assigned.
+	//std::string				_filename;
+    //FILE*                   pFile;               /// A File Pointer to the Target. pFile will be closed and set to null when _filename is assigned.
+    std::map<std::string,FILE*> _filePacks;
     std::vector<char>           _requestData;    /// used for POST
     std::string                 _tag;            /// user defined tag, to identify different requests in response callback
 	int							_inttag;
