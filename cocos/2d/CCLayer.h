@@ -119,7 +119,7 @@ public:
     @since v0.8.1
     */
     CC_DEPRECATED_ATTRIBUTE bool isTouchEnabled() const;
-    CC_DEPRECATED_ATTRIBUTE void setTouchEnabled(bool value);
+    void setTouchEnabled(bool value);
     
     CC_DEPRECATED_ATTRIBUTE virtual void setTouchMode(Touch::DispatchMode mode);
     CC_DEPRECATED_ATTRIBUTE virtual Touch::DispatchMode getTouchMode() const;
@@ -142,7 +142,7 @@ public:
     */
 
     CC_DEPRECATED_ATTRIBUTE virtual bool isKeyboardEnabled() const;
-    CC_DEPRECATED_ATTRIBUTE virtual void setKeyboardEnabled(bool value);
+    virtual void setKeyboardEnabled(bool value);
 
     /** Please use onKeyPressed instead. */
     CC_DEPRECATED_ATTRIBUTE virtual void keyPressed(int keyCode) final {};
