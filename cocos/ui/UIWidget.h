@@ -36,7 +36,7 @@ class EventListenerTouchOneByOne;
 
 
 namespace ui {
-    
+
 typedef enum
 {
     TOUCH_EVENT_BEGAN,
@@ -44,7 +44,7 @@ typedef enum
     TOUCH_EVENT_ENDED,
     TOUCH_EVENT_CANCELED
 }TouchEventType;
-    
+
 typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
 #define toucheventselector(_SELECTOR) (SEL_TouchEvent)(&_SELECTOR)
 
@@ -71,47 +71,40 @@ public:
         UP,
         DOWN
     };
-    
+
     enum class PositionType
     {
         ABSOLUTE,
         PERCENT
     };
-    
+
     enum class SizeType
     {
         ABSOLUTE,
         PERCENT
     };
-    
+
     enum class TouchEventType
     {
         BEGAN,
         MOVED,
         ENDED,
-        CANCELED
+        CANCELED,
+        HOLD
     };
-    
+
     enum class TextureResType
     {
         LOCAL = 0,
         PLIST = 1
     };
-    
-    enum class BrightStyle
-    {
-        NONE = -1,
-        NORMAL,
-        HIGHLIGHT
-    };
 
-    
     typedef std::function<void(Ref*,Widget::TouchEventType)> ccWidgetTouchCallback;
     /**
      * Default constructor
      */
     Widget(void);
-    
+
     /**
      * Default destructor
      */
@@ -123,7 +116,7 @@ public:
 
     /**
      * Sets whether the widget is enabled
-     * 
+     *
      * true if the widget is enabled, widget may be touched , false if the widget is disabled, widget cannot be touched.
      *
      * The default value is true, a widget is default to enabled
@@ -140,22 +133,6 @@ public:
     bool isEnabled() const;
 
     /**
-     * Sets whether the widget is bright
-     *
-     * The default value is true, a widget is default to bright
-     *
-     * @param visible   true if the widget is bright, false if the widget is dark.
-     */
-    void setBright(bool bright);
-
-    /**
-     * Determines if the widget is bright
-     *
-     * @return true if the widget is bright, false if the widget is dark.
-     */
-    bool isBright() const;
-
-    /**
      * Sets whether the widget is touch enabled
      *
      * The default value is false, a widget is default to touch disabled
@@ -165,36 +142,11 @@ public:
     virtual void setTouchEnabled(bool enabled);
 
     /**
-     * To set the bright style of widget.
-     *
-     * @see BrightStyle
-     *
-     * @param style   BrightStyle::NORMAL means the widget is in normal state, BrightStyle::HIGHLIGHT means the widget is in highlight state.
-     */
-    void setBrightStyle(BrightStyle style);
-
-    /**
      * Determines if the widget is touch enabled
      *
      * @return true if the widget is touch enabled, false if the widget is touch disabled.
      */
     bool isTouchEnabled() const;
-
-    /**
-     * Determines if the widget is highlighted
-     *
-     * @return true if the widget is highlighted, false if the widget is not hignlighted .
-     */
-    bool isHighlighted() const;
-
-    /**
-     * Sets whether the widget is hilighted
-     *
-     * The default value is false, a widget is default to not hilighted
-     *
-     * @param hilight   true if the widget is hilighted, false if the widget is not hilighted.
-     */
-    void setHighlighted(bool hilight);
 
     /**
      * Gets the left boundary position of this widget in parent's coordination system.
@@ -233,7 +185,6 @@ public:
     /**
      * Sets the touch event target/selector of the menu item
      */
-    CC_DEPRECATED_ATTRIBUTE void addTouchEventListener(Ref* target,SEL_TouchEvent selector);
     void addTouchEventListener(ccWidgetTouchCallback callback);
 
 
@@ -401,9 +352,9 @@ public:
      * @return size
      */
     CC_DEPRECATED_ATTRIBUTE const Size& getSize() const;
-    
+
     const Size& getCustomSize() const;
-    
+
     virtual const Size& getLayoutSize() {return _contentSize;};
 
     /**
@@ -453,7 +404,7 @@ public:
 
     /**
      *
-     * Note: when you set _ignoreSize to true, no matther you call setContentSize or not, 
+     * Note: when you set _ignoreSize to true, no matther you call setContentSize or not,
      * the widget size is always equal to the return value of the member function getVirtualRendererSize.
      *
      * @param ignore, set member variabl _ignoreSize to ignore
@@ -485,7 +436,7 @@ public:
 
 
     virtual const Size& getVirtualRendererSize() const;
-    
+
 
     /**
      * Returns the "class name" of widget.
@@ -500,42 +451,42 @@ public:
     void updateSizeAndPosition();
 
     void updateSizeAndPosition(const Size& parentSize);
-    
+
     /*temp action*/
     void setActionTag(int tag);
 	int getActionTag()const;
-    
+
     /**
      *@return  whether the widget is focused or not
      */
     bool isFocused()const;
-    
+
     /**
      *@param focus  pass true to let the widget get focus or pass false to let the widget lose focus
      *@return void
      */
     void setFocused(bool focus);
-    
+
     /**
      *@return true represent the widget could accept focus, false represent the widget couldn't accept focus
      */
     bool isFocusEnabled()const;
-    
+
     /**
      *@param enable pass true/false to enable/disable the focus ability of a widget
      *@return void
      */
     void setFocusEnabled(bool enable);
-    
+
     /**
-     *  When a widget is in a layout, you could call this method to get the next focused widget within a specified direction. 
+     *  When a widget is in a layout, you could call this method to get the next focused widget within a specified direction.
      *  If the widget is not in a layout, it will return itself
      *@param dir the direction to look for the next focused widget in a layout
      *@param current  the current focused widget
      *@return the next focused widget in a layout
      */
     virtual Widget* findNextFocusedWidget(FocusDirection direction, Widget* current);
-    
+
     /**
      * when a widget calls this method, it will get focus immediately.
      */
@@ -559,7 +510,7 @@ public:
     static void enableDpadNavigation(bool enable);
 
     /**
-     * When a widget lose/get focus, this method will be called. Be Caution when you provide your own version, 
+     * When a widget lose/get focus, this method will be called. Be Caution when you provide your own version,
      * you must call widget->setFocused(true/false) to change the focus state of the current focused widget;
      */
     std::function<void(Widget*,Widget*)> onFocusChanged;
@@ -588,7 +539,7 @@ CC_CONSTRUCTOR_ACCESS:
      *@return void
      */
     void onFocusChange(Widget* widgetLostFocus, Widget* widgetGetFocus);
-    
+
     /**
      * Dispatch a EventFocus through a EventDispatcher
      *@param widgetLoseFocus  The widget which lose its focus
@@ -596,7 +547,7 @@ CC_CONSTRUCTOR_ACCESS:
      *@return void
      */
     void  dispatchFocusEvent(Widget* widgetLoseFocus, Widget* widgetGetFocus);
-    
+
 protected:
     //call back function called when size changed.
     virtual void onSizeChanged();
@@ -613,22 +564,22 @@ protected:
 
     void pushDownEvent();
     void moveEvent();
-
     virtual void releaseUpEvent();
     virtual void cancelUpEvent();
+    void holdEvent(float dt);
 
     virtual void updateFlippedX(){};
     virtual void updateFlippedY(){};
     virtual void adaptRenderers(){};
-    
+
     void copyProperties(Widget* model);
     virtual Widget* createCloneInstance();
     virtual void copySpecialProperties(Widget* model);
     virtual void copyClonedWidgetChildren(Widget* model);
-    
+
     Widget* getWidgetParent();
     void updateContentSizeWithTextureSize(const Size& size);
-    
+
     bool isAncestorsEnabled();
     Widget* getAncensterWidget(Node* node);
     bool isAncestorsVisible(Node* node);
@@ -637,14 +588,12 @@ protected:
 
 protected:
     bool _enabled;
-    bool _bright;
     bool _touchEnabled;
-    bool _highlight;
     bool _reorderWidgetChildDirty;
     bool _affectByClipping;
     bool _ignoreSize;
+    bool _triggerHold;
 
-    BrightStyle _brightStyle;
     SizeType _sizeType;
     PositionType _positionType;
 
@@ -676,14 +625,13 @@ protected:
      */
     static Widget *_focusedWidget;  //both layout & widget will be stored in this variable
 
-    Ref*       _touchEventListener;
     #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     #elif _MSC_VER >= 1400 //vs 2005 or higher
     #pragma warning (push)
     #pragma warning (disable: 4996)
     #endif
-    SEL_TouchEvent    _touchEventSelector;
+
     #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
     #pragma GCC diagnostic warning "-Wdeprecated-declarations"
     #elif _MSC_VER >= 1400 //vs 2005 or higher
