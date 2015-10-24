@@ -28,10 +28,5 @@ THE SOFTWARE.
 #include "CCScale9Sprite.h"
 #include "CCControl.h"
 #include "CCControlButton.h"
-#include "CCControlColourPicker.h"
-#include "CCControlPotentiometer.h"
-#include "CCControlSlider.h"
-#include "CCControlStepper.h"
-#include "CCControlSwitch.h"
 
 #endif
