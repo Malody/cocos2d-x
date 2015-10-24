@@ -677,6 +677,10 @@ const Size& Node::getContentSize() const
     return _contentSize;
 }
 
+Size Node::getRealSize(){
+	return Size(_contentSize.width * _scaleX, _contentSize.height * _scaleY);
+}
+
 void Node::setContentSize(const Size & size)
 {
     if ( ! size.equals(_contentSize))

@@ -494,7 +494,7 @@ public:
      * @return The untransformed size of the node.
      */
     virtual const Size& getContentSize() const;
-
+	Size getRealSize();
 
     /**
      * Sets whether the node is visible
