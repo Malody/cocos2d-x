@@ -73,7 +73,7 @@ bool ControlButton::initWithLabelAndBackgroundSprite(Node* node, Scale9Sprite* b
     {
         CCASSERT(node != nullptr, "node must not be nil.");
         LabelProtocol* label = dynamic_cast<LabelProtocol*>(node);
-        CCASSERT(backgroundSprite != nullptr, "Background sprite must not be nil.");
+        //CCASSERT(backgroundSprite != nullptr, "Background sprite must not be nil.");
         CCASSERT(label != nullptr, "label must not be nil.");
         
         _parentInited = true;
@@ -445,20 +445,25 @@ void ControlButton::setBackgroundSpriteForState(Scale9Sprite* sprite, State stat
         _backgroundSpriteDispatchTable.erase((int)state);
     }
 
-    _backgroundSpriteDispatchTable.insert((int)state, sprite);
-    sprite->setVisible(false);
-    sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
-    addChild(sprite);
+    
+	if(sprite){
+		_backgroundSpriteDispatchTable.insert((int)state, sprite);
+		sprite->setVisible(false);
+		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+		addChild(sprite);
+	}
 
     if (this->_preferredSize.width != 0 || this->_preferredSize.height != 0)
     {
-        if (oldPreferredSize.equals(_preferredSize))
+        if (oldPreferredSize.equals(_preferredSize) && sprite)
         {
             // Force update of preferred size
             sprite->setPreferredSize(Size(oldPreferredSize.width+1, oldPreferredSize.height+1));
         }
         
-        sprite->setPreferredSize(this->_preferredSize);
+		if(sprite){
+			sprite->setPreferredSize(this->_preferredSize);
+		}
     }
 
     // If the current state if equal to the given state we update the layout
