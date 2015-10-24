@@ -441,7 +441,7 @@ void Sprite::setTextureCoords(Rect rect)
 
     if (_rectRotated)
     {
-#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL || true
         left    = (2*rect.origin.x+1)/(2*atlasWidth);
         right   = left+(rect.size.height*2-2)/(2*atlasWidth);
         top     = (2*rect.origin.y+1)/(2*atlasHeight);
@@ -474,7 +474,7 @@ void Sprite::setTextureCoords(Rect rect)
     }
     else
     {
-#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL || true
         left    = (2*rect.origin.x+1)/(2*atlasWidth);
         right    = left + (rect.size.width*2-2)/(2*atlasWidth);
         top        = (2*rect.origin.y+1)/(2*atlasHeight);
