@@ -328,6 +328,7 @@ public:
      */
     inline const Vec2& getOffsetPosition(void) const { return _offsetPosition; }
 
+	void setTexturePixelFix(bool enable);
 
     /**
      * Returns the flag which indicates whether the sprite is flipped horizontally or not.
@@ -564,6 +565,7 @@ protected:
     // texture
     Rect _rect;                             /// Retangle of Texture2D
     bool   _rectRotated;                    /// Whether the texture is rotated
+	bool _texFix;
 
     // Offset Position (used by Zwoptex)
     Vec2 _offsetPosition;

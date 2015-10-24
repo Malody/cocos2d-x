@@ -281,6 +281,7 @@ Sprite::Sprite(void)
 : _shouldBeHidden(false)
 , _texture(nullptr)
 , _insideBounds(true)
+, _texFix(false)
 {
 }
 
@@ -424,6 +425,11 @@ void Sprite::setVertexRect(const Rect& rect)
     _rect = rect;
 }
 
+void Sprite::setTexturePixelFix(bool enable){
+	_texFix = enable;
+	setTextureCoords(_rect);
+}
+
 void Sprite::setTextureCoords(Rect rect)
 {
     rect = CC_RECT_POINTS_TO_PIXELS(rect);
@@ -441,17 +447,17 @@ void Sprite::setTextureCoords(Rect rect)
 
     if (_rectRotated)
     {
-#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL || true
-        left    = (2*rect.origin.x+1)/(2*atlasWidth);
-        right   = left+(rect.size.height*2-2)/(2*atlasWidth);
-        top     = (2*rect.origin.y+1)/(2*atlasHeight);
-        bottom  = top+(rect.size.width*2-2)/(2*atlasHeight);
-#else
-        left    = rect.origin.x/atlasWidth;
-        right   = (rect.origin.x+rect.size.height) / atlasWidth;
-        top     = rect.origin.y/atlasHeight;
-        bottom  = (rect.origin.y+rect.size.width) / atlasHeight;
-#endif // CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+		if(_texFix){
+			left    = (2*rect.origin.x+1)/(2*atlasWidth);
+			right   = left+(rect.size.height*2-2)/(2*atlasWidth);
+			top     = (2*rect.origin.y+1)/(2*atlasHeight);
+			bottom  = top+(rect.size.width*2-2)/(2*atlasHeight);
+		}else{
+			left    = rect.origin.x/atlasWidth;
+			right   = (rect.origin.x+rect.size.height) / atlasWidth;
+			top     = rect.origin.y/atlasHeight;
+			bottom  = (rect.origin.y+rect.size.width) / atlasHeight;
+		}
 
         if (_flippedX)
         {
@@ -474,17 +480,17 @@ void Sprite::setTextureCoords(Rect rect)
     }
     else
     {
-#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL || true
-        left    = (2*rect.origin.x+1)/(2*atlasWidth);
-        right    = left + (rect.size.width*2-2)/(2*atlasWidth);
-        top        = (2*rect.origin.y+1)/(2*atlasHeight);
-        bottom    = top + (rect.size.height*2-2)/(2*atlasHeight);
-#else
-        left    = rect.origin.x/atlasWidth;
-        right    = (rect.origin.x + rect.size.width) / atlasWidth;
-        top        = rect.origin.y/atlasHeight;
-        bottom    = (rect.origin.y + rect.size.height) / atlasHeight;
-#endif // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+		if(_texFix){
+			left    = (2*rect.origin.x+1)/(2*atlasWidth);
+			right    = left + (rect.size.width*2-2)/(2*atlasWidth);
+			top        = (2*rect.origin.y+1)/(2*atlasHeight);
+			bottom    = top + (rect.size.height*2-2)/(2*atlasHeight);
+		}else{
+			left    = rect.origin.x/atlasWidth;
+			right    = (rect.origin.x + rect.size.width) / atlasWidth;
+			top        = rect.origin.y/atlasHeight;
+			bottom    = (rect.origin.y + rect.size.height) / atlasHeight;
+		}
 
         if(_flippedX)
         {
