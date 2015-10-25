@@ -448,7 +448,7 @@ static int processDownloadTask(HttpRequest *request, write_callback callback, lo
     request->closeAllFiles();
     
     
-    if(!ok){
+    if(!ok || *responseCode >= 400){
         for(auto& p : list){
             remove(p.first.c_str());
         }
