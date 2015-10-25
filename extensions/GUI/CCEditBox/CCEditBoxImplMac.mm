@@ -153,24 +153,22 @@
 
 -(void) openKeyboard
 {
-    if ([textField_ superview]) {
+	if([secureTextField_ superview]){
+		[secureTextField_ becomeFirstResponder];
+	}else{
         [textField_ becomeFirstResponder];
-    }
-    else {
-        [secureTextField_ becomeFirstResponder];
     }
 }
 
 -(void) closeKeyboard
 {
-    if ([textField_ superview]) {
-        [textField_ resignFirstResponder];
-        [textField_ removeFromSuperview];
-    }
-    else {
+    if([secureTextField_ superview]) {
         [secureTextField_ resignFirstResponder];
         [secureTextField_ removeFromSuperview];
-    }
+	}else{
+		[textField_ resignFirstResponder];
+		[textField_ removeFromSuperview];
+	}
 }
 
 - (BOOL)textFieldShouldReturn:(NSTextField *)sender
@@ -432,7 +430,8 @@ void EditBoxImplMac::setInputFlag(EditBox::InputFlag inputFlag)
     {
         case EditBox::InputFlag::PASSWORD:
             [_sysEdit.textField.superview addSubview:_sysEdit.secureTextField];
-            [_sysEdit.textField removeFromSuperview];
+//            [_sysEdit.textField removeFromSuperview];
+			[_sysEdit.textField setHidden:YES];
             break;
         case EditBox::InputFlag::INITIAL_CAPS_WORD:
             CCLOGWARN("INITIAL_CAPS_WORD not implemented");
@@ -441,7 +440,11 @@ void EditBoxImplMac::setInputFlag(EditBox::InputFlag inputFlag)
             CCLOGWARN("INITIAL_CAPS_SENTENCE not implemented");
             break;
         case EditBox::InputFlag::INTIAL_CAPS_ALL_CHARACTERS:
-            CCLOGWARN("INTIAL_CAPS_ALL_CHARACTERS not implemented");
+			if(_sysEdit.secureTextField.superview){
+				[_sysEdit.secureTextField removeFromSuperview];
+				[_sysEdit.textField setHidden:NO];
+//				[_sysEdit.textField.superview addSubview:_sysEdit.textField];
+			}
             break;
         case EditBox::InputFlag::SENSITIVE:
             CCLOGWARN("SENSITIVE not implemented");

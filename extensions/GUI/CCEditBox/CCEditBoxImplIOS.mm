@@ -465,6 +465,7 @@ void EditBoxImplIOS::setInputFlag(EditBox::InputFlag inputFlag)
             _systemControl.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
             break;
         case EditBox::InputFlag::INTIAL_CAPS_ALL_CHARACTERS:
+			_systemControl.textField.secureTextEntry = NO;
             _systemControl.textField.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
             break;
         case EditBox::InputFlag::SENSITIVE:
