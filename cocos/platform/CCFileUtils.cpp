@@ -507,7 +507,7 @@ Data FileUtils::getVirtualData(const std::string& filename,const std::string& pa
 
 	Data ret;
 	char* buffer = nullptr;
-	ssize_t size = 0;
+	size_t size = 0;
 	const char* mode = nullptr;
 	if(forString){
 		mode = "rt";
@@ -515,21 +515,19 @@ Data FileUtils::getVirtualData(const std::string& filename,const std::string& pa
 		mode = "rb";
 	}
 
-	std::stringstream ss;
+	buffer = (this->loader)(filename,packname,size);
 
-	if(!(this->loader)(filename,packname,&ss))
+	if(buffer == nullptr)
 	{
 		return Data::Null;
 	}
 
-	ss.seekg(0,ios::end);
-	size = ss.tellg();
-	ss.seekg(0,ios::beg);
-
 	if(size == 0){
+		delete[] buffer;
 		return Data::Null;
 	}
 
+	/*
 	if(forString)
 	{
 		buffer = new char[size+1];
@@ -538,15 +536,13 @@ Data FileUtils::getVirtualData(const std::string& filename,const std::string& pa
 	else
 	{
 		buffer = new char[size];
-	}
-
-	ss.read(buffer,size);
+	}*/
 
 	ret.fastSet(reinterpret_cast<unsigned char*>(buffer),size);
 	return ret;
 }
 
-void FileUtils::registerVirtualLoader(std::function<bool(const std::string&,const std::string&,std::ostream*)> loaderFunc)
+void FileUtils::registerVirtualLoader(std::function<char*(const std::string&,const std::string&,size_t& size)> loaderFunc)
 {
 	this->loader = loaderFunc;
 }

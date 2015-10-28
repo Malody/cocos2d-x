@@ -355,7 +355,7 @@ public:
 	*/
 	virtual Data getVirtualData(const std::string& filename,const std::string& packname,bool forString);
 
-	virtual void registerVirtualLoader(std::function<bool(const std::string&,const std::string&,std::ostream*)> loaderFunc);
+	virtual void registerVirtualLoader(std::function<char*(const std::string&,const std::string&,size_t& size)> loaderFunc);
 	virtual void registerVirtualChecker(std::function<bool(const std::string&,const std::string&)> checkerFunc);
 
 	virtual void withdrawVirtualLoader(void);
@@ -376,7 +376,7 @@ protected:
 		/*
 		Virtual File loader function
 	*/
-	std::function<bool(const std::string&,const std::string&,std::ostream*)> loader;
+	std::function<char*(const std::string&,const std::string&,size_t&)> loader;
 	std::function<bool(const std::string&,const std::string&)> checker;
 	std::set<std::string> packnameList;
 
