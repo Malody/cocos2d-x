@@ -495,6 +495,8 @@ public:
      */
     virtual const Size& getContentSize() const;
 	Size getRealSize();
+	void setRealWidth(float w);
+	void setRealHeight(float h);
 
     /**
      * Sets whether the node is visible

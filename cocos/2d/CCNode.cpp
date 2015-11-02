@@ -681,6 +681,22 @@ Size Node::getRealSize(){
 	return Size(_contentSize.width * _scaleX, _contentSize.height * _scaleY);
 }
 
+void Node::setRealWidth(float w){
+	if(fabs(_contentSize.width) < 1e-4){
+		return;
+	}
+	_scaleX = _scaleY = w / _contentSize.width;
+	_transformUpdated = _transformDirty = _inverseDirty = true;
+}
+
+void Node::setRealHeight(float h){
+	if(fabs(_contentSize.height) < 1e-4){
+		return;
+	}
+	_scaleX = _scaleY = h / _contentSize.width;
+	_transformUpdated = _transformDirty = _inverseDirty = true;
+}
+
 void Node::setContentSize(const Size & size)
 {
     if ( ! size.equals(_contentSize))
