@@ -613,13 +613,7 @@ static Data getData(const std::string& filename, bool forString)
         }
     } while (0);
     
-    if (nullptr == buffer || 0 == readsize)
-    {
-        std::string msg = "Get data from file(";
-        msg.append(filename).append(") failed!");
-        CCLOG("%s", msg.c_str());
-    }
-    else
+    if (nullptr != buffer && 0 != readsize)
     {
         ret.fastSet(buffer, readsize);
     }
@@ -664,6 +658,11 @@ Data FileUtils::getDataFromFile(const std::string& filename)
 				break;
 			}
 		}
+	}
+	if(ret.getBytes() == nullptr || ret.getSize() == 0){
+		std::string msg = "Get data from file(";
+		msg.append(filename).append(") failed!");
+		CCLOG("%s", msg.c_str());
 	}
 	return ret;
 
