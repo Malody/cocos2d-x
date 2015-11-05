@@ -436,6 +436,7 @@ public:
     virtual bool isOpacityModifyRGB(void) const override;
     /// @}
 
+	bool isInBound() { return _insideBounds;};
 CC_CONSTRUCTOR_ACCESS:
 
     Sprite(void);
