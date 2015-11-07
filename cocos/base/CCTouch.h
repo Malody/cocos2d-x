@@ -80,7 +80,7 @@ public:
         }
     }
 
-	//Ö±½ÓÌæ»»µ±Ç°µã, ×¢ÒâÊ¹ÓÃ³¡¾°
+	//ç›´æ¥æ›¿æ¢å½“å‰ç‚¹, æ³¨æ„ä½¿ç”¨åœºæ™¯
 	void setTouchInfo(float x, float y){
 		_point.x = x;
 		_point.y = y;
