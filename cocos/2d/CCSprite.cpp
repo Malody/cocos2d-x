@@ -419,6 +419,13 @@ void Sprite::setTextureRect(const Rect& rect, bool rotated, const Size& untrimme
     }
 }
 
+void Sprite::setVertex(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d){
+	_quad.bl.vertices = Vec3(a.x , a.y, 0);
+    _quad.br.vertices = Vec3(b.x , b.y, 0);
+    _quad.tl.vertices = Vec3(c.x , c.y, 0);
+    _quad.tr.vertices = Vec3(d.x , d.y, 0);
+}
+
 // override this method to generate "double scale" sprites
 void Sprite::setVertexRect(const Rect& rect)
 {
@@ -1060,7 +1067,7 @@ void Sprite::updateBlendFunc(void)
     // it is possible to have an untextured sprite
     if (! _texture || ! _texture->hasPremultipliedAlpha())
     {
-        //_blendFunc = BlendFunc::ALPHA_NON_PREMULTIPLIED;
+        _blendFunc = BlendFunc::ALPHA_NON_PREMULTIPLIED;
         setOpacityModifyRGB(false);
     }
     else

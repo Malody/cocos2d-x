@@ -436,7 +436,7 @@ public:
     virtual bool isOpacityModifyRGB(void) const override;
     /// @}
 
-	bool isInBound() { return _insideBounds;};
+	void setVertex(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d);
 CC_CONSTRUCTOR_ACCESS:
 
     Sprite(void);
