@@ -65,7 +65,7 @@ THE SOFTWARE.
 
 /**
  Position of the FPS
- 
+
  Default: 0,0 (bottom-left corner)
  */
 #ifndef CC_DIRECTOR_STATS_POSITION
@@ -178,7 +178,7 @@ Director::~Director(void)
     CC_SAFE_RELEASE(_notificationNode);
     CC_SAFE_RELEASE(_scheduler);
     CC_SAFE_RELEASE(_actionManager);
-    
+
     delete _eventAfterUpdate;
     delete _eventAfterDraw;
     delete _eventAfterVisit;
@@ -191,7 +191,7 @@ Director::~Director(void)
 #endif
 
     CC_SAFE_RELEASE(_eventDispatcher);
-    
+
     // delete _lastUpdate
     CC_SAFE_DELETE(_lastUpdate);
 
@@ -256,7 +256,7 @@ void Director::drawScene()
 {
     // calculate "global" dt
     calculateDeltaTime();
-    
+
     // skip one flame when _deltaTime equal to zero.
     if(_deltaTime < FLT_EPSILON)
     {
@@ -437,39 +437,65 @@ void Director::suitViewWithMonitor(GLView* openGLView)
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     CCASSERT(openGLView != nullptr, "no view");
-	
+
     auto frameSize = openGLView->getFrameSize();
     auto frameZoom = openGLView->getFrameZoomFactor();
-	
+
     auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
     if (video == nullptr)
         return;
-	
+
     Size suitableSize(video->width, video->height);
-    
+
     int clipW = 0;
     int clipH = 0;
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	clipW = GetSystemMetrics(SM_CXSIZEFRAME)*2;
     clipH = GetSystemMetrics(SM_CYSIZEFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-	
+
 #endif
     suitableSize.width = suitableSize.width - clipW;
     suitableSize.height = suitableSize.height - clipH;
-	
+
     if (frameSize.width > suitableSize.width)
         frameSize.width = suitableSize.width;
     if (frameSize.height > suitableSize.height)
         frameSize.height = suitableSize.height;
-	
+
     if (frameSize.width <= 0 || frameSize.height <= 0)
         return;
-	
+
     openGLView->setFrameSize(frameSize.width,  frameSize.height);
 #endif
 }
 
+Size Director::getSuitMonitorSize(const Size& size){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    auto video = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    if (video == nullptr)
+        return size;
+
+    Size suitableSize(video->width, video->height);
+
+    int clipW = 0;
+    int clipH = 0;
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	clipW = GetSystemMetrics(SM_CXSIZEFRAME)*2;
+    clipH = GetSystemMetrics(SM_CYSIZEFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+
+#endif
+    suitableSize.width = suitableSize.width - clipW;
+    suitableSize.height = suitableSize.height - clipH;
+
+    if (size.width > suitableSize.width)
+        size.width = suitableSize.width;
+    if (size.height > suitableSize.height)
+        size.height = suitableSize.height;
+#endif
+    return size;
+}
 
 TextureCache* Director::getTextureCache() const
 {
@@ -512,24 +538,24 @@ void Director::setNextDeltaTimeZero(bool nextDeltaTimeZero)
 {
     _nextDeltaTimeZero = nextDeltaTimeZero;
 }
-   
+
 void Director::initMatrixStack()
 {
     while (!_modelViewMatrixStack.empty())
     {
         _modelViewMatrixStack.pop();
     }
-    
+
     while (!_projectionMatrixStack.empty())
     {
         _projectionMatrixStack.pop();
     }
-    
+
     while (!_textureMatrixStack.empty())
     {
         _textureMatrixStack.pop();
     }
-    
+
     _modelViewMatrixStack.push(Mat4::IDENTITY);
     _projectionMatrixStack.push(Mat4::IDENTITY);
     _textureMatrixStack.push(Mat4::IDENTITY);
@@ -697,7 +723,7 @@ void Director::setProjection(Projection projection)
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
             break;
         }
-            
+
         case Projection::_3D:
         {
             float zeye = this->getZEye();
@@ -705,7 +731,7 @@ void Director::setProjection(Projection projection)
             Mat4 matrixPerspective, matrixLookup;
 
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
-            
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
             //if needed, we need to add a rotation for Landscape orientations on Windows Phone 8 since it is always in Portrait Mode
             GLView* view = getOpenGLView();
@@ -722,7 +748,7 @@ void Director::setProjection(Projection projection)
             Vec3 eye(size.width/2, size.height/2, zeye), center(size.width/2, size.height/2, 0.0f), up(0.0f, 1.0f, 0.0f);
             Mat4::createLookAt(eye, center, up, &matrixLookup);
             multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, matrixLookup);
-            
+
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
             break;
         }
@@ -798,10 +824,10 @@ void Director::setDepthTest(bool on)
 static void GLToClipTransform(Mat4 *transformOut)
 {
     if(nullptr == transformOut) return;
-    
+
     Director* director = Director::getInstance();
     CCASSERT(nullptr != director, "Director is null when seting matrix stack");
-    
+
     Mat4 projection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
@@ -850,7 +876,7 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
 	b = (a×M)T
 	Out = 1 ⁄ bw(bx, by, bz)
 	*/
-	
+
 	clipCoord.x = clipCoord.x / clipCoord.w;
 	clipCoord.y = clipCoord.y / clipCoord.w;
 	clipCoord.z = clipCoord.z / clipCoord.w;
@@ -909,10 +935,10 @@ void Director::replaceScene(Scene *scene)
 {
     CCASSERT(_runningScene, "Use runWithScene: instead to start the director");
     CCASSERT(scene != nullptr, "the scene should not be null");
-    
+
     if (scene == _nextScene)
         return;
-    
+
     if (_nextScene)
     {
         if (_nextScene->isRunning())
@@ -1017,7 +1043,7 @@ void Director::purgeDirector()
 {
     // cleanup scheduler
     getScheduler()->unscheduleAll();
-    
+
     // Disable event dispatching
     if (_eventDispatcher)
     {
@@ -1030,7 +1056,7 @@ void Director::purgeDirector()
         _runningScene->cleanup();
         _runningScene->release();
     }
-    
+
     _runningScene = nullptr;
     _nextScene = nullptr;
 
@@ -1059,13 +1085,13 @@ void Director::purgeDirector()
 
     // cocos2d-x specific data structures
     UserDefault::destroyInstance();
-    
+
     GL::invalidateStateCache();
-    
+
     destroyTextureCache();
 
     CHECK_GL_ERROR_DEBUG();
-    
+
     // OpenGL view
     if (_openGLView)
     {
@@ -1104,7 +1130,7 @@ void Director::setNextScene()
              _runningScene->onExitTransitionDidStart();
              _runningScene->onExit();
          }
- 
+
          // issue #709. the root node (scene) should receive the cleanup message too
          // otherwise it might be leaked.
          if (_sendCleanupToScene && _runningScene)
@@ -1177,7 +1203,7 @@ void Director::showStats()
 
     ++_frames;
     _accumDt += _deltaTime;
-    
+
     if (_displayStats && _FPSLabel && _drawnBatchesLabel && _drawnVerticesLabel)
     {
         char buffer[30];
@@ -1218,14 +1244,14 @@ void Director::calculateMPF()
 {
     struct timeval now;
     gettimeofday(&now, nullptr);
-    
+
     _secondsPerFrame = (now.tv_sec - _lastUpdate->tv_sec) + (now.tv_usec - _lastUpdate->tv_usec) / 1000000.0f;
 }
 
 // returns the FPS image data pointer and len
 void Director::getFPSImageData(unsigned char** datapointer, ssize_t* length)
 {
-    // XXX fixed me if it should be used 
+    // XXX fixed me if it should be used
     *datapointer = cc_fps_images_png;
     *length = cc_fps_images_len();
 }
@@ -1260,9 +1286,9 @@ void Director::createStatsLabel()
     CC_SAFE_RELEASE(image);
 
     /*
-     We want to use an image which is stored in the file named ccFPSImage.c 
-     for any design resolutions and all resource resolutions. 
-     
+     We want to use an image which is stored in the file named ccFPSImage.c
+     for any design resolutions and all resource resolutions.
+
      To achieve this, we need to ignore 'contentScaleFactor' in 'AtlasNode' and 'LabelAtlas'.
      So I added a new method called 'setIgnoreContentScaleFactor' for 'AtlasNode',
      this is not exposed to game developers, it's only used for displaying FPS now.
@@ -1329,7 +1355,7 @@ void Director::setActionManager(ActionManager* actionManager)
         CC_SAFE_RETAIN(actionManager);
         CC_SAFE_RELEASE(_actionManager);
         _actionManager = actionManager;
-    }    
+    }
 }
 
 void Director::setEventDispatcher(EventDispatcher* dispatcher)
@@ -1359,7 +1385,7 @@ void DisplayLinkDirector::startAnimation()
     _invalid = false;
 
     Application::getInstance()->setAnimationInterval(_animationInterval);
-    
+
     // fix issue #3509, skip one fps to avoid incorrect time calculation.
     setNextDeltaTimeZero(true);
 }
@@ -1369,7 +1395,7 @@ void DisplayLinkDirector::mainLoop()
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	//这里会在glfw处理事件之前，先行拦截接下来要发生的事件，因此PeekMessage的参数应该是PM_NOREMOVE
 	//另一个可以考虑放置此代码的地方在CCApplication.cpp, 144行后面，在glview->pollEvents()之后再人工解决
-	
+
 	/*
 	MSG msg;
 	if(::GetMessage(&msg,NULL,NULL,NULL)){
@@ -1401,7 +1427,7 @@ void DisplayLinkDirector::mainLoop()
 						}
 
 						if(GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam),cInputs,pInputs,sizeof(TOUCHINPUT))){
-							
+
 							TOUCHINPUT begins[10];
 							TOUCHINPUT moves[10];
 							TOUCHINPUT ends[10];
@@ -1410,7 +1436,7 @@ void DisplayLinkDirector::mainLoop()
 							int ctMv = 0;
 							int ctEnd = 0;
 
-							
+
 
 							for(UINT i = 0; i< cInputs; i++){
 								TOUCHINPUT ti = pInputs[i];
@@ -1491,7 +1517,7 @@ void DisplayLinkDirector::mainLoop()
 							}
 
 							//这里，我们把提取到的数据整理出来，并且根据情况调用给cocos
-							
+
 							//this->getOpenGLView()->handleTouchesBegin( );
 
 							handled = true;
@@ -1499,7 +1525,7 @@ void DisplayLinkDirector::mainLoop()
 							handled = false;
 						}
 						delete[] pInputs;
-						
+
 						if(handled){
 							::CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(lParam));
 						}
@@ -1507,7 +1533,7 @@ void DisplayLinkDirector::mainLoop()
 					//这里处理出错的情况，需要将事件抛回去吗？由于是Peek出来的因此似乎不需要
 					//::DefWindowProc(hwnd,WM_TOUCH,wParam,lParam);
 				}
-				
+
 			}break;
 			case WM_GESTURE:
 				{
@@ -1591,7 +1617,7 @@ void DisplayLinkDirector::mainLoop()
     else if (! _invalid)
     {
         drawScene();
-     
+
         // release the objects
         PoolManager::getInstance()->getCurrentPool()->clear();
     }
@@ -1609,8 +1635,7 @@ void DisplayLinkDirector::setAnimationInterval(double interval)
     {
         stopAnimation();
         startAnimation();
-    }    
+    }
 }
 
 NS_CC_END
-
