@@ -489,10 +489,11 @@ Size Director::getSuitMonitorSize(const Size& size){
     suitableSize.width = suitableSize.width - clipW;
     suitableSize.height = suitableSize.height - clipH;
 
-    if (size.width > suitableSize.width)
-        size.width = suitableSize.width;
-    if (size.height > suitableSize.height)
-        size.height = suitableSize.height;
+    if (size.width < suitableSize.width)
+        suitableSize.width = size.width;
+    if (size.height < suitableSize.height)
+        suitableSize.height = size.height;
+	return suitableSize;
 #endif
     return size;
 }
