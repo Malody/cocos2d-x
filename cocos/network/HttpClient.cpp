@@ -367,28 +367,26 @@ static int processDeleteTask(HttpRequest *request, write_callback callback, void
     return ok ? 0 : 1;
 }
 
-static int processVisitTask(HttpRequest *request, long *responseCode, char *errorBuffer)
+static int processVisitTask(HttpRequest *request, long *responseCode, write_callback callback, void *stream, write_callback headerCallback, void *headerStream, char *errorBuffer)
 {
     CURLRaii curl;
-    bool ok = curl.init(request, nullptr, nullptr, nullptr, nullptr, errorBuffer)
-            && curl.setOption(CURLOPT_CUSTOMREQUEST, "GET")
+    bool ok = curl.init(request, callback, stream, headerCallback, headerStream, errorBuffer)
             && curl.setOption(CURLOPT_NOBODY, true)
-            && curl.setOption(CURLOPT_HEADER, true)
+            && curl.setOption(CURLOPT_HEADER, false)
             && curl.setOption(CURLOPT_FOLLOWLOCATION, true);
     if(!ok){
         *responseCode = -1;
         return 1;
     }
-    time_t curr;
-    time(&curr);
+   
     ok = curl.perform(responseCode);
-    if(!ok){
-        *responseCode = -1;
+    if(*responseCode == -1){
         return 1;
     }
-    time_t end;
-    time(&end);
-    *responseCode = (end - curr);
+	double time = 0;
+	auto _curl = curl.getCURL();
+	curl_easy_getinfo(_curl, CURLINFO_TOTAL_TIME, &time);
+    *responseCode = (int)(time * 1000);
     return 0;
 }
 
@@ -592,6 +590,10 @@ static void processResponse(HttpResponse* response, char* errorBuffer)
     case HttpRequest::Type::VISIT:
         retValue = processVisitTask(request,
             &responseCode,
+			writeData,
+			response->getResponseData(),
+			writeHeaderData,
+			response->getResponseHeader(),
             errorBuffer);
         break;
     default:
