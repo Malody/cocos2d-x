@@ -128,6 +128,7 @@ Node::Node(void)
 , _usingNormalizedPosition(false)
 , _name("")
 , _hashOfName(0)
+, _eventTag(0)
 {
     // set default scheduler and actionManager
     _director = Director::getInstance();

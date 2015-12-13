@@ -907,6 +907,8 @@ public:
      */
     virtual void setName(const std::string& name);
 
+	void setEventTag(int tag) { _eventTag = tag; };
+	int getEventTag() { return _eventTag;};
 
     /**
      * Returns a custom user data pointer
@@ -1594,7 +1596,7 @@ protected:
 	Director* _director;            //cached director pointer to improve rendering performance
 
     int _tag;                         ///< a tag. Can be any number you assigned just to identify this node
-
+	int _eventTag;					/// used for event dispatch
     std::string _name;               ///<a string label, an user defined string to identify this node
     size_t _hashOfName;            ///<hash value of _name, used for speed in getChildByName
 
