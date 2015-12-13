@@ -153,6 +153,7 @@ public:
     CC_DEPRECATED_ATTRIBUTE SpriteFrame* spriteFrameByName(const std::string&name) { return getSpriteFrameByName(name); }
 
 	void setFramePrefix(const std::string& prefix) { this->prefix = prefix;};
+	void toggleOverride(bool canOverride) { this->canOverride = canOverride;};
 private:
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
@@ -168,6 +169,7 @@ protected:
     ValueMap _spriteFramesAliases;
     std::set<std::string>*  _loadedFileNames;
 	std::string prefix;
+	bool canOverride;
 };
 
 // end of sprite_nodes group

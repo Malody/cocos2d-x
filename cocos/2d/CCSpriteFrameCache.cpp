@@ -78,6 +78,7 @@ bool SpriteFrameCache::init()
     _spriteFrames.reserve(20);
     _spriteFramesAliases.reserve(20);
     _loadedFileNames = new std::set<std::string>();
+	canOverride = false;
     return true;
 }
 
@@ -118,7 +119,11 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
         SpriteFrame* spriteFrame = _spriteFrames.at(spriteFrameName);
         if (spriteFrame)
         {
-            continue;
+			if(canOverride){
+				_spriteFrames.erase(spriteFrameName);
+			}else{
+				continue;
+			}
         }
         
         if(format == 0) 

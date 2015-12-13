@@ -348,9 +348,9 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
     setViewName(viewName);
 
     _frameZoomFactor = frameZoomFactor;
-#if CC_TARGET_PLATFORM != CC_PLATFORM_MAC
+//#if CC_TARGET_PLATFORM != CC_PLATFORM_MAC
     glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
-#endif
+//#endif
     _mainWindow = glfwCreateWindow(rect.size.width * _frameZoomFactor,
                                    rect.size.height * _frameZoomFactor,
                                    _viewName.c_str(),
@@ -374,10 +374,6 @@ bool GLView::initWithRect(const std::string& viewName, Rect rect, float frameZoo
 	glfwSetTouchCallback(_mainWindow,GLFWEventHandler::onGLFWTouchCallBack);
 	glfwSwapInterval(0);
 #endif
-	/*typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
-	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = nullptr;
-	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)glfwGetProcAddress("wglSwapIntervalEXT");
-	wglSwapIntervalEXT(0);*/
 
     setFrameSize(rect.size.width, rect.size.height);
 
