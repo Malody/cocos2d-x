@@ -339,10 +339,13 @@ RAPIDJSON_NAMESPACE_END
     \note Parsing errors are handled and can be customized by the
           \ref RAPIDJSON_ERRORS APIs.
 */
-#ifndef RAPIDJSON_ASSERT
-#include <cassert>
-#define RAPIDJSON_ASSERT(x) assert(x)
-#endif // RAPIDJSON_ASSERT
+
+#define RAPIDJSON_ASSERT(x) {}
+//#define RAPIDJSON_ASSERT {}
+//#ifndef RAPIDJSON_ASSERT
+//#include <assert.h>
+//#define RAPIDJSON_ASSERT(x) assert(x)
+//#endif // RAPIDJSON_ASSERT
 
 ///////////////////////////////////////////////////////////////////////////////
 // RAPIDJSON_STATIC_ASSERT
