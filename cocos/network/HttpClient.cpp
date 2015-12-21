@@ -227,6 +227,8 @@ static bool configureCURL(CURL *handle, char *errorBuffer)
     }
     curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
+	curl_easy_setopt(handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 30);
+	curl_easy_setopt(handle, CURLOPT_TCP_KEEPALIVE, 1L);
 
     // FIXED #3224: The subthread of CCHttpClient interrupts main thread if timeout comes.
     // Document is here: http://curl.haxx.se/libcurl/c/curl_easy_setopt.html#CURLOPTNOSIGNAL
@@ -640,8 +642,8 @@ void HttpClient::enableCookies(const char* cookieFile) {
 }
 
 HttpClient::HttpClient()
-: _timeoutForConnect(30)
-, _timeoutForRead(60)
+: _timeoutForConnect(20)
+, _timeoutForRead(30)
 {
 }
 
