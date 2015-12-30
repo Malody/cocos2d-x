@@ -106,7 +106,17 @@ bool Scale9Sprite::updateWithBatchNode(SpriteBatchNode* batchnode, const Rect& o
     Rect rect(originalRect);
 
     // Release old sprites
-    this->removeAllChildrenWithCleanup(true);
+	removeChild(_centre, true);
+	removeChild(_top, true);
+	removeChild(_topLeft, true);
+	removeChild(_topRight, true);
+	removeChild(_left, true);
+	removeChild(_right, true);
+	removeChild(_bottomLeft, true);
+	removeChild(_bottomRight, true);
+	removeChild(_bottom, true);
+	removeChild(_scale9Image, true);
+//    this->removeAllChildrenWithCleanup(true);
 
     CC_SAFE_RELEASE(this->_centre);
     CC_SAFE_RELEASE(this->_top);
