@@ -151,12 +151,12 @@ public:
      *
      * @param file The name of the texture file.
      * @param rect The rectangle that describes the sub-part of the texture that
-     * is the whole image. If the shape is the whole texture, set this to the 
+     * is the whole image. If the shape is the whole texture, set this to the
      * texture's full rect.
      * @param capInsets The values to use for the cap insets.
      */
     virtual bool initWithFile(const std::string& file, const Rect& rect,  const Rect& capInsets);
-    
+
     /**
      * Initializes a 9-slice sprite with a texture file and a delimitation zone. The
      * texture will be broken down into a 3×3 grid of equal blocks.
@@ -166,11 +166,11 @@ public:
      *
      * @param file The name of the texture file.
      * @param rect The rectangle that describes the sub-part of the texture that
-     * is the whole image. If the shape is the whole texture, set this to the 
+     * is the whole image. If the shape is the whole texture, set this to the
      * texture's full rect.
      */
     virtual bool initWithFile(const std::string& file, const Rect& rect);
-    
+
     /**
      * Initializes a 9-slice sprite with a texture file and with the specified cap
      * insets.
@@ -182,7 +182,7 @@ public:
      * @param capInsets The values to use for the cap insets.
      */
     virtual bool initWithFile(const Rect& capInsets, const std::string& file);
-    
+
     /**
      * Initializes a 9-slice sprite with a texture file. The whole texture will be
      * broken down into a 3×3 grid of equal blocks.
@@ -193,9 +193,9 @@ public:
      * @param file The name of the texture file.
      */
     virtual bool initWithFile(const std::string& file);
-    
+
     /**
-     * Initializes a 9-slice sprite with an sprite frame and with the specified 
+     * Initializes a 9-slice sprite with an sprite frame and with the specified
      * cap insets.
      * Once the sprite is created, you can then call its "setContentSize:" method
      * to resize the sprite will all it's 9-slice goodness intract.
@@ -217,7 +217,7 @@ public:
     virtual bool initWithSpriteFrame(SpriteFrame* spriteFrame);
 
     /**
-     * Initializes a 9-slice sprite with an sprite frame name and with the specified 
+     * Initializes a 9-slice sprite with an sprite frame name and with the specified
      * cap insets.
      * Once the sprite is created, you can then call its "setContentSize:" method
      * to resize the sprite will all it's 9-slice goodness intract.
@@ -245,19 +245,20 @@ public:
     /**
      * Creates and returns a new sprite object with the specified cap insets.
      * You use this method to add cap insets to a sprite or to change the existing
-     * cap insets of a sprite. In both cases, you get back a new image and the 
+     * cap insets of a sprite. In both cases, you get back a new image and the
      * original sprite remains untouched.
      *
      * @param capInsets The values to use for the cap insets.
      */
     Scale9Sprite* resizableSpriteWithCapInsets(const Rect& capInsets);
-    
+
     virtual bool updateWithBatchNode(SpriteBatchNode* batchnode, const Rect& rect, bool rotated, const Rect& capInsets);
+    void setSpriteFrame(const std::string& name);
     virtual void setSpriteFrame(SpriteFrame * spriteFrame);
 
     // overrides
     virtual void setContentSize(const Size & size) override;
-	
+
 	virtual void setDesignSize(const Size & size);
     /**
      * @js NA
