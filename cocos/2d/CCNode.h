@@ -710,6 +710,8 @@ public:
      *
      */
     virtual void addChild(Node* child, int localZOrder, const std::string &name);
+
+    Node* getChildAt(size_t index);
     /**
      * Gets a child from the container with its tag
      *

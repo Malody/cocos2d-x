@@ -884,6 +884,13 @@ void Node::childrenAlloc()
     _children.reserve(4);
 }
 
+Node* Node::getChildAt(size_t index){
+    if(index >= _children.size()){
+        return nullptr;
+    }
+    return _children.at(index);
+}
+
 Node* Node::getChildByTag(int tag) const
 {
     CCASSERT( tag != Node::INVALID_TAG, "Invalid tag");
