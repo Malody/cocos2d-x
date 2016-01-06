@@ -109,6 +109,7 @@ public:
     }
 
     bool StartArray() {
+		arrOneRow = false;
         PrettyPrefix(kArrayType);
         new (Base::level_stack_.template Push<typename Base::Level>()) typename Base::Level(true);
         return Base::WriteStartArray();
@@ -120,10 +121,11 @@ public:
         RAPIDJSON_ASSERT(Base::level_stack_.template Top<typename Base::Level>()->inArray);
         bool empty = Base::level_stack_.template Pop<typename Base::Level>(1)->valueCount == 0;
 
-        if (!empty) {
+        if (!empty && !arrOneRow) {
             Base::os_->Put('\n');
             WriteIndent();
         }
+		arrOneRow = false;
         bool ret = Base::WriteEndArray();
         (void)ret;
         RAPIDJSON_ASSERT(ret == true);
@@ -131,6 +133,8 @@ public:
             Base::os_->Flush();
         return true;
     }
+	
+	void OneRowArray() { arrOneRow = true;}
 
     //@}
 
@@ -149,13 +153,20 @@ protected:
             typename Base::Level* level = Base::level_stack_.template Top<typename Base::Level>();
 
             if (level->inArray) {
-                if (level->valueCount > 0) {
-                    Base::os_->Put(','); // add comma if it is not the first element in array
-                    Base::os_->Put('\n');
-                }
-                else
-                    Base::os_->Put('\n');
-                WriteIndent();
+				if(arrOneRow){
+					if (level->valueCount > 0) {
+						Base::os_->Put(',');
+					}
+				}else{
+					if (level->valueCount > 0) {
+						Base::os_->Put(','); // add comma if it is not the first element in array
+						Base::os_->Put('\n');
+					}
+					else
+						Base::os_->Put('\n');
+					WriteIndent();
+				}
+                
             }
             else {  // in object
                 if (level->valueCount > 0) {
@@ -191,7 +202,7 @@ protected:
 
     Ch indentChar_;
     unsigned indentCharCount_;
-
+	bool arrOneRow;
 private:
     // Prohibit copy constructor & assignment operator.
     PrettyWriter(const PrettyWriter&);
