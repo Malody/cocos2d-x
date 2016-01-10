@@ -66,6 +66,7 @@ public:
         PUT,
         DELETE,
 		DOWNLOAD,
+		UPLOAD,
         VISIT,  //try visit server, return connection time
         UNKNOWN,
     };
