@@ -77,7 +77,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		onLoadNativeLibraries();
+//		onLoadNativeLibraries();
 
 		sContext = this;
     	this.mHandler = new Cocos2dxHandler(this);
