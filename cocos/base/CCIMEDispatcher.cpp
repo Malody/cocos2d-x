@@ -1,7 +1,7 @@
 /****************************************************************************
 Copyright (c) 2010      cocos2d-x.org
 Copyright (C) 2013-2014 Chukong Technologies Inc.
- 
+
 http://www.cocos2d-x.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,8 +24,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "base/CCIMEDispatcher.h"
-
-#include <list>
+#include <algorithm>
 
 NS_CC_BEGIN
 
@@ -33,23 +32,19 @@ NS_CC_BEGIN
 // add/remove delegate in IMEDelegate Cons/Destructor
 //////////////////////////////////////////////////////////////////////////
 
-IMEDelegate::IMEDelegate()
-{
+IMEDelegate::IMEDelegate(){
     IMEDispatcher::sharedDispatcher()->addDelegate(this);
 }
 
-IMEDelegate::~IMEDelegate()
-{
+IMEDelegate::~IMEDelegate(){
     IMEDispatcher::sharedDispatcher()->removeDelegate(this);
 }
 
-bool IMEDelegate::attachWithIME()
-{
+bool IMEDelegate::attachWithIME(){
     return IMEDispatcher::sharedDispatcher()->attachDelegateWithIME(this);
 }
 
-bool IMEDelegate::detachWithIME()
-{
+bool IMEDelegate::detachWithIME(){
     return IMEDispatcher::sharedDispatcher()->detachDelegateWithIME(this);
 }
 
@@ -58,227 +53,103 @@ bool IMEDelegate::isAttached(){
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-typedef std::list< IMEDelegate * > DelegateList;
-typedef std::list< IMEDelegate * >::iterator  DelegateIter;
-
-//////////////////////////////////////////////////////////////////////////
-// Delegate List manage class
-//////////////////////////////////////////////////////////////////////////
-
-class IMEDispatcher::Impl
-{
-public:
-    Impl()
-    {
-    }
-
-    ~Impl()
-    {
-
-    }
-
-    void init()
-    {
-        _delegateWithIme = 0;
-    }
-
-    DelegateIter findDelegate(IMEDelegate* delegate)
-    {
-        DelegateIter end = _delegateList.end();
-        for (DelegateIter iter = _delegateList.begin(); iter != end; ++iter)
-        {
-            if (delegate == *iter)
-            {
-                return iter;
-            }
-        }
-        return end;
-    }
-
-	void clearAll(){
-		_delegateList.clear();
-		_delegateWithIme = nullptr;
-	}
-
-    DelegateList    _delegateList;
-    IMEDelegate*  _delegateWithIme;
-};
-
-//////////////////////////////////////////////////////////////////////////
 // Cons/Destructor
 //////////////////////////////////////////////////////////////////////////
 
-IMEDispatcher::IMEDispatcher()
-: _impl(new IMEDispatcher::Impl)
-{
-    _impl->init();
+IMEDispatcher::IMEDispatcher(){
+    target = nullptr;
 }
 
-IMEDispatcher::~IMEDispatcher()
-{
-    CC_SAFE_DELETE(_impl);
+IMEDispatcher::~IMEDispatcher(){
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Add/Attach/Remove IMEDelegate
 //////////////////////////////////////////////////////////////////////////
 
-void IMEDispatcher::addDelegate(IMEDelegate* delegate)
-{
-    if (! delegate || ! _impl)
-    {
+void IMEDispatcher::addDelegate(IMEDelegate* delegate){
+    if(!delegate){
         return;
     }
-    if (_impl->_delegateList.end() != _impl->findDelegate(delegate))
-    {
-        // pDelegate already in list
+    auto old = find(delegates.begin(), delegates.end(), delegate);
+    if(old != delegates.end()){
         return;
     }
-    _impl->_delegateList.push_front(delegate);
+    delegates.push_back(delegate);
 }
 
-bool IMEDispatcher::attachDelegateWithIME(IMEDelegate * delegate)
-{
-    bool ret = false;
-    do
-    {
-        CC_BREAK_IF(! _impl || ! delegate);
-
-        DelegateIter end  = _impl->_delegateList.end();
-        DelegateIter iter = _impl->findDelegate(delegate);
-
-        // if pDelegate is not in delegate list, return
-        CC_BREAK_IF(end == iter);
-
-        if (_impl->_delegateWithIme)
-        {
-            // if old delegate canDetachWithIME return false 
-            // or pDelegate canAttachWithIME return false,
-            // do nothing.
-            CC_BREAK_IF(! _impl->_delegateWithIme->canDetachWithIME()
-                || ! delegate->canAttachWithIME());
-
-            // detach first
-            IMEDelegate * oldDelegate = _impl->_delegateWithIme;
-            _impl->_delegateWithIme = 0;
-            oldDelegate->didDetachWithIME();
-
-            _impl->_delegateWithIme = *iter;
-            delegate->didAttachWithIME();
-            ret = true;
-            break;
-        }
-
-        // delegate hasn't attached to IME yet
-        CC_BREAK_IF(! delegate->canAttachWithIME());
-
-        _impl->_delegateWithIme = *iter;
+bool IMEDispatcher::attachDelegateWithIME(IMEDelegate * delegate){
+    if(target && target != delegate && target->canDetachWithIME()){
+        target->didDetachWithIME();
+        target = nullptr;
+    }
+    if(delegate && delegate->canAttachWithIME()){
         delegate->didAttachWithIME();
-        ret = true;
-    } while (0);
-    return ret;
+    }
+    target = delegate;
+    return true;
 }
 
-bool IMEDispatcher::detachDelegateWithIME(IMEDelegate * delegate)
-{
-    bool ret = false;
-    do
-    {
-        CC_BREAK_IF(! _impl || ! delegate);
-
-        // if pDelegate is not the current delegate attached to IME, return
-        CC_BREAK_IF(_impl->_delegateWithIme != delegate);
-
-        CC_BREAK_IF(! delegate->canDetachWithIME());
-
-        _impl->_delegateWithIme = 0;
+bool IMEDispatcher::detachDelegateWithIME(IMEDelegate * delegate){
+    if(!target || delegate != target){
+        return false;
+    }
+    if(delegate->canDetachWithIME()){
         delegate->didDetachWithIME();
-        ret = true;
-    } while (0);
-    return ret;
+    }
+    target = nullptr;
+    return true;
 }
 
 bool IMEDispatcher::isAttached(IMEDelegate* delegate){
-	if(_impl->_delegateWithIme == delegate){
+	if(target && target == delegate){
 		return true;
 	}
 	return false;
 }
 
-void IMEDispatcher::removeDelegate(IMEDelegate* delegate)
-{
-    do 
-    {
-        CC_BREAK_IF(! delegate || ! _impl);
-
-        DelegateIter iter = _impl->findDelegate(delegate);
-        DelegateIter end  = _impl->_delegateList.end();
-        CC_BREAK_IF(end == iter);
-
-        if (_impl->_delegateWithIme)
-
-        if (*iter == _impl->_delegateWithIme)
-        {
-            _impl->_delegateWithIme = 0;
-        }
-        _impl->_delegateList.erase(iter);
-    } while (0);
+void IMEDispatcher::removeDelegate(IMEDelegate* delegate){
+    auto old = find(delegates.begin(), delegates.end(), delegate);
+    if(old != delegates.end()){
+        swap(delegates.back(), *old);
+        delegates.pop_back();
+    }
+    if(delegate == target){
+        target = nullptr;
+    }
 }
 
 void IMEDispatcher::removeAll(){
-	if(_impl){
-		_impl->clearAll();
-	}
+	delegates.clear();
+    target = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // dispatch text message
 //////////////////////////////////////////////////////////////////////////
 
-void IMEDispatcher::dispatchInsertText(const char * text, size_t len)
-{
-    do 
-    {
-        CC_BREAK_IF(! _impl || ! text || len <= 0);
-
-        // there is no delegate attached to IME
-        CC_BREAK_IF(! _impl->_delegateWithIme);
-
-        _impl->_delegateWithIme->insertText(text, len);
-    } while (0);
+void IMEDispatcher::dispatchInsertText(const char * text, size_t len){
+    if(target && text && len > 0){
+        target->insertText(text, len);
+    }
 }
 
-void IMEDispatcher::dispatchDeleteBackward()
-{
-    do 
-    {
-        CC_BREAK_IF(! _impl);
-
-        // there is no delegate attached to IME
-        CC_BREAK_IF(! _impl->_delegateWithIme);
-
-        _impl->_delegateWithIme->deleteBackward();
-    } while (0);
+void IMEDispatcher::dispatchDeleteBackward(){
+    if(target){
+        target->deleteBackward();
+    }
 }
 
 void IMEDispatcher::dispatchControl(int key){
-	do 
-	{
-		CC_BREAK_IF(! _impl);
-		
-		// there is no delegate attached to IME
-		CC_BREAK_IF(! _impl->_delegateWithIme);
-		
-		_impl->_delegateWithIme->controlKey(key);
-	} while (0);
+    if(target){
+        target->controlKey(key);
+    }
 }
 
-const std::string& IMEDispatcher::getContentText()
-{
-    if (_impl && _impl->_delegateWithIme)
-    {
-        return _impl->_delegateWithIme->getContentText();
+const std::string& IMEDispatcher::getContentText(){
+    if(target){
+        return target->getContentText();
     }
     return STD_STRING_EMPTY;
 }
@@ -287,78 +158,29 @@ const std::string& IMEDispatcher::getContentText()
 // dispatch keyboard message
 //////////////////////////////////////////////////////////////////////////
 
-void IMEDispatcher::dispatchKeyboardWillShow(IMEKeyboardNotificationInfo& info)
-{
-    if (_impl)
-    {
-        IMEDelegate * delegate = 0;
-        DelegateIter last = _impl->_delegateList.end();
-        for (DelegateIter first = _impl->_delegateList.begin(); first != last; ++first)
-        {
-            delegate = *(first);
-            if (delegate)
-            {
-                delegate->keyboardWillShow(info);
-            }
-        }
+void IMEDispatcher::dispatchKeyboardWillShow(IMEKeyboardNotificationInfo& info){
+    for(int i=0;i<delegates.size();i++){
+        delegates[i]->keyboardWillShow(info);
     }
 }
 
-void IMEDispatcher::dispatchKeyboardDidShow(IMEKeyboardNotificationInfo& info)
-{
-    if (_impl)
-    {
-        IMEDelegate * delegate = 0;
-        DelegateIter last = _impl->_delegateList.end();
-        for (DelegateIter first = _impl->_delegateList.begin(); first != last; ++first)
-        {
-            delegate = *(first);
-            if (delegate)
-            {
-                delegate->keyboardDidShow(info);
-            }
-        }
+void IMEDispatcher::dispatchKeyboardDidShow(IMEKeyboardNotificationInfo& info){
+    for(int i=0;i<delegates.size();i++){
+        delegates[i]->keyboardDidShow(info);
     }
 }
 
-void IMEDispatcher::dispatchKeyboardWillHide(IMEKeyboardNotificationInfo& info)
-{
-    if (_impl)
-    {
-        IMEDelegate * delegate = 0;
-        DelegateIter last = _impl->_delegateList.end();
-        for (DelegateIter first = _impl->_delegateList.begin(); first != last; ++first)
-        {
-            delegate = *(first);
-            if (delegate)
-            {
-                delegate->keyboardWillHide(info);
-            }
-        }
+void IMEDispatcher::dispatchKeyboardWillHide(IMEKeyboardNotificationInfo& info){
+    for(int i=0;i<delegates.size();i++){
+        delegates[i]->keyboardWillHide(info);
     }
 }
 
-void IMEDispatcher::dispatchKeyboardDidHide(IMEKeyboardNotificationInfo& info)
-{
-    if (_impl)
-    {
-        IMEDelegate * delegate = 0;
-        DelegateIter last = _impl->_delegateList.end();
-        for (DelegateIter first = _impl->_delegateList.begin(); first != last; ++first)
-        {
-            delegate = *(first);
-            if (delegate)
-            {
-                delegate->keyboardDidHide(info);
-            }
-        }
+void IMEDispatcher::dispatchKeyboardDidHide(IMEKeyboardNotificationInfo& info){
+    for(int i=0;i<delegates.size();i++){
+        delegates[i]->keyboardDidHide(info);
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-// protected member function
-//////////////////////////////////////////////////////////////////////////
-
 
 //////////////////////////////////////////////////////////////////////////
 // static member function

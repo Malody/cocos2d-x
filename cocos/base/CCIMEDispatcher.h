@@ -1,7 +1,7 @@
 /****************************************************************************
 Copyright (c) 2010      cocos2d-x.org
 Copyright (c) 2013-2014 Chukong Technologies Inc.
- 
+
 http://www.cocos2d-x.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,8 +27,11 @@ THE SOFTWARE.
 #define __CC_IME_DISPATCHER_H__
 
 #include "base/CCIMEDelegate.h"
+#include <vector>
 
 NS_CC_BEGIN
+
+using namespace std;
 
 /**
  * @addtogroup input
@@ -115,7 +118,7 @@ protected:
 
     /**
     @brief Attach the pDelegate to the IME.
-    @return If the old delegate can detach from the IME, and the new delegate 
+    @return If the old delegate can detach from the IME, and the new delegate
             can attach to the IME, return true, otherwise false.
     */
     bool attachDelegateWithIME(IMEDelegate * delegate);
@@ -126,12 +129,12 @@ protected:
     @brief Remove the delegate from the delegates which receive IME messages.
     */
     void removeDelegate(IMEDelegate * delegate);
-	
+
 private:
     IMEDispatcher();
-    
-    class Impl;
-    Impl * _impl;
+
+    vector<IMEDelegate*> delegates;
+    IMEDelegate* target;
 };
 
 // end of input group
