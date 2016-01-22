@@ -33,8 +33,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
-import java.security.Key;
-
 public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 	// ===========================================================
 	// Constants
@@ -328,7 +326,7 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pKeyEvent) {
 		boolean canSend = canSendThisKey(pKeyCode);
-		//android µÄkeydown»áÖØ¸´´¥·¢, ÎÒÃÇ²»ĞèÒªÕâ¸öÌØĞÔ
+		//android çš„keydownä¼šé‡å¤è§¦å‘, æˆ‘ä»¬ä¸éœ€è¦è¿™ä¸ªç‰¹æ€§
 		if(pKeyEvent.getRepeatCount() > 0){
 			return true;
 		}
