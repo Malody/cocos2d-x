@@ -2,19 +2,19 @@
  Copyright (c) 2012      greathqy
  Copyright (c) 2012      cocos2d-x.org
  Copyright (c) 2013-2014 Chukong Technologies Inc.
- 
+
  http://www.cocos2d-x.org
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -43,105 +43,105 @@
 NS_CC_BEGIN
 
 namespace network {
-	
+
 	static std::mutex       s_requestQueueMutex;
 	static std::mutex       s_responseQueueMutex;
-	
+
 	static std::mutex       s_SleepMutex;
 	static std::condition_variable      s_SleepCondition;
-	
-	
+
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	typedef int int32_t;
 #endif
-	
+
 	static bool s_need_quit = false;
-	
+
 	static std::deque<HttpRequest*>*  s_requestQueue = nullptr;
 	static std::deque<HttpResponse*>* s_responseQueue = nullptr;
-	
+
 	static HttpClient *s_pHttpClient = nullptr; // pointer to singleton
-	
+
 	static char s_errorBuffer[CURL_ERROR_SIZE] = {0};
-	
+
 	typedef size_t (*write_callback)(void *ptr, size_t size, size_t nmemb, void *stream);
-	
+
 	static std::string s_cookieFilename = "";
-	
+
 	// Callback function used by libcurl for collect response data
 	static size_t writeData(void *ptr, size_t size, size_t nmemb, void *stream)
 	{
 		std::vector<char> *recvBuffer = (std::vector<char>*)stream;
 		size_t sizes = size * nmemb;
-		
+
 		// add data to the end of recvBuffer
 		// write data maybe called more than once in a single request
 		recvBuffer->insert(recvBuffer->end(), (char*)ptr, (char*)ptr+sizes);
-		
+
 		return sizes;
 	}
-	
+
 	// Callback function used by libcurl for collect header data
 	static size_t writeHeaderData(void *ptr, size_t size, size_t nmemb, void *stream)
 	{
 		std::vector<char> *recvBuffer = (std::vector<char>*)stream;
 		size_t sizes = size * nmemb;
-		
+
 		// add data to the end of recvBuffer
 		// write data maybe called more than once in a single request
 		recvBuffer->insert(recvBuffer->end(), (char*)ptr, (char*)ptr+sizes);
-		
+
 		return sizes;
 	}
-	
+
 	static size_t write_file(void *ptr, size_t size, size_t nmemb, void *stream) {
 		size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
 		return written;
 	}
-	
-	static size_t read_file(void* buff, size_t size, size_t nmemb, void* userp)  
-	{  
-		size_t sizes = fread(buff, size, nmemb, (FILE *)userp);  
-		return sizes;  
-	} 
-	
-	
+
+	static size_t read_file(void* buff, size_t size, size_t nmemb, void* userp)
+	{
+		size_t sizes = fread(buff, size, nmemb, (FILE *)userp);
+		return sizes;
+	}
+
+
 	static int processGetTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 	static int processPostTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 	static int processPutTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 	static int processDeleteTask(HttpRequest *request, write_callback callback, void *stream, long *errorCode, write_callback headerCallback, void *headerStream, char *errorBuffer);
 	static int processDownloadTask(HttpRequest *request, int32_t *errorCode, write_callback headerCallback, void *headerStream, char* errorBuffer);
 	static void processResponse(HttpResponse* response, char* errorBuffer);
-	
+
 	// Worker thread
 	void HttpClient::networkThread()
 	{
 		HttpRequest *request = nullptr;
-		
+
 		auto scheduler = Director::getInstance()->getScheduler();
-		
+
 		while (true)
 		{
 			if (s_need_quit)
 			{
 				break;
 			}
-			
+
 			// step 1: send http request if the requestQueue isn't empty
 			request = nullptr;
-			
+
 			s_requestQueueMutex.lock();
-			
+
 			//Get request task from queue
-			
+
 			if (!s_requestQueue->empty())
 			{
 				request = s_requestQueue->front();
 				s_requestQueue->pop_front();
 			}
-			
+
 			s_requestQueueMutex.unlock();
-			
+
 			if (nullptr == request)
 			{
 				// Wait for http request tasks from main thread
@@ -149,40 +149,40 @@ namespace network {
 				s_SleepCondition.wait(lk);
 				continue;
 			}
-			
+
 			// step 2: libcurl sync access
-			
+
 			// Create a HttpResponse object, the default setting is http access failed
 			HttpResponse *response = new HttpResponse(request);
-			
+
 			processResponse(response, s_errorBuffer);
-			
-			
+
+
 			// add response packet into queue
 			s_responseQueueMutex.lock();
 			s_responseQueue->push_back(response);
 			s_responseQueueMutex.unlock();
-			
+
 			if (nullptr != s_pHttpClient) {
 				scheduler->performFunctionInCocosThread(CC_CALLBACK_0(HttpClient::dispatchResponseCallbacks, this));
 			}
 		}
-		
+
 		// cleanup: if worker thread received quit signal, clean up un-completed request queue
 		s_requestQueueMutex.lock();
 		s_requestQueue->clear();
 		s_requestQueueMutex.unlock();
-		
-		
+
+
 		if (s_requestQueue != nullptr) {
 			delete s_requestQueue;
 			s_requestQueue = nullptr;
 			delete s_responseQueue;
 			s_responseQueue = nullptr;
 		}
-		
+
 	}
-	
+
 	// Worker thread
 	void HttpClient::networkThreadAlone(HttpRequest* request)
 	{
@@ -190,13 +190,13 @@ namespace network {
 		HttpResponse *response = new HttpResponse(request);
 		char errorBuffer[CURL_ERROR_SIZE] = { 0 };
 		processResponse(response, errorBuffer);
-		
+
 		auto scheduler = Director::getInstance()->getScheduler();
 		scheduler->performFunctionInCocosThread([response, request]{
 			const ccHttpRequestCallback& callback = request->getCallback();
 			Ref* pTarget = request->getTarget();
 			SEL_HttpResponse pSelector = request->getSelector();
-			
+
 			if (callback != nullptr)
 			{
 				callback(s_pHttpClient, response);
@@ -210,14 +210,14 @@ namespace network {
 			request->release();
 		});
 	}
-	
+
 	//Configure curl's timeout property
 	static bool configureCURL(CURL *handle, char *errorBuffer)
 	{
 		if (!handle) {
 			return false;
 		}
-		
+
 		int32_t code;
 		code = curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, errorBuffer);
 		if (code != CURLE_OK) {
@@ -235,14 +235,14 @@ namespace network {
 		curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
 		curl_easy_setopt(handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 30);
 		curl_easy_setopt(handle, CURLOPT_TCP_KEEPALIVE, 1L);
-		
+
 		// FIXED #3224: The subthread of CCHttpClient interrupts main thread if timeout comes.
 		// Document is here: http://curl.haxx.se/libcurl/c/curl_easy_setopt.html#CURLOPTNOSIGNAL
 		curl_easy_setopt(handle, CURLOPT_NOSIGNAL, 1L);
-		
+
 		return true;
 	}
-	
+
 	class CURLRaii
 	{
 		/// Instance of CURL
@@ -255,7 +255,7 @@ namespace network {
 		, _headers(nullptr)
 		{
 		}
-		
+
 		~CURLRaii()
 		{
 			if (_curl)
@@ -264,15 +264,15 @@ namespace network {
 			if (_headers)
 				curl_slist_free_all(_headers);
 		}
-		
+
 		CURL* getCURL(){ return _curl;}
-		
+
 		template <class T>
 		bool setOption(CURLoption option, T data)
 		{
 			return CURLE_OK == curl_easy_setopt(_curl, option, data);
 		}
-		
+
 		/**
 		 * @brief Inits CURL instance for common usage
 		 * @param request Null not allowed
@@ -285,7 +285,7 @@ namespace network {
 				return false;
 			if (!configureCURL(_curl, errorBuffer))
 				return false;
-			
+
 			/* get custom header data (if set) */
 			std::vector<std::string> headers=request->getHeaders();
 			if(!headers.empty())
@@ -305,15 +305,15 @@ namespace network {
 					return false;
 				}
 			}
-			
+
 			return setOption(CURLOPT_URL, request->getUrl())
 			&& setOption(CURLOPT_WRITEFUNCTION, callback)
 			&& setOption(CURLOPT_WRITEDATA, stream)
 			&& setOption(CURLOPT_HEADERFUNCTION, headerCallback)
 			&& setOption(CURLOPT_HEADERDATA, headerStream);
-			
+
 		}
-		
+
 		/// @param responseCode Null not allowed
 		bool perform(long *responseCode)
 		{
@@ -325,11 +325,11 @@ namespace network {
 				return false;
 			}
 			// Get some mor data.
-			
+
 			return true;
 		}
 	};
-	
+
 	//Process Get Request
 	static int processGetTask(HttpRequest *request, write_callback callback, void *stream, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
@@ -339,7 +339,7 @@ namespace network {
 		&& curl.perform(responseCode);
 		return ok ? 0 : 1;
 	}
-	
+
 	//Process POST Request
 	static int processPostTask(HttpRequest *request, write_callback callback, void *stream, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
@@ -351,7 +351,7 @@ namespace network {
 		&& curl.perform(responseCode);
 		return ok ? 0 : 1;
 	}
-	
+
 	//Process PUT Request
 	static int processPutTask(HttpRequest *request, write_callback callback, void *stream, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
@@ -363,7 +363,7 @@ namespace network {
 		&& curl.perform(responseCode);
 		return ok ? 0 : 1;
 	}
-	
+
 	//Process DELETE Request
 	static int processDeleteTask(HttpRequest *request, write_callback callback, void *stream, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
@@ -374,7 +374,7 @@ namespace network {
 		&& curl.perform(responseCode);
 		return ok ? 0 : 1;
 	}
-	
+
 	static int processVisitTask(HttpRequest *request, long *responseCode, write_callback callback, void *stream, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
 		CURLRaii curl;
@@ -386,7 +386,7 @@ namespace network {
 			*responseCode = -1;
 			return 1;
 		}
-		
+
 		ok = curl.perform(responseCode);
 		if(*responseCode == -1){
 			return 1;
@@ -397,18 +397,18 @@ namespace network {
 		*responseCode = (int)(time * 1000);
 		return 0;
 	}
-	
+
 	static int processDownloadTask(HttpRequest *request, write_callback callback, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
 		CURLRaii curl;
 		FILE* fp = nullptr;
-		
+
 		auto& list = request->getTargetFileList();
-		
+
 		if(list.empty()){
 			return 1;
 		}
-		
+
 		std::string firsttar;
 		for(auto& fs : list){
 			if(fs.second != nullptr){
@@ -417,94 +417,93 @@ namespace network {
 				break;
 			}
 		}
-		
+
 		if(fp == nullptr){
 			return -1;
 		}
-		
+
 		bool ok = curl.init(request, callback, fp, headerCallback, headerStream, errorBuffer)
 		&& curl.setOption(CURLOPT_CUSTOMREQUEST, "GET")
 		&& curl.setOption(CURLOPT_FOLLOWLOCATION, true)
 		&& curl.setOption(CURLOPT_TIMEOUT, 240L)
 		&& curl.setOption(CURLOPT_CONNECTTIMEOUT, 0L)
 		&& curl.perform(responseCode);
-		
+
 		long size = ftell(fp);
 		//adjust all the other logics
-		
+
 		fp = nullptr;
 		request->closeAllFiles();
-		
-		
+
 		if(!ok || *responseCode >= 400){
 			for(auto& p : list){
 				remove(p.first.c_str());
 			}
-			(*responseCode)=600;
+			//(*responseCode)=600;
 			return 1;
 		}
-		
+
 		double contentLength = 0;
 		auto _curl = curl.getCURL();
 		curl_easy_getinfo(_curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
 		long _contentLength = floor(contentLength + 0.5);
-		
+
 		if(size == 0 || size != _contentLength){
 			for(auto& p : list){
 				remove(p.first.c_str());
 			}
-			(*responseCode)=600;
+			(*responseCode)=601;
 			return 1;
 		}
-		
+
 		//Correct, copy content to other files;
-		
+
 		std::ifstream fin;
 		fin.open(firsttar,std::ios::binary);
-		
+
 		//cannot open downloaded file
 		if(!fin.is_open()){
 			for(auto& p : list){
 				remove(p.first.c_str());
 			}
-			(*responseCode)=600;
+			(*responseCode)=602;
 			return 1;
 		}
-		
+
 		fin.seekg(0,std::ios::end);
 		size_t len = fin.tellg();
 		fin.seekg(0,std::ios::beg);
-		
+
 		if(len == 0 || len == 0xffffffff){
 			fin.close();
 			for(auto& p : list){
 				remove(p.first.c_str());
 			}
-			(*responseCode)=600;
+			(*responseCode)=603;
 			return 1;
 		}
-		
+
 		char* buffer = new char[len];
 		fin.close();
-		
+
 		std::ofstream fout;
-		
+
 		for(auto& p : list){
 			if(p.first == firsttar){
 				continue;
 			}
 			fout.open(p.first,std::ios::binary);
-			
+
 			if(!fout.is_open()){
 				continue;
 			}
-			
+
 			fout.write(buffer,len);
-			
+
 			fout.close();
-			
+
 		}
-		
+
 		delete[] buffer;
 		/*
 		 //fclose(fp);
@@ -513,21 +512,21 @@ namespace network {
 		 }else{
 		 ::fclose(fp);
 		 }
-		 
+
 		 //
 		 if(!ok){
 		 remove(request->getFilename());  //todo wstring
 		 (*responseCode) = 600; //force an internal error
 		 return 1;
 		 }
-		 
+
 		 //compare file size and content length
-		 
+
 		 double contentLength = 0;
 		 auto _curl = curl.getCURL();
 		 curl_easy_getinfo(_curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
 		 long _contentLength = floor(contentLength + 0.5);
-		 
+
 		 if(size == 0 || size != _contentLength){
 		 remove(request->getFilename());
 		 (*responseCode) = 600; //force an internal error
@@ -536,18 +535,18 @@ namespace network {
 		 */
 		return 0;
 	}
-	
+
 	static int processUploadTask(HttpRequest *request, long *responseCode, write_callback headerCallback, void *headerStream, char *errorBuffer)
 	{
 		CURLRaii curl;
 		FILE* fp = nullptr;
-		
+
 		auto& list = request->getTargetFileList();
-		
+
 		if(list.empty()){
 			return 1;
 		}
-		
+
 		std::string firsttar;
 		for(auto& fs : list){
 			if(fs.second != nullptr){
@@ -556,15 +555,15 @@ namespace network {
 				break;
 			}
 		}
-		
+
 		if(fp == nullptr){
 			return -1;
 		}
-		
+
 		fseek(fp, 0, 2);
-		size_t file_size = ftell(fp);  
+		size_t file_size = ftell(fp);
 		rewind(fp);
-		
+
 		bool ok = curl.init(request, nullptr, nullptr, headerCallback, headerStream, errorBuffer)
 		&& curl.setOption(CURLOPT_UPLOAD, true)
 		&& curl.setOption(CURLOPT_FOLLOWLOCATION, true)
@@ -575,18 +574,18 @@ namespace network {
 		&& curl.setOption(CURLOPT_TIMEOUT, 240L)
 		&& curl.setOption(CURLOPT_CONNECTTIMEOUT, 0L)
 		&& curl.perform(responseCode);
-		
+
 		return ok ? 0 : 1;
 	}
-	
-	
+
+
 	// Process Response
 	static void processResponse(HttpResponse* response, char* errorBuffer)
 	{
 		auto request = response->getHttpRequest();
 		long responseCode = -1;
 		int retValue = 0;
-		
+
 		// Process the request -> get response packet
 		switch (request->getRequestType())
 		{
@@ -599,7 +598,7 @@ namespace network {
             response->getResponseHeader(),
             errorBuffer);
 				break;
-				
+
 			case HttpRequest::Type::POST: // HTTP POST
 				retValue = processPostTask(request,
 										   writeData,
@@ -609,7 +608,7 @@ namespace network {
 										   response->getResponseHeader(),
 										   errorBuffer);
 				break;
-				
+
 			case HttpRequest::Type::PUT:
 				retValue = processPutTask(request,
             writeData,
@@ -619,7 +618,7 @@ namespace network {
             response->getResponseHeader(),
             errorBuffer);
 				break;
-				
+
 			case HttpRequest::Type::DELETE:
 				retValue = processDeleteTask(request,
             writeData,
@@ -643,7 +642,7 @@ namespace network {
 											   writeHeaderData,
 											   response->getResponseHeader(),
 											   errorBuffer);
-				break;	
+				break;
 			case HttpRequest::Type::VISIT:
 				retValue = processVisitTask(request,
 											&responseCode,
@@ -657,10 +656,10 @@ namespace network {
 				CCASSERT(true, "CCHttpClient: unkown request type, only GET and POSt are supported");
 				break;
 		}
-		
+
 		// write data to HttpResponse
 		response->setResponseCode(responseCode);
-		
+
 		if (retValue != 0)
 		{
 			response->setSucceed(false);
@@ -671,22 +670,22 @@ namespace network {
 			response->setSucceed(true);
 		}
 	}
-	
+
 	// HttpClient implementation
 	HttpClient* HttpClient::getInstance()
 	{
 		if (s_pHttpClient == nullptr) {
 			s_pHttpClient = new HttpClient();
 		}
-		
+
 		return s_pHttpClient;
 	}
-	
+
 	void HttpClient::destroyInstance()
 	{
 		CC_SAFE_DELETE(s_pHttpClient);
 	}
-	
+
 	void HttpClient::enableCookies(const char* cookieFile) {
 		if (cookieFile) {
 			s_cookieFilename = std::string(cookieFile);
@@ -695,43 +694,43 @@ namespace network {
 			s_cookieFilename = (FileUtils::getInstance()->getWritablePath() + "cookieFile.txt");
 		}
 	}
-	
+
 	HttpClient::HttpClient()
 	: _timeoutForConnect(20)
 	, _timeoutForRead(30)
 	{
 	}
-	
+
 	HttpClient::~HttpClient()
 	{
 		s_need_quit = true;
-		
+
 		if (s_requestQueue != nullptr) {
 			s_SleepCondition.notify_one();
 		}
-		
+
 		s_pHttpClient = nullptr;
 	}
-	
+
 	//Lazy create semaphore & mutex & thread
 	bool HttpClient::lazyInitThreadSemphore()
 	{
 		if (s_requestQueue != nullptr) {
 			return true;
 		} else {
-			
+
 			s_requestQueue = new std::deque<HttpRequest*>;
 			s_responseQueue = new std::deque<HttpResponse*>;
-			
+
 			s_need_quit = false;
-			
+
 			auto t = std::thread(CC_CALLBACK_0(HttpClient::networkThread, this));
 			t.detach();
 		}
-		
+
 		return true;
 	}
-	
+
 	//Add a get task to queue
 	void HttpClient::send(HttpRequest* request,  bool highPriority)
 	{
@@ -739,14 +738,14 @@ namespace network {
 		{
 			return;
 		}
-		
+
 		if (!request)
 		{
 			return;
 		}
-		
+
 		request->retain();
-		
+
 		if (nullptr != s_requestQueue) {
 			s_requestQueueMutex.lock();
 			if(highPriority){
@@ -755,24 +754,24 @@ namespace network {
 				s_requestQueue->push_back(request);
 			}
 			s_requestQueueMutex.unlock();
-			
+
 			// Notify thread start to work
 			s_SleepCondition.notify_one();
 		}
 	}
-	
+
 	void HttpClient::sendImmediate(HttpRequest* request)
 	{
 		if(!request)
 		{
 			return;
 		}
-		
+
 		request->retain();
 		auto t = std::thread(&HttpClient::networkThreadAlone, this, request);
 		t.detach();
 	}
-	
+
 	// Poll and notify main thread if responses exists in queue
 	void HttpClient::dispatchResponseCallbacks()
 	{
@@ -782,24 +781,24 @@ namespace network {
 			return;
 		}
 		HttpResponse* response = nullptr;
-		
+
 		s_responseQueueMutex.lock();
-		
+
 		if (!s_responseQueue->empty())
 		{
 			response = s_responseQueue->front();;
 			s_responseQueue->pop_front();
 		}
-		
+
 		s_responseQueueMutex.unlock();
-		
+
 		if (response)
 		{
 			HttpRequest *request = response->getHttpRequest();
 			const ccHttpRequestCallback& callback = request->getCallback();
 			Ref* pTarget = request->getTarget();
 			SEL_HttpResponse pSelector = request->getSelector();
-			
+
 			if (callback != nullptr)
 			{
 				callback(this, response);
@@ -808,13 +807,13 @@ namespace network {
 			{
 				(pTarget->*pSelector)(this, response);
 			}
-			
+
 			response->release();
 			// do not release in other thread
 			request->release();
 		}
 	}
-	
+
 }
 
 NS_CC_END
