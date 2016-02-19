@@ -328,6 +328,10 @@ public:
    		_headers=pHeaders;
    	}
 
+    inline void addHeader(string header){
+        _headers.push_back(header);
+    }
+
     /** Get custom headers **/
    	inline std::vector<std::string> getHeaders()
    	{
