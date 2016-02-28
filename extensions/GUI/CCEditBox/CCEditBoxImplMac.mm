@@ -429,9 +429,10 @@ void EditBoxImplMac::setInputFlag(EditBox::InputFlag inputFlag)
     switch (inputFlag)
     {
         case EditBox::InputFlag::PASSWORD:
-            [_sysEdit.textField.superview addSubview:_sysEdit.secureTextField];
-//            [_sysEdit.textField removeFromSuperview];
-			[_sysEdit.textField setHidden:YES];
+			[[[_sysEdit getNSWindow] contentView] addSubview:_sysEdit.secureTextField];
+//            [_sysEdit.textField.superview addSubview:_sysEdit.secureTextField];
+            [_sysEdit.textField removeFromSuperview];
+//			[_sysEdit.textField setHidden:YES];
             break;
         case EditBox::InputFlag::INITIAL_CAPS_WORD:
             CCLOGWARN("INITIAL_CAPS_WORD not implemented");
@@ -440,11 +441,13 @@ void EditBoxImplMac::setInputFlag(EditBox::InputFlag inputFlag)
             CCLOGWARN("INITIAL_CAPS_SENTENCE not implemented");
             break;
         case EditBox::InputFlag::INTIAL_CAPS_ALL_CHARACTERS:
-			if(_sysEdit.secureTextField.superview){
-				[_sysEdit.secureTextField removeFromSuperview];
-				[_sysEdit.textField setHidden:NO];
+		case EditBox::InputFlag::ORIGINAL:
+			[[[_sysEdit getNSWindow] contentView] addSubview: _sysEdit.textField];
+//			if(_sysEdit.secureTextField.superview){
+			[_sysEdit.secureTextField removeFromSuperview];
+//				[_sysEdit.textField setHidden:NO];
 //				[_sysEdit.textField.superview addSubview:_sysEdit.textField];
-			}
+//			}
             break;
         case EditBox::InputFlag::SENSITIVE:
             CCLOGWARN("SENSITIVE not implemented");

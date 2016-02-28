@@ -165,6 +165,8 @@ public:
     void setTextColor(Color4B color);
 
     const Color4B& getTextColor() const;
+	
+	void setMaxWord(int word) { _maxWordLen = word;};
     /**
      * Enable shadow for the label
      *
@@ -211,6 +213,7 @@ protected:
     float _normalScaleValueY;
     std::string _fontName;
     int _fontSize;
+	int _maxWordLen;
     float _onSelectedScaleOffset;
     Label* _labelRenderer;
     bool _labelRendererAdaptDirty;

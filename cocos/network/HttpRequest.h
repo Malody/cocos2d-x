@@ -328,7 +328,7 @@ public:
    		_headers=pHeaders;
    	}
 
-    inline void addHeader(string header){
+	inline void addHeader(std::string header){
         _headers.push_back(header);
     }
 

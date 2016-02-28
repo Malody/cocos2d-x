@@ -43,7 +43,8 @@ namespace ui {
 	_onSelectedScaleOffset(0.5),
 	_labelRenderer(nullptr),
 	_labelRendererAdaptDirty(true),
-	_type(Type::SYSTEM)
+	_type(Type::SYSTEM),
+	_maxWordLen(-1)
 	{
 	}
 	
@@ -108,13 +109,14 @@ namespace ui {
 	
 	void Text::setString(const std::string &text)
 	{
-		_labelRenderer->setString(text);
-		updateContentSizeWithTextureSize(_labelRenderer->getContentSize());
-		_labelRendererAdaptDirty = true;
+		setString(text, _maxWordLen);
 	}
 	
 	void Text::setString(const std::string &text, int maxLen){
-		if(text.size() > maxLen){
+		if(maxLen == -1){
+			maxLen = _maxWordLen;
+		}
+		if(maxLen > 0 && text.size() > maxLen){
 			_labelRenderer->setString(text.substr(0, maxLen) + "...");
 		}else{
 			_labelRenderer->setString(text);
