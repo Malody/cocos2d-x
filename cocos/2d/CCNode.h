@@ -515,6 +515,7 @@ public:
      * @return true if the node is visible, false if the node is hidden.
      */
     virtual bool isVisible() const;
+	virtual bool isVisibleGraphic() const;
 
 	/**
 	 Consider visible from parent

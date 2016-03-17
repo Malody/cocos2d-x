@@ -622,6 +622,10 @@ bool Node::isVisible() const
     return _visible;
 }
 
+bool Node::isVisibleGraphic() const{
+	return _visible && _displayedOpacity > 0;
+}
+
 bool Node::isVisibleRoot(){
 	Node* curr = this;
 	while(curr->_visible){

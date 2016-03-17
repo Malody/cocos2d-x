@@ -722,7 +722,7 @@ void Scale9Sprite::setSpriteFrame(SpriteFrame * spriteFrame)
     Size s = _contentSize;
     s.width *= _scaleX;
     s.height *= _scaleY;
-    this->updateWithBatchNode(batchnode, spriteFrame->getRect(), spriteFrame->isRotated(), Rect::ZERO);
+    this->updateWithBatchNode(batchnode, spriteFrame->getRect(), spriteFrame->isRotated(), _capInsets);
     setDesignSize(s);
 
     // Reset insets
